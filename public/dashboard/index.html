@@ -5,381 +5,195 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Affiliate Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .loading { opacity: 0.5; pointer-events: none; }
-  </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-  <!-- Login/Signup Section -->
-  <div id="auth-section" class="min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h1 class="text-2xl font-bold text-center mb-6">Affiliate Portal</h1>
-      
-      <!-- Tabs -->
-      <div class="flex mb-6 border-b">
-        <button onclick="showTab('login')" id="login-tab" class="flex-1 py-2 text-center border-b-2 border-blue-500 text-blue-500 font-medium">Login</button>
-        <button onclick="showTab('signup')" id="signup-tab" class="flex-1 py-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700">Sign Up</button>
+
+<!-- Login Screen -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
+  <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">Affiliate Portal</h1>
+    <p class="text-gray-500 text-center mb-6">Enter your email to receive a magic login link</p>
+    <div id="loginMsg" class="hidden mb-4 p-3 rounded text-sm"></div>
+    <input id="loginEmail" type="email" placeholder="you@example.com"
+      class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <button onclick="requestLogin()"
+      class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+      Send Magic Link
+    </button>
+    <p class="text-center text-sm text-gray-400 mt-4">Don't have an account?
+      <a href="#" onclick="showSignup()" class="text-blue-600 hover:underline">Sign up</a>
+    </p>
+  </div>
+</div>
+
+<!-- Sign Up Screen -->
+<div id="signupScreen" class="hidden min-h-screen flex items-center justify-center px-4">
+  <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Create Affiliate Account</h1>
+    <div id="signupMsg" class="hidden mb-4 p-3 rounded text-sm"></div>
+    <input id="signupName"  type="text"  placeholder="Your name"    class="w-full border rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <input id="signupEmail" type="email" placeholder="Email address" class="w-full border rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <input id="signupSite"  type="url"   placeholder="Website (optional)" class="w-full border rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <input id="signupWallet" type="text" placeholder="Wallet address (optional)" class="w-full border rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <button onclick="doSignup()"
+      class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+      Create Account
+    </button>
+    <p class="text-center text-sm text-gray-400 mt-4">Already have an account?
+      <a href="#" onclick="showLogin()" class="text-blue-600 hover:underline">Log in</a>
+    </p>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="hidden">
+  <nav class="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
+    <h1 class="text-xl font-bold text-gray-800">Affiliate Dashboard</h1>
+    <button onclick="logout()" class="text-sm text-red-500 hover:underline">Logout</button>
+  </nav>
+
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-5 shadow-sm text-center">
+        <p class="text-3xl font-bold text-blue-600" id="statClicks">—</p>
+        <p class="text-gray-500 text-sm mt-1">Total Clicks</p>
       </div>
-      
-      <!-- Login Form -->
-      <div id="login-form">
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-          <input type="email" id="login-email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
-        </div>
-        <button onclick="requestLogin()" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">Request Login Link</button>
-        <p id="login-message" class="mt-4 text-sm text-center"></p>
+      <div class="bg-white rounded-xl p-5 shadow-sm text-center">
+        <p class="text-3xl font-bold text-green-600" id="statConversions">—</p>
+        <p class="text-gray-500 text-sm mt-1">Conversions</p>
       </div>
-      
-      <!-- Signup Form -->
-      <div id="signup-form" class="hidden">
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-          <input type="text" id="signup-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Name">
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-          <input type="email" id="signup-email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
-        </div>
-        <button onclick="signup()" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Create Account</button>
-        <p id="signup-message" class="mt-4 text-sm text-center"></p>
+      <div class="bg-white rounded-xl p-5 shadow-sm text-center">
+        <p class="text-3xl font-bold text-purple-600" id="statEarned">—</p>
+        <p class="text-gray-500 text-sm mt-1">Total Earned</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 shadow-sm text-center">
+        <p class="text-3xl font-bold text-yellow-600" id="statPending">—</p>
+        <p class="text-gray-500 text-sm mt-1">Pending Payout</p>
       </div>
     </div>
+
+    <!-- Tracking Link -->
+    <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+      <h2 class="font-semibold text-gray-700 mb-3">Your Tracking Link</h2>
+      <div class="flex gap-2">
+        <input id="trackingLink" readonly class="flex-1 bg-gray-100 rounded-lg px-4 py-2 text-sm font-mono text-gray-700">
+        <button onclick="copyLink()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">Copy</button>
+      </div>
+    </div>
+
+    <!-- Recent Conversions -->
+    <div class="bg-white rounded-xl p-6 shadow-sm">
+      <h2 class="font-semibold text-gray-700 mb-4">Recent Conversions</h2>
+      <div id="conversionsList" class="text-sm text-gray-500">Loading...</div>
+    </div>
   </div>
+</div>
 
-  <!-- Dashboard Section -->
-  <div id="dashboard-section" class="hidden">
-    <!-- Header -->
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-gray-800">Affiliate Dashboard</h1>
-        <div class="flex items-center gap-4">
-          <span id="user-name" class="text-gray-600"></span>
-          <button onclick="logout()" class="text-red-500 hover:text-red-600">Logout</button>
-        </div>
-      </div>
-    </header>
+<script>
+  const API = '';
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-      <!-- Tracking Link Card -->
-      <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 mb-8 text-white">
-        <h2 class="text-lg font-medium mb-2">Your Tracking Link</h2>
-        <div class="flex items-center gap-2 bg-white/20 rounded-lg p-3">
-          <input type="text" id="tracking-link" readonly class="flex-1 bg-transparent border-none outline-none text-white placeholder-white/70">
-          <button onclick="copyLink()" class="bg-white text-blue-600 px-4 py-1 rounded font-medium hover:bg-gray-100 transition">Copy</button>
-        </div>
-        <p class="mt-2 text-sm text-white/80">Share this link to earn commissions on conversions</p>
-      </div>
+  function token() { return localStorage.getItem('aff_token'); }
+  function authHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
 
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow p-6">
-          <p class="text-gray-500 text-sm">Total Earnings</p>
-          <p id="stat-earnings" class="text-3xl font-bold text-green-600">$0.00</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <p class="text-gray-500 text-sm">Total Clicks</p>
-          <p id="stat-clicks" class="text-3xl font-bold text-blue-600">0</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <p class="text-gray-500 text-sm">Conversions</p>
-          <p id="stat-conversions" class="text-3xl font-bold text-purple-600">0</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <p class="text-gray-500 text-sm">Conversion Rate</p>
-          <p id="stat-rate" class="text-3xl font-bold text-orange-600">0%</p>
-        </div>
-      </div>
+  function showMsg(id, msg, ok) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `mb-4 p-3 rounded text-sm ${ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+    el.classList.remove('hidden');
+  }
 
-      <!-- Period Filter -->
-      <div class="flex gap-2 mb-6">
-        <button onclick="loadStats('today')" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition period-btn" data-period="today">Today</button>
-        <button onclick="loadStats('week')" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition period-btn" data-period="week">This Week</button>
-        <button onclick="loadStats('month')" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition period-btn" data-period="month">This Month</button>
-        <button onclick="loadStats('all')" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition period-btn" data-period="all">All Time</button>
-      </div>
+  function showLogin()  { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('signupScreen').classList.add('hidden'); }
+  function showSignup() { document.getElementById('signupScreen').classList.remove('hidden'); document.getElementById('loginScreen').classList.add('hidden'); }
 
-      <!-- Conversions by Type -->
-      <div class="bg-white rounded-lg shadow mb-8">
-        <div class="p-6 border-b">
-          <h2 class="text-lg font-bold text-gray-800">Conversions by Type</h2>
-        </div>
-        <div id="conversions-by-type" class="p-6">
-          <p class="text-gray-500">Loading...</p>
-        </div>
-      </div>
-
-      <!-- Recent Conversions -->
-      <div class="bg-white rounded-lg shadow mb-8">
-        <div class="p-6 border-b">
-          <h2 class="text-lg font-bold text-gray-800">Recent Conversions</h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
-              </tr>
-            </thead>
-            <tbody id="conversions-table" class="divide-y divide-gray-200">
-              <tr><td colspan="4" class="px-6 py-4 text-gray-500">Loading...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Profile Section -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b">
-          <h2 class="text-lg font-bold text-gray-800">Profile Settings</h2>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-              <input type="text" id="profile-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-              <input type="email" id="profile-email" readonly class="w-full px-3 py-2 border rounded-lg bg-gray-100">
-            </div>
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Wallet Address</label>
-              <input type="text" id="profile-wallet" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0x...">
-            </div>
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Payment Method</label>
-              <select id="profile-payment" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="crypto">Crypto</option>
-                <option value="fiat">Fiat</option>
-                <option value="both">Both</option>
-              </select>
-            </div>
-          </div>
-          <button onclick="updateProfile()" class="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">Save Changes</button>
-          <p id="profile-message" class="mt-2 text-sm"></p>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <script>
-    const API_BASE = '';
-    let authToken = null;
-    let currentAffiliate = null;
-
-    // Check for token in URL or localStorage
-    function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const tokenFromUrl = urlParams.get('token');
-      
-      if (tokenFromUrl) {
-        authToken = tokenFromUrl;
-        localStorage.setItem('affiliateToken', tokenFromUrl);
-        window.history.replaceState({}, document.title, '/dashboard');
-      } else {
-        authToken = localStorage.getItem('affiliateToken');
-      }
-
-      if (authToken) {
-        loadDashboard();
-      }
+  async function requestLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) return showMsg('loginMsg', 'Please enter your email', false);
+    const r = await fetch(API + '/api/affiliates/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) });
+    const d = await r.json();
+    if (d.dev_magic_url) {
+      showMsg('loginMsg', '✅ Magic link ready (dev mode — click to log in)', true);
+      const a = document.createElement('a'); a.href = d.dev_magic_url;
+      a.textContent = ' [Login now]'; a.className = 'font-semibold underline';
+      document.getElementById('loginMsg').appendChild(a);
+    } else {
+      showMsg('loginMsg', d.message || 'Check your email for a magic link', true);
     }
+  }
 
-    function showTab(tab) {
-      document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
-      document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
-      document.getElementById('login-tab').classList.toggle('border-blue-500', tab === 'login');
-      document.getElementById('login-tab').classList.toggle('text-blue-500', tab === 'login');
-      document.getElementById('signup-tab').classList.toggle('border-blue-500', tab === 'signup');
-      document.getElementById('signup-tab').classList.toggle('text-blue-500', tab === 'signup');
-    }
+  async function doSignup() {
+    const body = {
+      name: document.getElementById('signupName').value.trim(),
+      email: document.getElementById('signupEmail').value.trim(),
+      website: document.getElementById('signupSite').value.trim(),
+      wallet_address: document.getElementById('signupWallet').value.trim()
+    };
+    if (!body.name || !body.email) return showMsg('signupMsg', 'Name and email are required', false);
+    const r = await fetch(API + '/api/affiliates/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (r.ok) { showMsg('signupMsg', '✅ Account created! Check your email to log in.', true); }
+    else       { showMsg('signupMsg', d.error || 'Signup failed', false); }
+  }
 
-    async function requestLogin() {
-      const email = document.getElementById('login-email').value;
-      const msgEl = document.getElementById('login-message');
-      
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        
-        if (data.magic_link) {
-          msgEl.innerHTML = `<span class="text-green-600">Login link generated! <a href="${data.magic_link}" class="underline">Click here to login</a></span>`;
-        } else {
-          msgEl.innerHTML = `<span class="text-green-600">${data.message}</span>`;
-        }
-      } catch (err) {
-        msgEl.innerHTML = `<span class="text-red-600">Error: ${err.message}</span>`;
-      }
-    }
+  async function loadDashboard() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('signupScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
 
-    async function signup() {
-      const name = document.getElementById('signup-name').value;
-      const email = document.getElementById('signup-email').value;
-      const msgEl = document.getElementById('signup-message');
-      
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email })
-        });
-        const data = await res.json();
-        
-        if (data.token) {
-          authToken = data.token;
-          localStorage.setItem('affiliateToken', data.token);
-          msgEl.innerHTML = `<span class="text-green-600">Account created! Redirecting...</span>`;
-          setTimeout(() => loadDashboard(), 1000);
-        } else {
-          msgEl.innerHTML = `<span class="text-red-600">${data.error}</span>`;
-        }
-      } catch (err) {
-        msgEl.innerHTML = `<span class="text-red-600">Error: ${err.message}</span>`;
-      }
-    }
+    const [meRes, statsRes, convRes] = await Promise.all([
+      fetch(API + '/api/affiliates/me',          { headers: authHeaders() }),
+      fetch(API + '/api/affiliates/stats',        { headers: authHeaders() }),
+      fetch(API + '/api/affiliates/conversions',  { headers: authHeaders() })
+    ]);
 
-    async function loadDashboard() {
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/me`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        
-        if (!res.ok) {
-          throw new Error('Session expired');
-        }
-        
-        currentAffiliate = await res.json();
-        
-        document.getElementById('auth-section').classList.add('hidden');
-        document.getElementById('dashboard-section').classList.remove('hidden');
-        
-        document.getElementById('user-name').textContent = currentAffiliate.name;
-        document.getElementById('tracking-link').value = currentAffiliate.tracking_link;
-        
-        document.getElementById('profile-name').value = currentAffiliate.name;
-        document.getElementById('profile-email').value = currentAffiliate.email;
-        document.getElementById('profile-wallet').value = currentAffiliate.wallet_address || '';
-        document.getElementById('profile-payment').value = currentAffiliate.payment_method || 'crypto';
-        
-        loadStats('all');
-        loadConversions();
-      } catch (err) {
-        logout();
-      }
-    }
+    if (!meRes.ok) { logout(); return; }
 
-    async function loadStats(period = 'all') {
-      // Update button styles
-      document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-500', 'text-white');
-        btn.classList.add('bg-gray-200');
+    const me    = await meRes.json();
+    const stats = await statsRes.json();
+    const convs = await convRes.json();
+
+    document.getElementById('trackingLink').value = me.tracking_link || '';
+    document.getElementById('statClicks').textContent      = stats.clicks || 0;
+    document.getElementById('statConversions').textContent = stats.conversions || 0;
+    document.getElementById('statEarned').textContent      = '$' + parseFloat(stats.earnings?.total || 0).toFixed(2);
+    document.getElementById('statPending').textContent     = '$' + parseFloat(stats.earnings?.approved || 0).toFixed(2);
+
+    const list = document.getElementById('conversionsList');
+    if (!convs.conversions?.length) { list.textContent = 'No conversions yet.'; return; }
+    list.innerHTML = convs.conversions.map(c => `
+      <div class="flex justify-between items-center py-2 border-b last:border-0">
+        <div>
+          <span class="font-medium text-gray-700">${c.conversion_type}</span>
+          <span class="ml-2 text-gray-400 text-xs">${new Date(c.created_at).toLocaleDateString()}</span>
+        </div>
+        <div class="text-right">
+          <span class="text-green-600 font-semibold">$${parseFloat(c.commission_amount).toFixed(4)}</span>
+          <span class="ml-2 px-2 py-0.5 rounded-full text-xs ${c.status==='paid'?'bg-green-100 text-green-700':c.status==='approved'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${c.status}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function copyLink() {
+    const el = document.getElementById('trackingLink');
+    navigator.clipboard.writeText(el.value).then(() => alert('Copied!'));
+  }
+
+  function logout() {
+    localStorage.removeItem('aff_token');
+    location.reload();
+  }
+
+  // Handle magic link token in URL
+  const params = new URLSearchParams(location.search);
+  if (params.get('token') && params.get('email')) {
+    fetch(API + '/api/affiliates/magic?token=' + params.get('token') + '&email=' + params.get('email'))
+      .then(r => r.json()).then(d => {
+        if (d.token) { localStorage.setItem('aff_token', d.token); history.replaceState({}, '', '/dashboard'); loadDashboard(); }
+        else { showMsg('loginMsg', d.error || 'Login link invalid or expired', false); }
       });
-      document.querySelector(`.period-btn[data-period="${period}"]`).classList.remove('bg-gray-200');
-      document.querySelector(`.period-btn[data-period="${period}"]`).classList.add('bg-blue-500', 'text-white');
-      
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/stats?period=${period}`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const stats = await res.json();
-        
-        const earnings = stats.earnings.length > 0 ? stats.earnings[0].amount : 0;
-        document.getElementById('stat-earnings').textContent = `$${earnings.toFixed(2)}`;
-        document.getElementById('stat-clicks').textContent = stats.clicks.total;
-        document.getElementById('stat-conversions').textContent = stats.conversions.total;
-        document.getElementById('stat-rate').textContent = stats.conversion_rate;
-        
-        // Conversions by type
-        const typeHtml = stats.conversions.by_type.length > 0
-          ? stats.conversions.by_type.map(t => `
-              <div class="flex justify-between items-center py-2 border-b last:border-0">
-                <span class="capitalize">${t.type.replace('_', ' ')}</span>
-                <span class="font-bold">${t.count}</span>
-              </div>
-            `).join('')
-          : '<p class="text-gray-500">No conversions yet</p>';
-        document.getElementById('conversions-by-type').innerHTML = typeHtml;
-      } catch (err) {
-        console.error('Failed to load stats:', err);
-      }
-    }
-
-    async function loadConversions() {
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/conversions?limit=10`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        
-        const tableHtml = data.conversions.length > 0
-          ? data.conversions.map(c => `
-              <tr>
-                <td class="px-6 py-4 capitalize">${c.conversion_type.replace('_', ' ')}</td>
-                <td class="px-6 py-4">$${(c.conversion_value || 0).toFixed(2)}</td>
-                <td class="px-6 py-4">${new Date(c.created_at).toLocaleString()}</td>
-                <td class="px-6 py-4 text-sm text-gray-500">${c.metadata ? JSON.stringify(c.metadata).slice(0, 50) : '-'}</td>
-              </tr>
-            `).join('')
-          : '<tr><td colspan="4" class="px-6 py-4 text-gray-500">No conversions yet</td></tr>';
-        document.getElementById('conversions-table').innerHTML = tableHtml;
-      } catch (err) {
-        console.error('Failed to load conversions:', err);
-      }
-    }
-
-    async function updateProfile() {
-      const msgEl = document.getElementById('profile-message');
-      try {
-        const res = await fetch(`${API_BASE}/api/affiliates/me`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: document.getElementById('profile-name').value,
-            wallet_address: document.getElementById('profile-wallet').value,
-            payment_method: document.getElementById('profile-payment').value
-          })
-        });
-        const data = await res.json();
-        
-        if (data.affiliate) {
-          msgEl.innerHTML = '<span class="text-green-600">Profile updated successfully!</span>';
-          currentAffiliate = { ...currentAffiliate, ...data.affiliate };
-          document.getElementById('user-name').textContent = currentAffiliate.name;
-        } else {
-          msgEl.innerHTML = `<span class="text-red-600">${data.error}</span>`;
-        }
-      } catch (err) {
-        msgEl.innerHTML = `<span class="text-red-600">Error: ${err.message}</span>`;
-      }
-    }
-
-    function copyLink() {
-      const link = document.getElementById('tracking-link');
-      link.select();
-      document.execCommand('copy');
-      alert('Link copied to clipboard!');
-    }
-
-    function logout() {
-      authToken = null;
-      localStorage.removeItem('affiliateToken');
-      document.getElementById('auth-section').classList.remove('hidden');
-      document.getElementById('dashboard-section').classList.add('hidden');
-    }
-
-    // Initialize on load
-    init();
-  </script>
+  } else if (token()) {
+    loadDashboard();
+  }
+</script>
 </body>
 </html>
