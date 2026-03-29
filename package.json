@@ -2,9 +2,11 @@
   "name": "affiliate-tracker",
   "version": "2.0.0",
   "description": "Affiliate Tracking Platform with S2S tracking for websites and Web3 metaverses",
+  "main": "api/index.js",
   "scripts": {
     "dev": "vercel dev",
     "build": "node db/migrate.js",
+    "start": "node api/index.js",
     "test": "echo \"No tests yet\" && exit 0"
   },
   "keywords": [
@@ -23,7 +25,7 @@
     "dotenv": "^16.4.5",
     "ethers": "^6.12.0",
     "exceljs": "^4.4.0",
-    "express": "^5.2.1",
+    "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
     "uuid": "^9.0.1"
