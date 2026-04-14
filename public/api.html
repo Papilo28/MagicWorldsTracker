@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Docs - Magic Worlds Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3a 50%,#0a0a1a 100%);color:#fff;min-height:100vh;line-height:1.6}
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;background:rgba(10,10,26,.95);border-bottom:1px solid rgba(139,92,246,.2);position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(10px)}
+    .logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:#fff}
+    .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#8B5CF6,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0}
+    .logo-text{font-weight:700;font-size:1rem}
+    .logo-text span{color:#8B5CF6}
+    .nav-links{display:flex;align-items:center;gap:1.25rem}
+    .nav-links a{color:#a1a1aa;text-decoration:none;font-size:.88rem;transition:color .3s}
+    .nav-links a:hover{color:#fff}
+    .btn-launch{background:#22c55e;color:#fff;padding:.45rem .9rem;border-radius:.5rem;text-decoration:none;font-weight:600;font-size:.82rem}
+    .layout{display:flex;padding-top:60px}
+    .sidebar{width:260px;background:rgba(0,0,0,.3);border-right:1px solid rgba(139,92,246,.2);height:calc(100vh - 60px);position:fixed;overflow-y:auto;padding:1.25rem 0;scrollbar-width:thin;scrollbar-color:#8B5CF6 transparent}
+    .sidebar-section{margin-bottom:1.25rem}
+    .sidebar-title{color:#a1a1aa;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:0 1.25rem;margin-bottom:.6rem}
+    .sidebar-link{display:block;padding:.55rem 1.25rem;color:#d1d5db;text-decoration:none;font-size:.86rem;transition:all .3s;border-left:3px solid transparent}
+    .sidebar-link:hover,.sidebar-link.active{background:rgba(139,92,246,.1);color:#fff;border-left-color:#8B5CF6}
+    .main-content{flex:1;margin-left:260px;padding:2rem;max-width:860px}
+    .section{margin-bottom:3.5rem}
+    .section-title{font-size:1.75rem;font-weight:700;margin-bottom:.875rem;padding-bottom:.875rem;border-bottom:1px solid rgba(139,92,246,.2)}
+    .section-title span{color:#8B5CF6}
+    .section p{color:#d1d5db;margin-bottom:1.25rem;font-size:.95rem}
+    h3{font-size:1.1rem;font-weight:600;margin:1.75rem 0 .875rem;color:#fff}
+    .badge{display:inline-block;padding:.15rem .55rem;border-radius:.25rem;font-size:.72rem;font-weight:600;margin-right:.4rem}
+    .badge.get{background:rgba(34,197,94,.2);color:#22c55e}
+    .badge.post{background:rgba(59,130,246,.2);color:#3b82f6}
+    .badge.put{background:rgba(249,115,22,.2);color:#f97316}
+    .badge.delete{background:rgba(239,68,68,.2);color:#ef4444}
+    .endpoint-card{background:rgba(255,255,255,.03);border:1px solid rgba(139,92,246,.2);border-radius:.75rem;margin-bottom:1.25rem;overflow:hidden}
+    .endpoint-header{padding:.875rem 1.1rem;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(139,92,246,.2);display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+    .endpoint-path{font-family:'Fira Code',monospace;font-size:.88rem;color:#A78BFA}
+    .endpoint-body{padding:1.1rem}
+    .endpoint-desc{color:#d1d5db;margin-bottom:.875rem;font-size:.9rem}
+    .code-block{background:rgba(0,0,0,.4);border:1px solid rgba(139,92,246,.2);border-radius:.5rem;overflow:hidden;margin:.875rem 0}
+    .code-header{background:rgba(0,0,0,.3);padding:.5rem .875rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(139,92,246,.2)}
+    .code-lang{color:#a1a1aa;font-size:.78rem}
+    .btn-copy{background:transparent;border:1px solid rgba(139,92,246,.3);color:#8B5CF6;padding:.25rem .55rem;border-radius:.3rem;font-size:.72rem;cursor:pointer;font-family:inherit}
+    .code-content{padding:.875rem;overflow-x:auto}
+    .code-content pre{margin:0;font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.6;color:#d1d5db;white-space:pre}
+    .code-content .comment{color:#6b7280}
+    .code-content .string{color:#22c55e}
+    .code-content .number{color:#f97316}
+    .code-content .keyword{color:#8B5CF6}
+    .code-content .property{color:#3b82f6}
+    .param-table{width:100%;border-collapse:collapse;margin:.875rem 0}
+    .param-table th{text-align:left;padding:.65rem .875rem;background:rgba(0,0,0,.3);color:#a1a1aa;font-size:.75rem;font-weight:600;text-transform:uppercase}
+    .param-table td{padding:.65rem .875rem;border-bottom:1px solid rgba(255,255,255,.05);font-size:.88rem}
+    .param-name{font-family:'Fira Code',monospace;color:#A78BFA}
+    .param-type{color:#f97316;font-size:.78rem}
+    .param-req{color:#ef4444;font-size:.72rem;font-weight:600}
+    .param-opt{color:#6b7280;font-size:.72rem}
+    .base-url{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);border-radius:.5rem;padding:.875rem;font-family:'Fira Code',monospace;font-size:.9rem;color:#A78BFA;margin:.875rem 0}
+    .info-box{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:.5rem;padding:.875rem 1.1rem;margin:1.25rem 0}
+    .info-box.success{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3)}
+    .info-box-title{font-weight:600;margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;font-size:.9rem}
+    .info-box p{margin:0;font-size:.88rem;color:#d1d5db}
+    .conversion-types{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.875rem;margin:1.25rem 0}
+    .ct-card{background:rgba(255,255,255,.03);border:1px solid rgba(139,92,246,.2);border-radius:.5rem;padding:.875rem}
+    .ct-card h4{font-size:.88rem;margin-bottom:.35rem;color:#8B5CF6}
+    .ct-card p{font-size:.82rem;color:#a1a1aa;margin:0}
+    @media(max-width:1024px){.sidebar{display:none}.main-content{margin-left:0;padding:1.25rem}}
+    @media(max-width:768px){.nav-links{display:none}.section-title{font-size:1.4rem}}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo"><div class="logo-icon">MW</div><div class="logo-text">MAGIC<span>WORLDS</span></div></a>
+    <div class="nav-links"><a href="/">Home</a><a href="/dashboard">Affiliates</a><a href="/merchant">Merchants</a><a href="/dashboard" class="btn-launch">Get Started</a></div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Getting Started</div><a href="#intro" class="sidebar-link active">Introduction</a><a href="#quickstart" class="sidebar-link">Quick Start</a><a href="#auth" class="sidebar-link">Authentication</a></div>
+      <div class="sidebar-section"><div class="sidebar-title">Tracking</div><a href="#script" class="sidebar-link">JS Snippet</a><a href="#redirect" class="sidebar-link">Redirect Links</a><a href="#s2s" class="sidebar-link">S2S Tracking</a><a href="#types" class="sidebar-link">Conversion Types</a></div>
+      <div class="sidebar-section"><div class="sidebar-title">Affiliate API</div><a href="#aff-signup" class="sidebar-link">Signup</a><a href="#aff-login" class="sidebar-link">Login</a><a href="#aff-stats" class="sidebar-link">Statistics</a></div>
+      <div class="sidebar-section"><div class="sidebar-title">Merchant API</div><a href="#mer-signup" class="sidebar-link">Registration</a><a href="#mer-login" class="sidebar-link">Login</a><a href="#mer-stats" class="sidebar-link">Dashboard Stats</a></div>
+    </aside>
+    <main class="main-content">
+      <section id="intro" class="section">
+        <h1 class="section-title">API <span>Documentation</span></h1>
+        <p>The Magic Worlds Tracker API lets you integrate affiliate tracking into any website, game, or Web3 application.</p>
+        <h3>Base URL</h3>
+        <div class="base-url">https://api.magictracker.cc</div>
+        <div class="info-box success"><div class="info-box-title">✨ Web3 Ready</div><p>Track wallet connects, NFT mints, token swaps, subscriptions, referrals, and in-game actions.</p></div>
+      </section>
+      <section id="quickstart" class="section">
+        <h2 class="section-title">Quick <span>Start</span></h2>
+        <h3>1. Add the Tracking Script</h3>
+        <div class="code-block"><div class="code-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div><div class="code-content"><pre><span class="keyword">&lt;script</span> <span class="property">src</span>=<span class="string">"https://api.magictracker.cc/api/track/script.js"</span><span class="keyword">&gt;&lt;/script&gt;</span></pre></div></div>
+        <h3>2. Track Conversions</h3>
+        <div class="code-block"><div class="code-header"><span class="code-lang">JavaScript</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div><div class="code-content"><pre><span class="comment">// Wallet connection</span>
+AffiliateTracker.trackWalletConnect(<span class="string">'0x1234...abcd'</span>, <span class="string">'ethereum'</span>);
+<span class="comment">// Purchase</span>
+AffiliateTracker.trackPurchase(<span class="number">99.99</span>, <span class="string">'USD'</span>, <span class="string">'order-123'</span>);
+<span class="comment">// NFT mint</span>
+AffiliateTracker.trackNFTMint(<span class="string">'#1234'</span>, <span class="string">'MagicWorlds'</span>);
+<span class="comment">// Token swap</span>
+AffiliateTracker.trackTokenSwap(<span class="string">'ETH'</span>, <span class="string">'MAGIC'</span>, <span class="number">0.5</span>);
+<span class="comment">// Level up</span>
+AffiliateTracker.trackLevelUp(<span class="number">5</span>);
+<span class="comment">// Subscription</span>
+AffiliateTracker.trackSubscription(<span class="string">'pro'</span>, <span class="number">9.99</span>, <span class="string">'USD'</span>);</pre></div></div>
+      </section>
+      <section id="auth" class="section">
+        <h2 class="section-title">Authen<span>tication</span></h2>
+        <p>All protected API requests require a Bearer token in the Authorization header:</p>
+        <div class="code-block"><div class="code-header"><span class="code-lang">HTTP Header</span></div><div class="code-content"><pre>Authorization: Bearer YOUR_JWT_TOKEN</pre></div></div>
+      </section>
+      <section id="s2s" class="section">
+        <h2 class="section-title">S2S <span>Tracking</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/track/conversion</span></div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">Record a conversion server-side. Authenticate with your API secret header.</p>
+            <div class="code-block"><div class="code-header"><span class="code-lang">cURL</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div><div class="code-content"><pre>curl -X POST https://api.magictracker.cc/api/track/conversion \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -H <span class="string">"X-API-Secret: YOUR_TRACKING_SECRET"</span> \
+  -d <span class="string">'{"affiliate_code":"ABC12345","conversion_type":"purchase","conversion_value":99.99}'</span></pre></div></div>
+          </div>
+        </div>
+      </section>
+      <section id="types" class="section">
+        <h2 class="section-title">Conversion <span>Types</span></h2>
+        <div class="conversion-types">
+          <div class="ct-card"><h4>wallet_connect</h4><p>User connects crypto wallet</p></div>
+          <div class="ct-card"><h4>purchase</h4><p>Purchase or transaction</p></div>
+          <div class="ct-card"><h4>signup</h4><p>User registration</p></div>
+          <div class="ct-card"><h4>in_game_action</h4><p>Custom in-game event</p></div>
+          <div class="ct-card"><h4>referral</h4><p>User refers another</p></div>
+          <div class="ct-card"><h4>subscription</h4><p>Recurring payment</p></div>
+          <div class="ct-card"><h4>nft_mint</h4><p>NFT mint event</p></div>
+          <div class="ct-card"><h4>token_swap</h4><p>Token swap event</p></div>
+          <div class="ct-card"><h4>level_up</h4><p>In-game level up</p></div>
+        </div>
+      </section>
+      <section id="aff-signup" class="section">
+        <h2 class="section-title">Affiliate <span>Signup</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/affiliates/signup</span></div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">Register a new affiliate. Creates a unique code, crypto wallet, and sends welcome email.</p>
+            <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th></tr></thead><tbody>
+              <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">yes</span></td></tr>
+              <tr><td><span class="param-name">email</span></td><td><span class="param-type">string</span></td><td><span class="param-req">yes</span></td></tr>
+              <tr><td><span class="param-name">merchant_slug</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">one of</span></td></tr>
+              <tr><td><span class="param-name">merchant_id</span></td><td><span class="param-type">integer</span></td><td><span class="param-opt">one of</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </section>
+      <section id="aff-login" class="section">
+        <h2 class="section-title">Affiliate <span>Login</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/affiliates/login</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Request a magic login link. The link is sent via email and expires in 15 minutes.</p></div>
+        </div>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/affiliates/forgot-password</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Request a password reset email. Works for affiliates with a password set.</p></div>
+        </div>
+      </section>
+      <section id="aff-stats" class="section">
+        <h2 class="section-title">Affiliate <span>Statistics</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge get">GET</span><span class="endpoint-path">/api/affiliates/stats?period=week</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Get performance stats. period = today | week | month | all. Requires Bearer token.</p></div>
+        </div>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge get">GET</span><span class="endpoint-path">/api/affiliates/conversions</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">List all conversions for the authenticated affiliate. Paginated.</p></div>
+        </div>
+      </section>
+      <section id="mer-signup" class="section">
+        <h2 class="section-title">Merchant <span>Registration</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/merchants/signup</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Create a new merchant account. Returns API key + secret and sends welcome email.</p></div>
+        </div>
+      </section>
+      <section id="mer-login" class="section">
+        <h2 class="section-title">Merchant <span>Login</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge post">POST</span><span class="endpoint-path">/api/merchants/login</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Login with email and password. Returns JWT token valid for 7 days.</p></div>
+        </div>
+      </section>
+      <section id="mer-stats" class="section">
+        <h2 class="section-title">Merchant <span>Stats</span></h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header"><span class="badge get">GET</span><span class="endpoint-path">/api/merchants/stats</span></div>
+          <div class="endpoint-body"><p class="endpoint-desc">Get merchant dashboard stats: affiliates, clicks, conversions, revenue, top affiliates. Requires merchant Bearer token.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    function copyCode(btn) { var pre = btn.closest('.code-block').querySelector('pre'); navigator.clipboard.writeText(pre.textContent).then(() => { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }); }
+    window.addEventListener('scroll', () => { var current = ''; document.querySelectorAll('section[id]').forEach(s => { if (scrollY >= s.offsetTop - 100) current = s.id; }); document.querySelectorAll('.sidebar-link').forEach(l => { l.classList.toggle('active', l.getAttribute('href') === '#' + current); }); });
+  </script>
+</body>
+</html>

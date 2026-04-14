@@ -1,0 +1,35 @@
+{
+  "name": "magicworlds-affiliate-tracker",
+  "version": "2.0.0",
+  "description": "Magic Worlds Affiliate Tracking Platform - Production",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": ["affiliate", "tracking", "web3", "magicworlds"],
+  "author": "Magic Worlds",
+  "license": "ISC",
+  "dependencies": {
+    "@sentry/node": "^7.119.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.12.0",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.12.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

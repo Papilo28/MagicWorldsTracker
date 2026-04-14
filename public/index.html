@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Magic Worlds Tracker - Web3 Affiliate Tracking Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050510;--bg2:#07071a;--bg3:#0a0a20;
+  --s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);
+  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);
+  --txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;
+  --a:#7c6dfa;--b:#00d4ff;--c:#ff6ef7;--d:#00ffa3;--e:#ffb347;
+  --ga:linear-gradient(135deg,#7c6dfa,#00d4ff);
+  --gb:linear-gradient(135deg,#7c6dfa,#ff6ef7);
+  --gc:linear-gradient(135deg,#00d4ff,#00ffa3);
+  --glow-a:rgba(124,109,250,.2);--glow-b:rgba(0,212,255,.2);
+  --r:.85rem;--r2:1.25rem;--r3:1.5rem;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+img{display:block;max-width:100%}
+h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif;line-height:1.15;letter-spacing:-.02em}
+h1{font-size:clamp(1.7rem,5.5vw,3.6rem);font-weight:800}
+h2{font-size:clamp(2rem,4vw,3rem);font-weight:700}
+h3{font-size:clamp(1.15rem,2.2vw,1.45rem);font-weight:600}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--a);border-radius:4px}
+
+/* ambient */
+.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;will-change:transform}
+.orb1{width:min(650px,130vw);height:min(650px,130vw);background:radial-gradient(circle,rgba(124,109,250,.16),transparent 70%);top:-180px;left:-180px;animation:o1 22s ease-in-out infinite}
+.orb2{width:min(550px,110vw);height:min(550px,110vw);background:radial-gradient(circle,rgba(0,212,255,.13),transparent 70%);top:38%;right:-160px;animation:o2 27s ease-in-out infinite}
+.orb3{width:min(480px,100vw);height:min(480px,100vw);background:radial-gradient(circle,rgba(255,110,247,.1),transparent 70%);bottom:5%;left:25%;animation:o3 19s ease-in-out infinite}
+@keyframes o1{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,70px)}}
+@keyframes o2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,50px)}}
+@keyframes o3{0%,100%{transform:translate(0,0)}50%{transform:translate(35px,-55px)}}
+
+/* grid pattern */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(124,109,250,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,.04) 1px,transparent 1px);
+  background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 100%)}
+
+/* ---- NAV ---- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:.75rem 2rem;background:rgba(5,5,16,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);transition:background .3s;height:56px;will-change:transform}
+.nav.scrolled{background:rgba(5,5,16,.98);border-bottom-color:rgba(255,255,255,.12)}
+.logo{display:flex;align-items:center;gap:.7rem}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:var(--ga);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.logo-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.22),transparent)}
+.logo-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:.88rem;letter-spacing:-.01em;line-height:1.2;white-space:nowrap}
+.logo-text .accent{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--txt2);transition:color .2s}
+.nav-links a:hover{color:var(--txt)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.btn-login{font-size:.875rem;font-weight:500;color:var(--txt2);padding:.48rem .9rem;border-radius:var(--r);transition:all .2s}
+.btn-login:hover{color:var(--txt);background:var(--s1)}
+.btn-cta{font-size:.875rem;font-weight:600;padding:.55rem 1.35rem;border-radius:var(--r);background:var(--ga);color:#fff;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;white-space:nowrap}
+.btn-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent)}
+.btn-cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px var(--glow-a)}
+.hamburger{display:none;padding:.45rem;border-radius:var(--r);border:1px solid var(--bdr2);color:var(--txt);font-size:1.1rem;line-height:1;align-items:center;justify-content:center}
+.mob-nav{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(5,5,16,.97);border-bottom:1px solid var(--bdr);padding:1.5rem 2rem;flex-direction:column;gap:.75rem;z-index:899}
+.mob-nav.open{display:flex}
+.mob-nav a{font-size:.95rem;color:var(--txt2);padding:.6rem 0;border-bottom:1px solid var(--bdr)}.mob-nav a:last-of-type{border-bottom:none}
+.mob-nav .btn-cta{text-align:center;margin-top:.5rem;display:block;padding:.75rem}
+
+/* ---- LAYOUT ---- */
+.section{position:relative;z-index:1}
+.container{max-width:1180px;margin:0 auto;padding:0 1.5rem}
+.tag{display:inline-flex;align-items:center;gap:.45rem;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .85rem;border-radius:2rem;background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.25);color:var(--a);margin-bottom:1.4rem}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:var(--a);animation:pdot 2s infinite}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.4}}
+.grad-text{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-text-b{background:var(--gb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-head{text-align:center;margin-bottom:3.5rem}
+.sec-head p{color:var(--txt2);font-size:1.05rem;max-width:560px;margin:.7rem auto 0;line-height:1.75}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.vis{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ---- HERO ---- */
+.hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(56px + 3.5rem) 1.5rem 3rem;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 75% 55% at 50% 0%,rgba(124,109,250,.13),transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:.55rem;padding:.35rem 1rem;border-radius:2rem;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18);font-size:.75rem;font-weight:600;color:var(--b);letter-spacing:.07em;text-transform:uppercase;margin-bottom:1.75rem;animation:fadeUp .6s ease both}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--b);animation:pdot 2s infinite}
+.hero h1{animation:fadeUp .7s .08s ease both;max-width:880px}
+.hero-sub{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--txt2);max-width:620px;margin:1.5rem auto 0;line-height:1.8;animation:fadeUp .7s .16s ease both}
+.hero-sub strong{color:var(--txt);font-weight:600}
+
+/* HERO INLINE FORM */
+.hero-form-wrap{width:100%;max-width:560px;margin:2.5rem auto 0;animation:fadeUp .7s .24s ease both}
+.hero-form-label{font-size:.8rem;font-weight:600;color:var(--txt2);text-align:left;margin-bottom:.65rem;letter-spacing:.04em}
+.hero-plan-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+.plan-tab{padding:.65rem .5rem;border-radius:var(--r);border:1px solid var(--bdr2);background:var(--s1);text-align:center;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif}
+.plan-tab .plan-name{font-size:.78rem;font-weight:600;color:var(--txt2);transition:color .2s}
+.plan-tab .plan-price{font-size:1.05rem;font-weight:700;color:var(--txt);font-family:'Poppins',sans-serif;transition:color .2s}
+.plan-tab .plan-period{font-size:.65rem;color:var(--txt3)}
+.plan-tab.active{border-color:rgba(124,109,250,.5);background:rgba(124,109,250,.1)}
+.plan-tab.active .plan-name{color:var(--a)}
+.plan-tab.active .plan-price{color:var(--a)}
+.hero-fields{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.65rem}
+.hero-input{width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.875rem;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.hero-input:focus{outline:none;border-color:rgba(124,109,250,.5)}
+.hero-input::placeholder{color:var(--txt3)}
+.btn-hero{width:100%;padding:.9rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;background:var(--ga);color:#fff;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;margin-bottom:.5rem}
+.btn-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16),transparent)}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 36px var(--glow-a)}
+.btn-hero:disabled{opacity:.6;transform:none;cursor:not-allowed}
+.hero-form-note{font-size:.72rem;color:var(--txt3);text-align:center}
+.hero-form-note strong{color:var(--txt2)}
+
+/* payment steps */
+.pay-step{display:none}
+.pay-step.active{display:block}
+.pay-success{text-align:center;padding:1.5rem 0}
+.pay-success-icon{width:64px;height:64px;border-radius:50%;background:rgba(0,255,163,.12);border:2px solid rgba(0,255,163,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.75rem}
+.pay-success h3{font-size:1.35rem;margin-bottom:.5rem}
+.pay-success p{color:var(--txt2);font-size:.88rem}
+.pay-error-msg{padding:.65rem 1rem;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);border-radius:var(--r);font-size:.82rem;color:#ff6b6b;margin-bottom:.75rem;display:none}
+
+.hero-trust{display:flex;align-items:center;gap:.75rem;color:var(--txt3);font-size:.82rem;justify-content:center;flex-wrap:wrap;margin-top:1.75rem;animation:fadeUp .7s .32s ease both}
+.avatar-row{display:flex}
+.av{width:26px;height:26px;border-radius:50%;background:var(--ga);border:2px solid var(--bg);margin-left:-7px;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff}
+.av:first-child{margin-left:0}
+.dot-sep{width:3px;height:3px;border-radius:50%;background:var(--txt3)}
+
+/* ---- HERO DASHBOARD PREVIEW ---- */
+.preview-wrap{width:100%;max-width:980px;margin:3.5rem auto 0;animation:fadeUp .8s .4s ease both;position:relative}
+.preview-wrap::before{content:'';position:absolute;inset:-1px;border-radius:var(--r3);background:var(--ga);opacity:.35;filter:blur(1px);z-index:-1}
+.preview-inner{border-radius:calc(var(--r3) - 1px);overflow:hidden;background:linear-gradient(180deg,#0d0d26,#080819);border:1px solid rgba(124,109,250,.22)}
+.preview-bar{display:flex;align-items:center;gap:.45rem;padding:.85rem 1.4rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--bdr)}
+.dot-red{width:9px;height:9px;border-radius:50%;background:#ff5f57}
+.dot-yel{width:9px;height:9px;border-radius:50%;background:#febc2e}
+.dot-grn{width:9px;height:9px;border-radius:50%;background:#28c840}
+.preview-url{flex:1;margin-left:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:.35rem;padding:.28rem .7rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--txt3);text-align:left}
+.preview-body{padding:1.25rem;display:grid;grid-template-columns:185px 1fr;gap:1.1rem;min-height:340px}
+.p-side{display:flex;flex-direction:column;gap:.4rem}
+.p-nav{display:flex;align-items:center;gap:.55rem;padding:.55rem .8rem;border-radius:.5rem;font-size:.72rem;color:var(--txt2);cursor:default;transition:all .2s}
+.p-nav.on{background:rgba(124,109,250,.13);color:var(--a);border:1px solid rgba(124,109,250,.22)}
+.p-nav-ic{width:14px;height:14px;border-radius:3px;background:currentColor;opacity:.5;flex-shrink:0}
+.p-main{display:flex;flex-direction:column;gap:.9rem;overflow:hidden}
+.p-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem}
+.p-stat{background:var(--s1);border:1px solid var(--bdr);border-radius:.65rem;padding:.75rem}
+.p-stat-lbl{font-size:.6rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.p-stat-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.2rem}
+.ca{color:var(--a)}.cb{color:var(--b)}.cd{color:var(--d)}.ce{color:var(--e)}
+.p-stat-chg{font-size:.58rem;color:var(--d);margin-top:.15rem}
+.p-chart{background:var(--s1);border:1px solid var(--bdr);border-radius:.65rem;padding:.85rem;flex:1;min-height:100px}
+.p-chart-lbl{font-size:.65rem;color:var(--txt2);font-weight:600;margin-bottom:.6rem}
+.p-bars{display:flex;align-items:flex-end;gap:3px;height:70px}
+.p-bar{border-radius:2px 2px 0 0;flex:1;min-width:10px;opacity:.8;animation:barUp .8s ease both}
+@keyframes barUp{from{height:0!important}}
+.p-tbl{background:var(--s1);border:1px solid var(--bdr);border-radius:.65rem;overflow:hidden}
+.p-tbl-row{display:grid;grid-template-columns:1fr auto auto;gap:.6rem;align-items:center;padding:.5rem .9rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:.68rem}
+.p-tbl-row:last-child{border:none}
+.p-tbl-row.hd{color:var(--txt3);font-size:.6rem;text-transform:uppercase;letter-spacing:.05em}
+.p-aff{display:flex;align-items:center;gap:.4rem}
+.p-av{width:18px;height:18px;border-radius:50%;background:var(--ga);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:#fff;flex-shrink:0}
+.bsm{padding:.12rem .4rem;border-radius:.22rem;font-size:.58rem;font-weight:600}
+.bsm-g{background:rgba(0,255,163,.1);color:var(--d)}
+.bsm-b{background:rgba(0,212,255,.1);color:var(--b)}
+
+/* ---- TICKER ---- */
+.ticker-sec{padding:2.25rem 0;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.012);overflow:hidden;position:relative;z-index:1}
+.ticker-lbl{text-align:center;font-size:.68rem;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.25rem;font-family:'Poppins',sans-serif}
+.ticker{display:flex;overflow:hidden}
+.t-track{display:flex;gap:2.5rem;animation:tick 28s linear infinite;white-space:nowrap}
+.t-track:hover{animation-play-state:paused}
+.t-item{font-size:.8rem;color:var(--txt2);white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:.5rem}
+.t-item::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--a);flex-shrink:0}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---- WHY ---- */
+.why-sec{padding:6rem 0}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.why-txt h2{margin-bottom:1.25rem}
+.why-txt p{color:var(--txt2);line-height:1.8;font-size:.95rem;margin-bottom:.85rem}
+.why-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.75rem}
+.wstat{padding:1.1rem;border-radius:var(--r2);background:var(--s1);border:1px solid var(--bdr);transition:border-color .3s}
+.wstat:hover{border-color:rgba(124,109,250,.35)}
+.wstat-num{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.9rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wstat-lbl{font-size:.78rem;color:var(--txt2);margin-top:.2rem;line-height:1.4}
+.why-card{background:linear-gradient(135deg,#0e0e27,#090920);border:1px solid var(--bdr2);border-radius:var(--r2);padding:1.6rem;position:relative;overflow:hidden}
+.why-card::before{content:'';position:absolute;top:-70px;right:-70px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--glow-a),transparent);pointer-events:none}
+.why-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem}
+.why-card-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem}
+.live-badge{padding:.22rem .65rem;border-radius:2rem;background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d);font-size:.68rem;font-weight:600;font-family:'Poppins',sans-serif}
+.why-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--bdr)}
+.why-row:last-child{border:none}
+.why-row-name{font-size:.82rem;color:var(--txt2)}
+.mini-bar{height:3px;border-radius:2px;background:rgba(255,255,255,.07);margin-top:.3rem;overflow:hidden;width:120px}
+.mini-fill{height:100%;border-radius:2px;background:var(--ga);animation:mfill 1.5s ease both}
+@keyframes mfill{from{width:0!important}}
+.why-row-right{text-align:right;flex-shrink:0;margin-left:1rem}
+.why-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem}
+.why-chg{font-size:.68rem;color:var(--d);margin-top:.15rem}
+.float-badge{position:absolute;bottom:-16px;left:-16px;background:var(--ga);border-radius:.7rem;padding:.75rem 1.1rem;box-shadow:0 16px 36px rgba(124,109,250,.28)}
+.float-num{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.4rem;color:#fff}
+.float-lbl{font-size:.65rem;color:rgba(255,255,255,.72);margin-top:.1rem}
+
+/* ---- FEATURES ---- */
+.feat-sec{padding:6rem 0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(124,109,250,.055),transparent 70%)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+.fc{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.6rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
+.fc:hover{transform:translateY(-4px);border-color:rgba(124,109,250,.32);box-shadow:0 18px 44px rgba(124,109,250,.1)}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--ga);opacity:0;transition:opacity .3s}
+.fc:hover::before{opacity:1}
+.fc.wide{grid-column:span 2}
+.fc-glow{position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;filter:blur(55px);opacity:.28;pointer-events:none}
+.fc-ico{width:44px;height:44px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-family:'Poppins',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:-.02em}
+.ic-a{background:rgba(124,109,250,.15);color:var(--a)}
+.ic-b{background:rgba(0,212,255,.15);color:var(--b)}
+.ic-c{background:rgba(255,110,247,.15);color:var(--c)}
+.ic-d{background:rgba(0,255,163,.15);color:var(--d)}
+.ic-e{background:rgba(255,179,71,.15);color:var(--e)}
+.fc h3{font-size:1.05rem;margin-bottom:.6rem}
+.fc p{font-size:.85rem;color:var(--txt2);line-height:1.7}
+.fc-tag{display:inline-block;padding:.18rem .55rem;border-radius:.3rem;font-size:.65rem;font-weight:600;margin-top:.7rem;font-family:'Poppins',sans-serif}
+.ft-a{background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.15);color:var(--a)}
+.ft-b{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);color:var(--b)}
+.ft-d{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.15);color:var(--d)}
+.ft-e{background:rgba(255,179,71,.08);border:1px solid rgba(255,179,71,.15);color:var(--e)}
+.ft-c{background:rgba(255,110,247,.08);border:1px solid rgba(255,110,247,.15);color:var(--c)}
+
+/* ---- USE CASES ---- */
+.uc-sec{padding:6rem 0}
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+.uc-card{border-radius:var(--r2);overflow:hidden;border:1px solid var(--bdr);transition:transform .3s,box-shadow .3s}
+.uc-card:hover{transform:translateY(-5px);box-shadow:0 24px 50px rgba(0,0,0,.25)}
+.uc-vis{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.uc-vis::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.52);z-index:0}.uc-vis-inner{position:relative;z-index:2!important}
+.uc-vis-inner{position:relative;z-index:1;text-align:center}
+.uc-vis-icon{width:56px;height:56px;border-radius:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:#fff;position:relative;overflow:hidden}
+.uc-vis-icon::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent)}
+.uc-vis h4{font-family:'Poppins',sans-serif;font-weight:700;font-size:.88rem;color:rgba(255,255,255,.9)}
+.uc-body{padding:1.35rem;background:var(--bg2)}
+.uc-tag{display:inline-block;padding:.18rem .6rem;border-radius:.3rem;font-size:.65rem;font-weight:600;margin-bottom:.65rem;font-family:'Poppins',sans-serif}
+.uc-body h3{font-size:.98rem;margin-bottom:.5rem}
+.uc-body p{font-size:.82rem;color:var(--txt2);line-height:1.65}
+
+/* ---- HOW ---- */
+.how-sec{padding:6rem 0;position:relative}
+.how-sec::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(124,109,250,.04),transparent);pointer-events:none}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:4rem;position:relative}
+.how-steps::before{content:'';position:absolute;top:44px;left:calc(33.333% - 24px);right:calc(33.333% - 24px);height:1px;background:linear-gradient(90deg,transparent,var(--a),var(--b),transparent);z-index:0}
+.how-step{text-align:center;position:relative;z-index:1}
+.how-num{width:88px;height:88px;border-radius:50%;margin:0 auto 1.4rem;background:var(--s1);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative}
+.how-num::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(124,109,250,.15),rgba(0,212,255,.1));border:1px solid rgba(124,109,250,.25)}
+.how-step h3{margin-bottom:.65rem;font-size:1.1rem}
+.how-step p{font-size:.85rem;color:var(--txt2);line-height:1.7}
+
+/* ---- RESULTS ---- */
+.results-sec{padding:6rem 0}
+.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:4.5rem}
+.res-card{text-align:center;padding:1.9rem 1rem;border-radius:var(--r2);background:var(--s1);border:1px solid var(--bdr);position:relative;overflow:hidden;transition:transform .3s}
+.res-card:hover{transform:translateY(-3px)}
+.res-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ga)}
+.res-num{font-family:'Poppins',sans-serif;font-weight:800;font-size:2.6rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.res-lbl{font-size:.78rem;color:var(--txt2);margin-top:.4rem;line-height:1.5}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+.testi{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.6rem;position:relative;transition:border-color .3s}
+.testi:hover{border-color:rgba(124,109,250,.3)}
+.testi-quote{font-size:.85rem;color:var(--txt2);line-height:1.8;margin-bottom:1.1rem}
+.testi-author{display:flex;align-items:center;gap:.7rem}
+.testi-av{width:36px;height:36px;border-radius:50%;background:var(--ga);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:.75rem;color:#fff;flex-shrink:0;border:2px solid rgba(124,109,250,.3)}
+.testi-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem}
+.testi-role{font-size:.72rem;color:var(--txt3)}
+.stars{color:var(--e);font-size:.7rem;letter-spacing:.05em;margin-bottom:.7rem}
+
+/* ---- PRICING ---- */
+.pricing-sec{padding:6rem 0;background:radial-gradient(ellipse 55% 40% at 50% 50%,rgba(124,109,250,.065),transparent 70%)}
+.price-toggle{display:flex;align-items:center;justify-content:center;gap:1rem;margin:1.75rem 0 3rem}
+.toggle-lbl{font-size:.88rem;color:var(--txt2)}
+.toggle-sw{width:42px;height:22px;border-radius:11px;background:var(--s2);border:1px solid var(--bdr2);position:relative;cursor:pointer;transition:background .3s}
+.toggle-sw.on{background:var(--a)}
+.toggle-th{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .3s}
+.toggle-sw.on .toggle-th{transform:translateX(20px)}
+.save-badge{padding:.18rem .55rem;border-radius:.3rem;background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);font-size:.65rem;font-weight:600;color:var(--d);font-family:'Poppins',sans-serif}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+.pc{border-radius:var(--r3);padding:2.25rem 1.85rem;position:relative;overflow:hidden;border:1px solid var(--bdr);background:var(--s1);transition:transform .3s,box-shadow .3s}
+.pc:hover{transform:translateY(-3px)}
+.pc.hot{border-color:rgba(124,109,250,.45);background:linear-gradient(135deg,rgba(124,109,250,.09),rgba(0,212,255,.04))}
+.pc.hot::before{content:'';position:absolute;inset:0;border-radius:var(--r3);background:var(--ga);opacity:.05;pointer-events:none}
+.pc-pop{position:absolute;top:1.1rem;right:1.1rem;padding:.22rem .7rem;border-radius:2rem;background:var(--ga);font-size:.65rem;font-weight:700;color:#fff;font-family:'Poppins',sans-serif}
+.pc-plan{font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:.65rem}
+.pc-price{font-family:'Poppins',sans-serif;font-weight:800;font-size:3rem;line-height:1;margin-bottom:.2rem}
+.pc-price sup{font-size:1.4rem;vertical-align:top;margin-top:.4rem;display:inline-block}
+.pc-period{font-size:.78rem;color:var(--txt3);margin-bottom:1.25rem}
+.pc-desc{font-size:.83rem;color:var(--txt2);margin-bottom:1.75rem;line-height:1.6}
+.pc-div{height:1px;background:var(--bdr);margin-bottom:1.6rem}
+.pc-feats{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.85rem}
+.pc-feats li{display:flex;align-items:flex-start;gap:.55rem;font-size:.83rem;color:var(--txt2)}
+.pc-feats li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(0,255,163,.12);border:1px solid rgba(0,255,163,.25);flex-shrink:0;margin-top:.1rem;display:flex;align-items:center;justify-content:center}
+.pc-feats li.no{color:var(--txt3)}
+.pc-feats li.no::before{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.btn-pc{width:100%;padding:.82rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:600;font-size:.9rem;transition:all .25s;position:relative;overflow:hidden}
+.btn-pc.ghost{background:transparent;border:1px solid var(--bdr2);color:var(--txt)}
+.btn-pc.ghost:hover{background:var(--s2);border-color:rgba(124,109,250,.35)}
+.btn-pc.solid{background:var(--ga);color:#fff;border:none}
+.btn-pc.solid::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}
+.btn-pc.solid:hover{box-shadow:0 10px 36px var(--glow-a);transform:translateY(-1px)}
+.pc-note{text-align:center;margin-top:.75rem;font-size:.72rem;color:var(--txt3)}
+.price-ent{margin-top:2.5rem;padding:2.25rem;border-radius:var(--r3);border:1px solid var(--bdr);background:var(--s1);display:grid;grid-template-columns:1fr auto;align-items:center;gap:2rem}
+.price-ent h3{font-size:1.2rem;margin-bottom:.4rem}
+.price-ent p{color:var(--txt2);font-size:.88rem}
+.btn-ent{padding:.75rem 1.85rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:600;font-size:.9rem;border:1px solid rgba(124,109,250,.4);color:var(--a);background:rgba(124,109,250,.08);transition:all .2s;white-space:nowrap}
+.btn-ent:hover{background:rgba(124,109,250,.15)}
+
+/* ---- FAQ ---- */
+.faq-sec{padding:6rem 0}
+.faq-list{max-width:740px;margin:3rem auto 0;display:flex;flex-direction:column;gap:.65rem}
+.faq-item{border:1px solid var(--bdr);border-radius:var(--r2);overflow:hidden;transition:border-color .3s}
+.faq-item.open{border-color:rgba(124,109,250,.32)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;cursor:pointer;background:var(--s1);transition:background .2s;gap:1rem}
+.faq-q:hover{background:var(--s2)}
+.faq-q-txt{font-family:'Poppins',sans-serif;font-weight:600;font-size:.9rem}
+.faq-ico{width:22px;height:22px;border-radius:50%;background:rgba(124,109,250,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem;transition:transform .3s;color:var(--a)}
+.faq-item.open .faq-ico{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 1.4rem 1.1rem;color:var(--txt2);font-size:.85rem;line-height:1.8}
+.faq-item.open .faq-a{display:block}
+
+/* ---- CTA ---- */
+.cta-sec{padding:6rem 0;text-align:center;background:linear-gradient(135deg,rgba(124,109,250,.07),rgba(0,212,255,.04),rgba(255,110,247,.05));position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(124,109,250,.13),transparent 70%);pointer-events:none}
+.cta-sec h2{max-width:680px;margin:0 auto 1.25rem}
+.cta-sec p{color:var(--txt2);max-width:520px;margin:0 auto 2.25rem;font-size:1rem}
+.cta-note{font-size:.75rem;color:var(--txt3);margin-top:1rem}
+
+/* ---- FOOTER ---- */
+.footer{padding:5rem 0 2.25rem;border-top:1px solid var(--bdr);background:var(--bg2)}
+.foot-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3.5rem}
+.foot-brand p{font-size:.83rem;color:var(--txt2);line-height:1.7;max-width:270px;margin-top:.9rem}
+.foot-social{display:flex;gap:.6rem;margin-top:1.1rem}
+.soc-link{width:32px;height:32px;border-radius:.5rem;background:var(--s1);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--txt2);transition:all .2s;font-family:'Poppins',sans-serif;font-weight:600}
+.soc-link:hover{background:rgba(124,109,250,.12);border-color:rgba(124,109,250,.28);color:var(--a)}
+.foot-col h4{font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:1.1rem}
+.foot-links{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.foot-links a{font-size:.83rem;color:var(--txt2);transition:color .2s}
+.foot-links a:hover{color:var(--txt)}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;padding-top:1.75rem;border-top:1px solid var(--bdr);font-size:.75rem;color:var(--txt3)}
+.foot-bottom-links{display:flex;gap:1.4rem}
+.foot-bottom-links a{color:var(--txt3);transition:color .2s}
+.foot-bottom-links a:hover{color:var(--txt2)}
+
+/* ---- ANIMATIONS ---- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* ---- RESPONSIVE ---- */
+
+/* ═══ RESPONSIVE ═══════════════════════════════════════════════════════════ */
+@media(max-width:1080px){
+  .why-grid{grid-template-columns:1fr}.why-card{display:none}
+  .feat-grid{grid-template-columns:1fr 1fr}.fc.wide{grid-column:span 1}
+  .res-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr 1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .preview-body{grid-template-columns:1fr}.p-side{display:none}
+}
+@media(max-width:860px){
+  .uc-grid{grid-template-columns:1fr 1fr}
+  .price-grid{grid-template-columns:1fr}
+  .price-ent{grid-template-columns:1fr;text-align:center}
+  .how-steps{grid-template-columns:1fr}
+  .how-steps::before{display:none}
+  .p-stats{grid-template-columns:1fr 1fr}
+  .why-sec,.feat-sec,.uc-sec,.how-sec,.results-sec,.pricing-sec,.faq-sec,.cta-sec{padding:5rem 0}
+}
+
+/* ── iPhone 13 Pro and all phones (390px) ── */
+@media(max-width:640px){
+  /* Nav */
+  .nav{padding:.75rem 1rem}
+  .nav-links,.btn-login{display:none}
+  .nav-right .btn-cta{display:none}
+  .hamburger{display:flex;padding:.42rem .58rem;font-size:1rem}
+  .btn-cta{font-size:.8rem;padding:.48rem .9rem;white-space:nowrap}
+  .mob-nav{top:56px;padding:1rem}
+  .mob-nav a{font-size:.9rem;padding:.55rem 0}
+
+  /* Container — 16px gutters on all sides */
+  .container{padding:0 1rem}
+
+  /* Section spacing — tight on mobile */
+  .why-sec,.feat-sec,.uc-sec,.how-sec,.results-sec,.pricing-sec,.faq-sec,.cta-sec{padding:3.5rem 0}
+  .ticker-sec{padding:1.5rem 0}
+
+  /* Hero */
+  .hero{padding:5rem 1rem 2.5rem;min-height:auto}
+  .hero h1{font-size:clamp(1.75rem,7vw,2.5rem);letter-spacing:-.03em;max-width:100%}
+  .hero-sub{font-size:.93rem;margin-top:1rem;line-height:1.7;max-width:100%}
+  .hero-badge{font-size:.65rem;padding:.28rem .75rem;letter-spacing:.04em;text-align:center}
+  .hero-buttons{flex-direction:column;gap:.65rem;width:100%;margin-top:1.75rem}
+  .btn-hero-primary,.btn-hero-secondary{width:100%;text-align:center;padding:.82rem 1rem;font-size:.9rem}
+  .hero-trust{font-size:.75rem;gap:.5rem;margin-top:1.25rem}
+
+  /* Dashboard preview */
+  .preview-wrap{margin:2rem auto 0}
+  .preview-bar{padding:.6rem 1rem}
+  .preview-body{padding:.85rem;min-height:auto}
+  .p-stats{grid-template-columns:1fr 1fr;gap:.5rem}
+  .p-stat{padding:.6rem}
+  .p-stat-val{font-size:1rem}
+  .p-stat-lbl{font-size:.55rem}
+  .p-stat-chg{font-size:.55rem}
+
+  /* Why section */
+  .why-stats{grid-template-columns:1fr 1fr}
+  .wstat{padding:.85rem}
+  .wstat-num{font-size:1.5rem}
+  h2{font-size:1.65rem}
+
+  /* Features */
+  .feat-grid{grid-template-columns:1fr}
+  .fc{padding:1.25rem}
+  .fc.wide{grid-column:span 1}
+  .sec-head{margin-bottom:2.25rem}
+  .sec-head p{font-size:.9rem}
+
+  /* Use cases */
+  .uc-grid{grid-template-columns:1fr}
+  .uc-vis{height:150px}
+
+  /* How it works */
+  .how-steps{grid-template-columns:1fr;gap:1.5rem}
+  .how-num{width:64px;height:64px}
+
+  /* Results */
+  .res-grid{grid-template-columns:1fr 1fr}
+  .res-num{font-size:2rem}
+  .testi-grid{grid-template-columns:1fr}
+  .testi{padding:1.25rem}
+
+  /* Pricing */
+  .price-grid{grid-template-columns:1fr}
+  .pc{padding:1.6rem 1.25rem}
+  .pc-price{font-size:2.4rem}
+  .price-toggle{gap:.65rem;font-size:.82rem;flex-wrap:wrap;justify-content:center}
+  .price-ent{padding:1.25rem;flex-direction:column;gap:1rem}
+  .price-ent h3{font-size:1rem}
+  .btn-ent{width:100%;text-align:center;padding:.75rem}
+
+  /* FAQ */
+  .faq-q{padding:.9rem 1rem}
+  .faq-q-txt{font-size:.85rem}
+  .faq-a{padding:0 1rem .9rem;font-size:.82rem}
+
+  /* Footer */
+  .foot-grid{grid-template-columns:1fr}
+  .foot-brand p{max-width:100%}
+  .foot-bottom{flex-direction:column;text-align:center;gap:.5rem}
+  .foot-bottom-links{justify-content:center}
+}
+
+/* ── Very small phones (360px) ── */
+@media(max-width:390px){
+  .nav{padding:.65rem .85rem}
+  .btn-cta{font-size:.75rem;padding:.42rem .75rem}
+  .hero h1{font-size:1.65rem}
+  .container{padding:0 .85rem}
+  .res-grid{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="logo">
+    <div class="logo-mark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="10" cy="10" r="3" fill="white" opacity="0.95"/>
+  <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+  <circle cx="10" cy="3" r="1.8" fill="white" opacity="0.9"/>
+  <circle cx="17" cy="10" r="1.8" fill="white" opacity="0.9"/>
+  <circle cx="3" cy="10" r="1.8" fill="white" opacity="0.9"/>
+</svg></div>
+    <div class="logo-text">MAGIC<span class="accent">WORLDS</span> TRACKER</div>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#use-cases">Use Cases</a>
+    <a href="#results">Results</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/api">API</a>
+  </div>
+  <div class="nav-right">
+    <a href="/dashboard" class="btn-login">Log in</a>
+    <a href="#pricing" class="btn-cta">See Plans</a>
+  </div>
+  <button class="hamburger" onclick="toggleMob()" id="ham">&#9776;</button>
+</nav>
+<div class="mob-nav" id="mob-nav">
+  <a href="#features" onclick="toggleMob()">Features</a>
+  <a href="#use-cases" onclick="toggleMob()">Use Cases</a>
+  <a href="#results" onclick="toggleMob()">Results</a>
+  <a href="#pricing" onclick="toggleMob()">Pricing</a>
+  <a href="/merchant" onclick="toggleMob()">Merchant Login</a>
+  <a href="/dashboard" onclick="toggleMob()">Affiliate Login</a>
+  <a href="#pricing" onclick="toggleMob()" style="display:block;margin-top:.5rem;padding:.82rem 1rem;background:linear-gradient(135deg,#7c6dfa,#00d4ff);color:#fff;border-radius:.75rem;font-family:'Poppins',sans-serif;font-weight:700;font-size:.9rem;text-align:center;text-decoration:none">See Plans</a>
+</div>
+
+<!-- HERO -->
+<section class="hero section">
+  <div class="hero-badge"><div class="hero-badge-dot"></div>Built for Web3 Founders the Web2 World Ignores</div>
+  <h1>The Affiliate Platform Built for<br><span class="grad-text">Web3 Digital Products</span></h1>
+  <p class="hero-sub">
+    Launch an affiliate program for your Web3 product in 30 minutes. <strong>Track wallet connects, NFT mints, token swaps,</strong> and every on-chain action your affiliates drive. No spreadsheets, no developers.
+  </p>
+
+    <div class="hero-buttons" style="margin-top:2.5rem;animation:fadeUp .7s .24s ease both">
+    <a href="#pricing" class="btn-hero-primary">View Plans and Get Started</a>
+    <a href="/merchant" class="btn-hero-secondary">Merchant Login</a>
+  </div>
+
+</section>
+
+<!-- TICKER -->
+<section class="ticker-sec section">
+  <div class="ticker-lbl">Trusted across every industry</div>
+  <div class="ticker"><div class="t-track" id="ticker">
+    <span class="t-item">DeFi Protocols</span><span class="t-item">NFT Marketplaces</span><span class="t-item">Web3 Gaming</span><span class="t-item">Crypto Wallets</span><span class="t-item">DAOs</span><span class="t-item">Metaverse Platforms</span><span class="t-item">Token Launches</span><span class="t-item">SaaS Companies</span><span class="t-item">E-commerce Brands</span><span class="t-item">Subscription Services</span><span class="t-item">Creator Economies</span><span class="t-item">Influencer Networks</span><span class="t-item">DeFi Protocols</span><span class="t-item">NFT Marketplaces</span><span class="t-item">Web3 Gaming</span><span class="t-item">Crypto Wallets</span><span class="t-item">DAOs</span><span class="t-item">Metaverse Platforms</span><span class="t-item">Token Launches</span><span class="t-item">SaaS Companies</span><span class="t-item">E-commerce Brands</span><span class="t-item">Subscription Services</span><span class="t-item">Creator Economies</span><span class="t-item">Influencer Networks</span>
+  </div></div>
+</section>
+
+<!-- WHY -->
+<section class="why-sec section">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-txt reveal">
+        <div class="tag"><div class="tag-dot"></div>Why Magic Worlds Tracker</div>
+        <h2>Affiliate Platforms Were Built for Web2.<br><span class="grad-text">We Built This for You.</span></h2>
+        <p>Traditional affiliate tools track clicks and purchases. You are building the future. NFT mints, wallet connections, on-chain actions, token swaps. None of those tools understand what you are building.</p>
+        <p>Magic Worlds Tracker is the first affiliate and partner management platform designed from the ground up for Web3 founders, crypto projects, and metaverse ecosystems.</p>
+        <div class="why-stats">
+          <div class="wstat reveal d1"><div class="wstat-num">10x</div><div class="wstat-lbl">Average revenue growth reported within 90 days</div></div>
+          <div class="wstat reveal d2"><div class="wstat-num">30min</div><div class="wstat-lbl">Average time from signup to first live affiliate link</div></div>
+          <div class="wstat reveal d3"><div class="wstat-num">$0</div><div class="wstat-lbl">Transaction fees on affiliate sales. Ever.</div></div>
+          <div class="wstat reveal d4"><div class="wstat-num">9+</div><div class="wstat-lbl">Conversion event types including Web3-native actions</div></div>
+        </div>
+      </div>
+      <div class="why-card reveal d2">
+        <div class="why-card-head">
+          <div class="why-card-title">Live Platform Performance</div>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="why-row">
+          <div><div class="why-row-name">Wallet Connects Tracked</div><div class="mini-bar"><div class="mini-fill" style="width:87%"></div></div></div>
+          <div class="why-row-right"><div class="why-val">8,741</div><div class="why-chg">+34%</div></div>
+        </div>
+        <div class="why-row">
+          <div><div class="why-row-name">NFT Mints Attributed</div><div class="mini-bar"><div class="mini-fill" style="width:62%"></div></div></div>
+          <div class="why-row-right"><div class="why-val">2,318</div><div class="why-chg">+28%</div></div>
+        </div>
+        <div class="why-row">
+          <div><div class="why-row-name">Token Swaps Tracked</div><div class="mini-bar"><div class="mini-fill" style="width:45%"></div></div></div>
+          <div class="why-row-right"><div class="why-val">1,092</div><div class="why-chg">+51%</div></div>
+        </div>
+        <div class="why-row">
+          <div><div class="why-row-name">Commissions Paid Out</div><div class="mini-bar"><div class="mini-fill" style="width:78%"></div></div></div>
+          <div class="why-row-right"><div class="why-val">$142K</div><div class="why-chg">+22%</div></div>
+        </div>
+        <div class="float-badge"><div class="float-num">+306%</div><div class="float-lbl">Revenue in 60 days</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-sec section" id="features">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>Platform Features</div>
+      <h2>Everything You Need to<br><span class="grad-text">Scale Partner Revenue</span></h2>
+      <p>Professional-grade affiliate management tools built for Web3. All in one platform, no developer required.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="fc wide reveal">
+        <div class="fc-glow" style="background:var(--a)"></div>
+        <div class="fc-ico ic-a">01</div>
+        <h3>Real-Time Tracking and Attribution</h3>
+        <p>Every click, wallet connection, NFT mint, token swap, purchase, signup, and in-game action tracked with precision. Our attribution engine handles cookie-based, server-to-server, and on-chain tracking simultaneously. Never lose a conversion again.</p>
+        <span class="fc-tag ft-a">30-day attribution window</span>
+        <span class="fc-tag ft-b" style="margin-left:.4rem">S2S tracking</span>
+      </div>
+      <div class="fc reveal d1">
+        <div class="fc-glow" style="background:var(--b)"></div>
+        <div class="fc-ico ic-b">W3</div>
+        <h3>Web3-Native Events</h3>
+        <p>The only platform that natively tracks wallet connects, NFT mints, token swaps, DeFi actions, level-ups, and referrals as first-class conversion events.</p>
+        <span class="fc-tag ft-b">9 event types</span>
+      </div>
+      <div class="fc reveal d2">
+        <div class="fc-glow" style="background:var(--c)"></div>
+        <div class="fc-ico ic-c">$</div>
+        <h3>Flexible Commission Engine</h3>
+        <p>Set percentage, fixed, or per-event commission rates. Override per-affiliate, per-program, or globally. Recurring commissions for subscriptions built in.</p>
+        <span class="fc-tag ft-c">Recurring support</span>
+      </div>
+      <div class="fc reveal">
+        <div class="fc-glow" style="background:var(--d)"></div>
+        <div class="fc-ico ic-d">SaaS</div>
+        <h3>Multi-Merchant Platform</h3>
+        <p>Run multiple independent affiliate programs from one account. Each merchant gets isolated dashboards, API keys, and affiliate pools. White-label ready.</p>
+        <span class="fc-tag ft-d">White-label</span>
+      </div>
+      <div class="fc reveal d1">
+        <div class="fc-glow" style="background:var(--e)"></div>
+        <div class="fc-ico ic-e">Rpt</div>
+        <h3>Real-Time Analytics</h3>
+        <p>Track performance by affiliate, program, conversion type, geography, and time period. Download payout reports as CSV. Know exactly where every dollar comes from.</p>
+        <span class="fc-tag ft-e">CSV export</span>
+      </div>
+      <div class="fc reveal d2">
+        <div class="fc-glow" style="background:var(--a)"></div>
+        <div class="fc-ico ic-a">API</div>
+        <h3>API-First Architecture</h3>
+        <p>Full REST API with merchant API keys, S2S conversion posting, JavaScript snippet, and webhook support. Integrate with any stack.</p>
+        <span class="fc-tag ft-a">REST API</span>
+      </div>
+      <div class="fc reveal">
+        <div class="fc-glow" style="background:var(--b)"></div>
+        <div class="fc-ico ic-b">Link</div>
+        <h3>Smart Tracking Links</h3>
+        <p>Auto-generated unique affiliate links with sub-ID support for campaign-level tracking. One-click copy, QR ready, deep-link compatible.</p>
+        <span class="fc-tag ft-b">Sub-ID support</span>
+      </div>
+      <div class="fc reveal d1">
+        <div class="fc-glow" style="background:var(--d)"></div>
+        <div class="fc-ico ic-d">Auth</div>
+        <h3>Magic Link Authentication</h3>
+        <p>Affiliates log in via email magic links. No password friction, higher activation rates. Welcome emails, payout notifications, and reset flows all handled automatically.</p>
+        <span class="fc-tag ft-d">Passwordless</span>
+      </div>
+      <div class="fc reveal d2">
+        <div class="fc-glow" style="background:var(--c)"></div>
+        <div class="fc-ico ic-c">Sec</div>
+        <h3>Enterprise-Grade Security</h3>
+        <p>Rate-limited endpoints, AES-256 encryption, JWT authentication, Postgres-backed with SSL. Production-hardened from day one.</p>
+        <span class="fc-tag ft-c">AES-256</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="uc-sec section" id="use-cases">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>Use Cases</div>
+      <h2>Built for Every Type of<br><span class="grad-text">Partner Program</span></h2>
+      <p>Whether you are a crypto protocol, a SaaS company, an e-commerce brand, or a content creator, we have your program covered.</p>
+    </div>
+    <div class="uc-grid">
+      <div class="uc-card reveal">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#1a0533,#0a1a40);background-image:url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:var(--ga)">DeFi</div>
+            <h4>Web3 and DeFi</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(124,109,250,.1);color:var(--a)">Web3 and DeFi</span>
+          <h3>Crypto and Blockchain Protocols</h3>
+          <p>Track wallet connections, token swaps, liquidity provisions, and NFT mints. Reward your community ambassadors on-chain. Built for protocols, DAOs, and DeFi apps.</p>
+        </div>
+      </div>
+      <div class="uc-card reveal d1">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#001a2e,#00152a);background-image:url('https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:var(--gb)">Play</div>
+            <h4>Web3 Gaming</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(0,212,255,.1);color:var(--b)">Gaming and Metaverse</span>
+          <h3>Web3 Games and Metaverse</h3>
+          <p>Track in-game actions, level-ups, referrals, and item purchases. Turn your top players into your most powerful growth channel with automated commission payouts.</p>
+        </div>
+      </div>
+      <div class="uc-card reveal d2">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#1a0020,#200010);background-image:url('https://images.unsplash.com/photo-1634193295627-1cdddf751ebf?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:var(--gb)">NFT</div>
+            <h4>Creator Economy</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(255,110,247,.1);color:var(--c)">Creator Economy</span>
+          <h3>NFT and Creator Platforms</h3>
+          <p>Give creators unique referral links. Track NFT mint attributions, royalty-based commissions, and subscription sign-ups from creator audiences. Pay in crypto or fiat.</p>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#001a10,#001508);background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:var(--gc)">SaaS</div>
+            <h4>SaaS Products</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(0,255,163,.1);color:var(--d)">SaaS</span>
+          <h3>SaaS and Subscription Products</h3>
+          <p>Launch partner programs for your software. Track signups, trial-to-paid conversions, and monthly recurring revenue. Recurring commissions built in.</p>
+        </div>
+      </div>
+      <div class="uc-card reveal d1">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#1a0d00,#140a00);background-image:url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:linear-gradient(135deg,var(--e),var(--c))">Shop</div>
+            <h4>E-commerce</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(255,179,71,.1);color:var(--e)">E-commerce</span>
+          <h3>E-commerce and Digital Products</h3>
+          <p>Track purchases, discount code usage, cart values, and repeat buyers. Generate weekly payout reports with one click. Scale without spreadsheet chaos.</p>
+        </div>
+      </div>
+      <div class="uc-card reveal d2">
+        <div class="uc-vis" style="background:linear-gradient(135deg,#1a1500,#141000);background-image:url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80');background-size:cover;background-position:center">
+          <div class="uc-vis-inner">
+            <div class="uc-vis-icon" style="background:linear-gradient(135deg,var(--a),var(--e))">Infl</div>
+            <h4>Influencer Programs</h4>
+          </div>
+        </div>
+        <div class="uc-body">
+          <span class="uc-tag" style="background:rgba(124,109,250,.1);color:var(--a)">Influencer Programs</span>
+          <h3>Influencer and Ambassador Programs</h3>
+          <p>Give influencers unique links and codes. Track which platforms drive the most conversions. Move beyond likes to measurable, attributable ROI.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-sec section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>How It Works</div>
+      <h2>Launch Your Program<br><span class="grad-text">in 3 Simple Steps</span></h2>
+      <p>No developer needed. No weeks of setup. Go from zero to a live affiliate program in under 30 minutes.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="how-num"><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">1</div></div>
+        <h3>Create Your Merchant Account</h3>
+        <p>Sign up, set your commission rates, and configure your first affiliate program. Add your brand details and landing page URL. Ready in under 5 minutes.</p>
+      </div>
+      <div class="how-step reveal d1">
+        <div class="how-num"><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">2</div></div>
+        <h3>Invite Your Partners</h3>
+        <p>Share your unique affiliate signup page. Each affiliate gets their own tracking link, crypto wallet, and dashboard instantly. No manual onboarding required.</p>
+      </div>
+      <div class="how-step reveal d2">
+        <div class="how-num"><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">3</div></div>
+        <h3>Track, Attribute, and Grow</h3>
+        <p>Every click, conversion, and on-chain action tracked in real time. Download payout reports weekly. Watch your affiliate network compound your growth on autopilot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="results-sec section" id="results">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>Proven Results</div>
+      <h2>The Numbers<br><span class="grad-text">Speak For Themselves</span></h2>
+      <p>Real results from real founders who launched affiliate programs with Magic Worlds Tracker.</p>
+    </div>
+    <div class="res-grid">
+      <div class="res-card reveal"><div class="res-num">10x</div><div class="res-lbl">Average revenue growth<br>within 90 days of launch</div></div>
+      <div class="res-card reveal d1"><div class="res-num">306%</div><div class="res-lbl">Revenue growth in<br>2 months (top performer)</div></div>
+      <div class="res-card reveal d2"><div class="res-num">30min</div><div class="res-lbl">Average setup time<br>from zero to live</div></div>
+      <div class="res-card reveal d3"><div class="res-num">$0</div><div class="res-lbl">Transaction fees on<br>your affiliate revenue</div></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"We tried three other platforms before finding Magic Worlds Tracker. None of them could track our NFT mint conversions. This one works perfectly out of the box. Our affiliate program went from zero to $40K revenue in 8 weeks."</p>
+        <div class="testi-author">
+          <div class="testi-av">AK</div>
+          <div><div class="testi-name">Alex K.</div><div class="testi-role">Founder, NFT Marketplace, London</div></div>
+        </div>
+      </div>
+      <div class="testi reveal d1">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"The Web3-native tracking is exceptional. We track wallet connects, token swaps, AND referrals in one dashboard. Our community grew 3x in 6 weeks because we finally knew who was driving growth and could reward them properly."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:var(--gb)">MR</div>
+          <div><div class="testi-name">Miriam R.</div><div class="testi-role">Co-Founder, DeFi Protocol, Lagos</div></div>
+        </div>
+      </div>
+      <div class="testi reveal d2">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"Setup in 25 minutes, first affiliate conversion in 2 hours. I have used Tapfiliate, PartnerStack, and Refersion. This is the first one that actually gets what a Web3 product needs. The multi-merchant feature alone saves us 3 tools."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:var(--gc)">JT</div>
+          <div><div class="testi-name">James T.</div><div class="testi-role">CEO, Metaverse Gaming Studio, Singapore</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-sec section" id="pricing">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>Pricing</div>
+      <h2>Simple, Transparent Pricing.<br><span class="grad-text">No Transaction Fees. Ever.</span></h2>
+      <p>Start free, scale as you grow. Every plan includes a 14-day free trial. </p>
+    </div>
+    <div class="price-toggle">
+      <span class="toggle-lbl">Monthly</span>
+      <div class="toggle-sw" id="togSw" onclick="toggleBilling()"><div class="toggle-th"></div></div>
+      <span class="toggle-lbl">Annual <span class="save-badge">Save up to 75%</span></span>
+    </div>
+    <div class="price-grid">
+      <div class="pc reveal">
+        <div class="pc-plan">Starter</div>
+        <div class="pc-price"><sup>$</sup><span id="pp-starter">1</span></div>
+        <div class="pc-period" id="pd-starter">per month, billed monthly</div>
+        <div class="pc-desc">Perfect for founders launching their first affiliate program. Everything you need to get started fast.</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li>Up to 3 affiliate programs</li>
+          <li>Up to 100 active affiliates</li>
+          <li>All 9 conversion event types (Web3 included)</li>
+          <li>Real-time analytics dashboard</li>
+          <li>Magic link authentication</li>
+          <li>CSV payout reports</li>
+          <li>REST API access</li>
+          <li class="no">Multi-merchant accounts</li>
+          <li class="no">Custom domain and white-label</li>
+        </ul>
+        <button class="btn-pc ghost" onclick="window.location='/merchant?plan=starter'">Start 14-Day Free Trial</button>
+        
+      </div>
+      <div class="pc hot reveal d1">
+        <div class="pc-pop">Most Popular</div>
+        <div class="pc-plan">Pro</div>
+        <div class="pc-price"><sup>$</sup><span id="pp-pro">2</span></div>
+        <div class="pc-period" id="pd-pro">per month, billed monthly</div>
+        <div class="pc-desc">For growing teams running serious affiliate programs across multiple products and channels.</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li>Unlimited affiliate programs</li>
+          <li>Up to 1,000 active affiliates</li>
+          <li>All 9 conversion event types (Web3 included)</li>
+          <li>Advanced analytics and segmentation</li>
+          <li>Multi-merchant accounts (up to 5)</li>
+          <li>Recurring commission support</li>
+          <li>Priority email and chat support</li>
+          <li>Custom per-affiliate commissions</li>
+          <li>Webhook integrations</li>
+        </ul>
+        <button class="btn-pc solid" onclick="window.location='/merchant?plan=pro'">Start 14-Day Free Trial</button>
+        
+      </div>
+      <div class="pc reveal d2">
+        <div class="pc-plan">Scale</div>
+        <div class="pc-price"><sup>$</sup><span id="pp-scale">3</span></div>
+        <div class="pc-period" id="pd-scale">per month, billed monthly</div>
+        <div class="pc-desc">For established businesses and agencies managing large affiliate networks across multiple brands.</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li>Unlimited affiliate programs</li>
+          <li>Unlimited active affiliates</li>
+          <li>Full white-label and custom domain</li>
+          <li>Unlimited multi-merchant accounts</li>
+          <li>Advanced automation and bulk actions</li>
+          <li>Dedicated account manager</li>
+          <li>SLA uptime guarantee</li>
+          <li>Custom onboarding session</li>
+          <li>Full API and Webhook access</li>
+        </ul>
+        <button class="btn-pc ghost" onclick="window.location='/merchant?plan=scale'">Start 14-Day Free Trial</button>
+        
+      </div>
+    </div>
+    <div class="price-ent reveal">
+      <div>
+        <h3>Need something custom?</h3>
+        <p>Running 10,000+ affiliates, multiple brands, or complex on-chain programs? We offer custom contracts, dedicated infrastructure, and white-glove onboarding.</p>
+      </div>
+      <button class="btn-ent" onclick="window.location='/merchant?plan=scale'">Contact Sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag"><div class="tag-dot"></div>FAQ</div>
+      <h2>Frequently Asked <span class="grad-text">Questions</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Do you really charge zero transaction fees?</span><div class="faq-ico">+</div></div><div class="faq-a">Yes, 100%. We charge a flat monthly subscription and take nothing from your affiliate sales. Every dollar your affiliates generate belongs to you. No percentages, no hidden fees, no surprises.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">How does the $0.10 card verification work?</span><div class="faq-ico">+</div></div><div class="faq-a">We charge $0.10 to verify your payment card when you start your free trial. This micro-charge is refunded immediately after verification. It lets us confirm your card is valid so we can activate your trial without friction. You will not be billed anything further until your 14-day trial ends.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">How does Web3 tracking actually work?</span><div class="faq-ico">+</div></div><div class="faq-a">We use a dual-layer system: a JavaScript snippet on your frontend detects affiliate codes from URL parameters and stores them in cookies; and a REST API endpoint your backend calls to record on-chain events like wallet connections, NFT mints, and token swaps. You pass the affiliate code and event type and we handle attribution, commission calculation, and reporting.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Can affiliates receive crypto payouts?</span><div class="faq-ico">+</div></div><div class="faq-a">Yes. Each affiliate gets an auto-generated Ethereum-compatible wallet address when they sign up. They can also add their own wallet address. You can pay affiliates in crypto or fiat. We generate payout reports so you know exactly who gets what and how much.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">How long does setup take?</span><div class="faq-ico">+</div></div><div class="faq-a">Most founders go from signup to first live affiliate link in under 30 minutes. Create your merchant account, configure your commission rate, share your signup page with affiliates. No developer required for basic setup. Advanced S2S tracking and API integration typically takes a developer 1 to 2 hours.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Do you support recurring commissions for subscriptions?</span><div class="faq-ico">+</div></div><div class="faq-a">Yes, on Pro and Scale plans. You can configure a subscription conversion event type and your affiliates will be credited each billing cycle a referred customer pays. Perfect for SaaS, NFT membership clubs, and any subscription-based product.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Can I white-label the affiliate dashboard?</span><div class="faq-ico">+</div></div><div class="faq-a">White-labeling with your own domain and branding is available on the Scale plan. Your affiliates will see your brand throughout their entire experience, from signup page to dashboard to emails. Contact us if you need custom domain setup help.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec section">
+  <div class="container">
+    <div class="tag" style="margin:0 auto 1.4rem;display:table"><div class="tag-dot"></div>Ready to Launch</div>
+    <h2 class="reveal">Stop Leaving Growth<br>on the <span class="grad-text">Table</span></h2>
+    <p class="reveal">Your community is ready to promote you. Give them the tools and rewards they deserve. Start your affiliate program today. No developer, no spreadsheets, no chaos.</p>
+    <div class="reveal" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn-cta" style="padding:.85rem 2rem;font-size:1rem;border-radius:var(--r)" onclick="window.location='/merchant?plan=pro'">Start Free Trial Now</button>
+      <a href="/merchant" class="btn-login" style="padding:.85rem 2rem;font-size:1rem;border-radius:var(--r);background:var(--s1);border:1px solid var(--bdr2)">Merchant Login</a>
+    </div>
+    <div class="cta-note reveal">14-day free trial. $0.10 card verification refunded instantly. Cancel anytime.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><div class="logo-mark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="10" cy="10" r="3" fill="white" opacity="0.95"/>
+  <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+  <circle cx="10" cy="3" r="1.8" fill="white" opacity="0.9"/>
+  <circle cx="17" cy="10" r="1.8" fill="white" opacity="0.9"/>
+  <circle cx="3" cy="10" r="1.8" fill="white" opacity="0.9"/>
+</svg></div><div class="logo-text">MAGIC<span class="accent">WORLDS</span> TRACKER</div></div>
+        <p>The affiliate tracking platform built for Web3 founders, crypto protocols, metaverse games, and digital product creators.</p>
+        
+      </div>
+      <div class="foot-col"><h4>Product</h4><ul class="foot-links"><li><a href="#features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="/api">API Docs</a></li><li><a href="/dashboard">Affiliate Login</a></li><li><a href="/merchant">Merchant Login</a></li></ul></div>
+      <div class="foot-col"><h4>Use Cases</h4><ul class="foot-links"><li><a href="#use-cases">Web3 and DeFi</a></li><li><a href="#use-cases">NFT Platforms</a></li><li><a href="#use-cases">Web3 Gaming</a></li><li><a href="#use-cases">SaaS</a></li><li><a href="#use-cases">E-commerce</a></li></ul></div>
+      <div class="foot-col"><h4>Company</h4><ul class="foot-links"><li><a href="#" onclick="openPopup('about');return false">About</a></li><li><a href="#" onclick="openPopup('contact');return false">Contact</a></li><li><a href="#" onclick="openPopup('privacy');return false">Privacy Policy</a></li><li><a href="#" onclick="openPopup('terms');return false">Terms of Service</a></li><li><a href="#" onclick="openPopup('status');return false">Platform Status</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>2025 Magic Worlds Tracker. Built for Web3 founders.</span>
+      <div class="foot-bottom-links"><a href="#" onclick="openPopup('privacy');return false">Privacy</a><a href="#" onclick="openPopup('terms');return false">Terms</a><a href="#" onclick="openPopup('status');return false">Status</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Chart
+const barData=[40,55,35,70,85,60,95];
+const barCols=['var(--a)','var(--b)','var(--a)','var(--c)','var(--d)','var(--b)','var(--d)'];
+const cb=document.getElementById('chartBars');
+if(cb){barData.forEach((h,i)=>{const b=document.createElement('div');b.className='p-bar';b.style.cssText=`height:${h}%;flex:1;background:${barCols[i]};border-radius:2px 2px 0 0;animation-delay:${i*.1}s`;cb.appendChild(b);})}
+
+// Nav scroll
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+
+// Mobile nav
+function toggleMob(){document.getElementById('mob-nav').classList.toggle('open')}
+document.addEventListener('click',e=>{const mn=document.getElementById('mob-nav');const h=document.getElementById('ham');if(mn.classList.contains('open')&&!mn.contains(e.target)&&!h.contains(e.target))mn.classList.remove('open')});
+
+// Reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// FAQ
+function toggleFaq(q){const it=q.parentElement;const was=it.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!was)it.classList.add('open')}
+
+// Billing toggle
+let annual=false;
+const prices={starter:{m:1,a:9},pro:{m:2,a:18},scale:{m:3,a:27}};
+function toggleBilling(){
+  annual=!annual;
+  document.getElementById('togSw').classList.toggle('on',annual);
+  ['starter','pro','scale'].forEach(p=>{
+    document.getElementById('pp-'+p).textContent=annual?prices[p].a:prices[p].m;
+    document.getElementById('pd-'+p).textContent=annual?'per month, billed annually (saves vs monthly)':'per month, billed monthly';
+    const el=document.getElementById('ptab-'+p);
+    if(el)el.textContent='$'+(annual?prices[p].a:prices[p].m);
+  });
+}
+
+// Plan selection
+let curPlan='pro',curPrice=2;
+function selectPlan(plan,price){
+  curPlan=plan;curPrice=annual?(plan==='starter'?9:plan==='pro'?18:27):price;
+  document.querySelectorAll('.plan-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+plan).classList.add('active');
+}
+
+// Show step
+function showStep(id){document.querySelectorAll('.pay-step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+// Jump from pricing section
+function jumpToForm(plan,price){
+  selectPlan(plan,price);
+  document.querySelector('.hero-form-wrap').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>showStep('step-plan'),400);
+}
+
+// Validate and go to payment
+function goToPayment(){
+  const name=document.getElementById('h-name').value.trim();
+  const email=document.getElementById('h-email').value.trim();
+  const company=document.getElementById('h-company').value.trim();
+  const pw=document.getElementById('h-password').value;
+  const err=document.getElementById('step1-err');
+  err.style.display='none';
+  if(!name||!email||!company||!pw){err.textContent='Please fill in all fields.';err.style.display='block';return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent='Please enter a valid email address.';err.style.display='block';return}
+  if(pw.length<8){err.textContent='Password must be at least 8 characters.';err.style.display='block';return}
+  const ap=annual?(curPlan==='starter'?9:curPlan==='pro'?18:27):curPrice;
+  document.getElementById('pay-plan-price').textContent='$'+ap+'/month';
+  showStep('step-pay');
+}
+
+// Flutterwave
+function launchFlutterwave(){
+  const name=document.getElementById('h-name').value.trim();
+  const email=document.getElementById('h-email').value.trim();
+  const err=document.getElementById('step2-err');
+  err.style.display='none';
+  const btn=document.getElementById('btn-pay');
+  btn.disabled=true;btn.textContent='Opening payment...';
+  FlutterwaveCheckout({
+    public_key:'FLWPUBK-4bc28fb9e509b351f586617ddb186621-X',
+    tx_ref:'MWT-'+Date.now()+'-'+Math.random().toString(36).substr(2,8),
+    amount:0.10,
+    currency:'USD',
+    payment_options:'card',
+    customer:{email,name},
+    customizations:{title:'Magic Worlds Tracker',description:'Card verification for '+curPlan+' plan trial ($0.10 refunded instantly)'},
+    callback:function(data){
+      btn.disabled=false;btn.textContent='Verify Card and Start Free Trial';
+      if(data.status==='successful'||data.status==='completed'){
+        showStep('step-success');
+        setTimeout(()=>{
+          const company=document.getElementById('h-company').value.trim();
+          const pw=document.getElementById('h-password').value;
+          window.location.href='/merchant?plan='+curPlan+'&email='+encodeURIComponent(email)+'&name='+encodeURIComponent(name)+'&company='+encodeURIComponent(company)+'&ref='+data.tx_ref;
+        },2000);
+      }else{
+        err.textContent='Payment could not be completed. Please try again.';
+        err.style.display='block';
+      }
+    },
+    onclose:function(){btn.disabled=false;btn.textContent='Verify Card and Start Free Trial';}
+  });
+}
+
+// Smooth anchors
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));
+</script>
+
+<!-- Footer Popups -->
+<div id="popup-overlay" onclick="closePopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;backdrop-filter:blur(6px)"></div>
+<div id="popup-box" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:801;width:90%;max-width:600px;max-height:80vh;overflow-y:auto;background:linear-gradient(135deg,#0e0e28,#090921);border:1px solid rgba(124,109,250,.3);border-radius:1.4rem;padding:2rem;scrollbar-width:thin;scrollbar-color:#7c6dfa transparent">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <h3 id="popup-title" style="font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:600;color:#eeeeff"></h3>
+    <button onclick="closePopup()" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#8888aa;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">&#215;</button>
+  </div>
+  <div id="popup-body" style="font-size:.875rem;color:#8888aa;line-height:1.8"></div>
+</div>
+
+<script>
+const POPUP_CONTENT = {
+  about: {
+    title: 'About Magic Worlds Tracker',
+    body: `<p style="color:#eeeeff;margin-bottom:.85rem">Magic Worlds Tracker is the affiliate tracking platform built for Web3 digital product owners.</p>
+<p>We believe that the builders creating the next generation of the internet — DeFi protocols, NFT platforms, metaverse games, and on-chain applications — deserve the same professional-grade affiliate marketing tools that Web2 companies have had for years.</p>
+<p style="margin-top:.85rem">Magic Worlds Tracker is part of the Magic Worlds ecosystem, a network of products and projects building at the frontier of Web3.</p>
+<p style="margin-top:.85rem">Our platform lets any digital product owner launch an affiliate program in 30 minutes, track every conversion including on-chain events, and pay partners automatically without spreadsheet chaos.</p>
+<p style="margin-top:.85rem;color:#7c6dfa">Contact us: <a href="mailto:go@sannisanni.com" style="color:#00d4ff">go@sannisanni.com</a></p>`
+  },
+  contact: {
+    title: 'Contact Us',
+    body: `<p style="margin-bottom:1.25rem">We are here to help. Reach out through any of the channels below.</p>
+<div style="display:flex;flex-direction:column;gap:.85rem">
+  <div style="padding:1rem;background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.2);border-radius:.75rem">
+    <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.82rem;color:#eeeeff;margin-bottom:.3rem">General and Business Enquiries</div>
+    <a href="mailto:go@sannisanni.com" style="color:#00d4ff;font-size:.85rem">go@sannisanni.com</a>
+  </div>
+  <div style="padding:1rem;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15);border-radius:.75rem">
+    <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.82rem;color:#eeeeff;margin-bottom:.3rem">Technical Support</div>
+    <a href="mailto:go@sannisanni.com" style="color:#00d4ff;font-size:.85rem">go@sannisanni.com</a>
+  </div>
+  <div style="padding:1rem;background:rgba(0,255,163,.06);border:1px solid rgba(0,255,163,.15);border-radius:.75rem">
+    <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.82rem;color:#eeeeff;margin-bottom:.3rem">Response Time</div>
+    <div style="font-size:.82rem">We aim to respond to all enquiries within 24 hours on business days.</div>
+  </div>
+</div>`
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    body: `<p style="color:#4a4a6a;font-size:.75rem;margin-bottom:1rem">Last updated: April 2025</p>
+<p style="margin-bottom:.85rem">Magic Worlds Tracker operates at <strong style="color:#eeeeff">magictracker.cc</strong>. This policy explains what data we collect, why, and how we protect it.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Data We Collect</h4>
+<p>We collect account information you provide (name, email, company), usage data (clicks, conversions, program performance), and payment verification data processed by Flutterwave. We do not store full card details.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">How We Use Your Data</h4>
+<p>To operate the platform, send transactional emails (magic links, payout reports), and improve our service. We do not sell your data to third parties.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Data Storage</h4>
+<p>Data is stored on Neon (PostgreSQL), hosted in the US. Email delivery is handled by Brevo. All connections are encrypted via SSL/TLS.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Your Rights</h4>
+<p>You may request access to, correction of, or deletion of your personal data at any time by emailing <a href="mailto:go@sannisanni.com" style="color:#00d4ff">go@sannisanni.com</a>.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Cookies</h4>
+<p>We use cookies solely for affiliate attribution tracking (30-day window) and authentication (JWT). No advertising or analytics cookies are used.</p>
+<p style="margin-top:.85rem">Questions? Email <a href="mailto:go@sannisanni.com" style="color:#00d4ff">go@sannisanni.com</a></p>`
+  },
+  terms: {
+    title: 'Terms of Service',
+    body: `<p style="color:#4a4a6a;font-size:.75rem;margin-bottom:1rem">Last updated: April 2025</p>
+<p style="margin-bottom:.85rem">By using Magic Worlds Tracker you agree to these terms. Please read them carefully.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Service</h4>
+<p>Magic Worlds Tracker provides affiliate tracking and management software on a subscription basis. A 14-day free trial is available on all plans. A $0.10 card verification charge is made at signup and refunded immediately.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Accounts</h4>
+<p>You are responsible for keeping your credentials secure. You may not share accounts or use the platform for unlawful purposes. We reserve the right to suspend accounts that violate these terms.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Billing</h4>
+<p>Subscriptions renew monthly or annually. You may cancel at any time before your next billing date. Refunds are not provided for partial periods. All prices are in USD.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Liability</h4>
+<p>We provide the platform as-is. We are not liable for commission disputes between merchants and affiliates, or for losses arising from platform downtime. Our maximum liability is limited to fees paid in the preceding 30 days.</p>
+<h4 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;color:#eeeeff;margin:.9rem 0 .4rem">Governing Law</h4>
+<p>These terms are governed by the laws of the European Union. Disputes will be resolved in the courts of the Netherlands.</p>
+<p style="margin-top:.85rem">Questions? Email <a href="mailto:go@sannisanni.com" style="color:#00d4ff">go@sannisanni.com</a></p>`
+  },
+  status: {
+    title: 'Platform Status',
+    body: `<div style="display:flex;flex-direction:column;gap:.75rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.18);border-radius:.75rem">
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;color:#eeeeff">API Server</span>
+    <span id="status-api" style="font-size:.8rem;color:#00ffa3;font-weight:600">Checking...</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.18);border-radius:.75rem">
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;color:#eeeeff">Database</span>
+    <span id="status-db" style="font-size:.8rem;color:#00ffa3;font-weight:600">Checking...</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15);border-radius:.75rem">
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;color:#eeeeff">Tracking Engine</span>
+    <span style="font-size:.8rem;color:#00d4ff;font-weight:600">Operational</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15);border-radius:.75rem">
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;color:#eeeeff">Email Delivery</span>
+    <span style="font-size:.8rem;color:#00d4ff;font-weight:600">Operational</span>
+  </div>
+</div>
+<p style="margin-top:1rem;font-size:.75rem;color:#4a4a6a">Status is checked live when you open this panel.</p>`
+  }
+};
+
+function openPopup(key){
+  const c=POPUP_CONTENT[key];if(!c)return;
+  document.getElementById('popup-title').textContent=c.title;
+  document.getElementById('popup-body').innerHTML=c.body;
+  document.getElementById('popup-overlay').style.display='block';
+  document.getElementById('popup-box').style.display='block';
+  document.body.style.overflow='hidden';
+  if(key==='status')checkLiveStatus();
+}
+function closePopup(){
+  document.getElementById('popup-overlay').style.display='none';
+  document.getElementById('popup-box').style.display='none';
+  document.body.style.overflow='';
+}
+async function checkLiveStatus(){
+  try{
+    const r=await fetch('https://api.magictracker.cc/api/health');
+    const d=await r.json();
+    const ok=d.status==='ok';
+    const aEl=document.getElementById('status-api');
+    const dEl=document.getElementById('status-db');
+    if(aEl)aEl.textContent=ok?'Operational':'Degraded';
+    if(dEl)dEl.textContent=ok?'Operational':'Degraded';
+  }catch{
+    const aEl=document.getElementById('status-api');
+    if(aEl)aEl.textContent='Unreachable';
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup()});
+</script>
+</body>
+</html>

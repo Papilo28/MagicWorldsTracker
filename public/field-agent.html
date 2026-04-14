@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Field Agent Dashboard — Ingenstat Solar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--s1:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);--txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;--a:#7c6dfa;--b:#00d4ff;--d:#00ffa3;--e:#ffb347;--r:#ff5a5a;--ga:linear-gradient(135deg,#f97316,#fbbf24)}
+html{overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100svh;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(249,115,22,.07),transparent 60%);pointer-events:none}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;line-height:1.2}
+
+/* Auth */
+.auth-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.auth-box{background:rgba(8,8,24,.95);border:1px solid var(--bdr2);border-radius:1.4rem;padding:2rem 1.75rem;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.auth-logo{display:flex;align-items:center;gap:.6rem;justify-content:center;margin-bottom:1.4rem}
+.auth-mark{width:38px;height:38px;border-radius:10px;background:var(--ga);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;color:#fff}
+.auth-title{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;text-align:center;margin-bottom:.3rem}
+.auth-sub{text-align:center;color:var(--txt2);font-size:.8rem;margin-bottom:1.35rem;line-height:1.6}
+label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:.32rem;font-family:'Poppins',sans-serif;letter-spacing:.03em}
+.inp{width:100%;padding:.75rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:.75rem;color:var(--txt);font-size:.9rem;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.inp:focus{outline:none;border-color:rgba(249,115,22,.5)}
+.inp::placeholder{color:var(--txt3)}
+.fg{margin-bottom:.85rem}
+.btn-primary{width:100%;padding:.82rem;border-radius:.75rem;font-family:'Poppins',sans-serif;font-weight:700;font-size:.9rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;margin-top:.15rem}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(249,115,22,.3)}
+.msg{padding:.58rem .9rem;border-radius:.65rem;font-size:.78rem;margin-top:.7rem;text-align:center;display:none}
+.msg.ok{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.18);color:var(--d)}
+.msg.err{background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.18);color:var(--r)}
+
+/* Dashboard */
+.dash{display:none;min-height:100svh;flex-direction:column}
+.dash.show{display:flex}
+.top-bar{background:rgba(0,0,0,.5);border-bottom:1px solid var(--bdr);padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.top-bar-logo{display:flex;align-items:center;gap:.5rem}
+.top-mark{width:30px;height:30px;border-radius:7px;background:var(--ga);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;color:#fff}
+.top-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:.85rem}
+.top-agent{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--b)}
+.btn-logout-top{padding:.42rem .85rem;border-radius:.5rem;font-family:'Poppins',sans-serif;font-weight:600;font-size:.73rem;background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.18);color:var(--r);cursor:pointer}
+
+.content{padding:1.25rem 1rem;max-width:600px;margin:0 auto;width:100%}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1.25rem}
+.stat-box{background:rgba(8,8,24,.8);border:1px solid var(--bdr);border-radius:1rem;padding:1rem;text-align:center}
+.stat-val{font-family:'Poppins',sans-serif;font-weight:800;font-size:2rem;line-height:1;margin-bottom:.2rem}
+.stat-lbl{font-size:.65rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em}
+.c-orange{color:#f97316}.c-green{color:var(--d)}.c-blue{color:var(--b)}.c-purple{color:var(--a)}
+
+/* My link */
+.link-card{background:rgba(8,8,24,.8);border:1px solid rgba(249,115,22,.2);border-radius:1rem;padding:1.1rem;margin-bottom:1.1rem}
+.link-card h4{font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;color:#f97316;margin-bottom:.55rem}
+.link-card p{font-size:.75rem;color:var(--txt2);margin-bottom:.65rem;line-height:1.55}
+.link-row{display:flex;gap:.4rem}
+.link-val{flex:1;padding:.6rem .75rem;background:rgba(0,0,0,.25);border:1px solid var(--bdr);border-radius:.6rem;color:var(--b);font-family:'JetBrains Mono',monospace;font-size:.68rem;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-copy{padding:.6rem .85rem;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.25);border-radius:.6rem;color:#f97316;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Poppins',sans-serif;transition:all .18s}
+.btn-copy:hover{background:rgba(249,115,22,.22)}
+.btn-submit{width:100%;padding:.78rem;border-radius:.75rem;font-family:'Poppins',sans-serif;font-weight:700;font-size:.9rem;background:var(--ga);color:#fff;border:none;cursor:pointer;margin-top:.65rem;position:relative;overflow:hidden}
+.btn-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+
+/* Leads table */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;margin-top:1.1rem}
+.section-head h3{font-family:'Poppins',sans-serif;font-size:.92rem;font-weight:700}
+.badge{display:inline-block;padding:.18rem .55rem;border-radius:.3rem;font-size:.65rem;font-weight:600;font-family:'Poppins',sans-serif}
+.b-pending{background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.2);color:var(--e)}
+.b-qualified{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--b)}
+.b-converted{background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d)}
+.b-rejected{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.2);color:var(--r)}
+
+.lead-card{background:rgba(8,8,24,.8);border:1px solid var(--bdr);border-radius:.9rem;padding:.95rem;margin-bottom:.65rem;transition:border-color .22s}
+.lead-card:hover{border-color:rgba(249,115,22,.2)}
+.lead-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.45rem;gap:.5rem}
+.lead-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem}
+.lead-date{font-size:.68rem;color:var(--txt3)}
+.lead-addr{font-size:.75rem;color:var(--txt2);margin-bottom:.4rem;line-height:1.4}
+.lead-meta{display:flex;gap:.5rem;flex-wrap:wrap}
+.lead-tag{font-size:.65rem;padding:.18rem .5rem;background:var(--s1);border:1px solid var(--bdr);border-radius:.3rem;color:var(--txt3)}
+
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--txt3);font-size:.85rem}
+.empty h3{font-family:'Poppins',sans-serif;font-size:1rem;margin-bottom:.35rem;color:var(--txt2)}
+
+@media(max-width:390px){.stat-grid{grid-template-columns:repeat(2,1fr);gap:.6rem}.content{padding:1rem .85rem}.stat-val{font-size:1.6rem}}
+</style>
+</head>
+<body>
+
+<!-- Auth -->
+<div class="auth-wrap" id="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-mark">IS</div>
+      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.92rem">Ingenstat Field Portal</div>
+    </div>
+    <h1 class="auth-title">Agent Login</h1>
+    <p class="auth-sub">Enter your agent code to view your leads and scoreboard.</p>
+    <div class="fg">
+      <label>Your Agent Code</label>
+      <input class="inp" type="text" id="aff-code-input" placeholder="e.g. XKPL9Z" style="text-transform:uppercase;font-family:'JetBrains Mono',monospace;letter-spacing:.1em" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="btn-primary" onclick="login()">View My Dashboard</button>
+    <div id="auth-msg" class="msg"></div>
+    <div style="margin-top:1.1rem;padding:.85rem;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.12);border-radius:.75rem;font-size:.75rem;color:var(--txt2);line-height:1.65;text-align:center">
+      Your agent code was given to you by your team lead. It looks like 6 random letters and numbers.
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div class="dash" id="dash">
+  <div class="top-bar">
+    <div class="top-bar-logo">
+      <div class="top-mark">IS</div>
+      <div>
+        <div class="top-name">Ingenstat Field Agent</div>
+        <div class="top-agent" id="dash-agent-code"></div>
+      </div>
+    </div>
+    <button class="btn-logout-top" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-val c-orange" id="st-submitted">0</div><div class="stat-lbl">Leads Submitted</div></div>
+      <div class="stat-box"><div class="stat-val c-blue" id="st-qualified">0</div><div class="stat-lbl">Qualified</div></div>
+      <div class="stat-box"><div class="stat-val c-green" id="st-converted">0</div><div class="stat-lbl">Converted</div></div>
+      <div class="stat-box"><div class="stat-val c-purple" id="st-earnings">£0</div><div class="stat-lbl">Est. Earnings</div></div>
+    </div>
+
+    <!-- My link -->
+    <div class="link-card">
+      <h4>Your Solar Lead Form Link</h4>
+      <p>Share this link with prospects or use it yourself when visiting a site. It tags every lead to your agent ID automatically.</p>
+      <div class="link-row">
+        <div class="link-val" id="my-link">Loading...</div>
+        <button class="btn-copy" onclick="copyLink()">Copy</button>
+      </div>
+      <button class="btn-submit" onclick="openForm()">&#43; Submit a New Lead</button>
+    </div>
+
+    <!-- Leads list -->
+    <div class="section-head">
+      <h3>My Submitted Leads</h3>
+      <button onclick="loadLeads()" style="font-size:.72rem;color:var(--txt3);background:none;border:none;cursor:pointer;font-family:'Poppins',sans-serif">&#8635; Refresh</button>
+    </div>
+    <div id="leads-list">
+      <div class="empty"><h3>Loading...</h3></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var API = 'https://api.magictracker.cc';
+var affCode = '';
+
+function login() {
+  var code = document.getElementById('aff-code-input').value.trim().toUpperCase();
+  if (!code) { showMsg('auth-msg','err','Please enter your agent code'); return; }
+  affCode = code;
+  loadDashboard();
+}
+
+function showMsg(id, type, text) {
+  var el = document.getElementById(id);
+  el.className = 'msg ' + type; el.textContent = text; el.style.display = 'block';
+}
+
+async function loadDashboard() {
+  try {
+    var r = await fetch(API + '/api/affiliates/me/all', {
+      headers: { 'x-aff-code': affCode }
+    });
+
+    // Try the join endpoint to verify the code exists
+    var check = await fetch(API + '/api/affiliates/by-code/' + affCode);
+
+    if (!check.ok) {
+      // Try another way — check via campaigns
+      showMsg('auth-msg','err','Agent code not found. Check with your team lead.');
+      return;
+    }
+
+    var d = await check.json();
+
+    document.getElementById('auth-wrap').style.display = 'none';
+    document.getElementById('dash').classList.add('show');
+    document.getElementById('dash-agent-code').textContent = affCode;
+    localStorage.setItem('field_agent_code', affCode);
+
+    var formUrl = 'https://magictracker.cc/solar-lead?aff=' + affCode;
+    document.getElementById('my-link').textContent = formUrl;
+
+    // Stats from affiliate data
+    var stats = d.stats || {};
+    document.getElementById('st-submitted').textContent = stats.total_conversions || 0;
+    document.getElementById('st-qualified').textContent = stats.qualified || 0;
+    document.getElementById('st-converted').textContent = stats.converted || 0;
+    document.getElementById('st-earnings').textContent = '£' + (parseFloat(stats.total_earnings||0) * 0.5).toFixed(0);
+
+    loadLeads();
+  } catch(e) {
+    showMsg('auth-msg','err','Error connecting to server. Check your internet connection.');
+  }
+}
+
+async function loadLeads() {
+  var el = document.getElementById('leads-list');
+  el.innerHTML = '<div class="empty"><h3>Loading...</h3></div>';
+  try {
+    var r = await fetch(API + '/api/affiliates/leads/' + affCode);
+    var d = await r.json();
+
+    if (!d.leads || !d.leads.length) {
+      el.innerHTML = '<div class="empty"><h3>No leads yet</h3><p>Submit your first solar prospect using the form link above.</p></div>';
+      return;
+    }
+
+    // Update stats
+    var total = d.leads.length;
+    var qualified = d.leads.filter(function(l){return l.status==='qualified'}).length;
+    var converted = d.leads.filter(function(l){return l.status==='converted'}).length;
+    document.getElementById('st-submitted').textContent = total;
+    document.getElementById('st-qualified').textContent = qualified;
+    document.getElementById('st-converted').textContent = converted;
+    document.getElementById('st-earnings').textContent = '£' + (converted * 25 + qualified * 5).toFixed(0);
+
+    el.innerHTML = d.leads.map(function(lead) {
+      var statusClass = {pending:'b-pending',qualified:'b-qualified',converted:'b-converted',rejected:'b-rejected'}[lead.status]||'b-pending';
+      var date = new Date(lead.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      var meta = [];
+      if(lead.roof_type) meta.push(lead.roof_type);
+      if(lead.annual_kwh) meta.push(lead.annual_kwh + ' kWh');
+      if(lead.mpan_number) meta.push('MPAN: ' + lead.mpan_number.substring(0,8) + '...');
+      return [
+        '<div class="lead-card">',
+          '<div class="lead-card-top">',
+            '<div class="lead-name">'+(lead.company_name||lead.contact_name||'Site Lead')+'</div>',
+            '<span class="badge '+statusClass+'">'+lead.status+'</span>',
+          '</div>',
+          '<div class="lead-addr">'+(lead.site_address||'Address not recorded')+'</div>',
+          '<div class="lead-meta">',
+            '<span class="lead-tag">'+date+'</span>',
+            meta.map(function(m){return '<span class="lead-tag">'+m+'</span>'}).join(''),
+          '</div>',
+        '</div>'
+      ].join('');
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty"><h3>Could not load leads</h3><p>'+e.message+'</p></div>';
+  }
+}
+
+function copyLink() {
+  var url = 'https://magictracker.cc/solar-lead?aff=' + affCode;
+  navigator.clipboard.writeText(url).then(function() {
+    var btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+function openForm() {
+  window.open('https://magictracker.cc/solar-lead?aff=' + affCode, '_blank');
+}
+
+function logout() {
+  affCode = '';
+  localStorage.removeItem('field_agent_code');
+  document.getElementById('dash').classList.remove('show');
+  document.getElementById('auth-wrap').style.display = '';
+  document.getElementById('aff-code-input').value = '';
+}
+
+// Auto-login if saved
+var saved = localStorage.getItem('field_agent_code');
+if (saved) { affCode = saved; document.getElementById('aff-code-input').value = saved; loadDashboard(); }
+</script>
+</body>
+</html>

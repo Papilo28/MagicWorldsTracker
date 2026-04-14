@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard - Magic Worlds Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--bg2:#07071a;--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);--txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;--a:#7c6dfa;--b:#00d4ff;--c:#ff6ef7;--d:#00ffa3;--e:#ffb347;--ga:linear-gradient(135deg,#7c6dfa,#00d4ff);--gb:linear-gradient(135deg,#7c6dfa,#ff6ef7);--glow-a:rgba(124,109,250,.2);--r:.75rem;--r2:1.1rem;--r3:1.4rem}
+html{overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;line-height:1.2}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a);border-radius:4px}
+.hidden{display:none!important}
+.auth-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(124,109,250,.1),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 80%,rgba(0,212,255,.07),transparent 60%)}
+.auth-box{background:linear-gradient(135deg,rgba(13,13,38,.97),rgba(8,8,25,.97));border:1px solid var(--bdr2);border-radius:var(--r3);padding:2.25rem;width:100%;max-width:460px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.auth-logo{display:flex;align-items:center;gap:.65rem;justify-content:center;margin-bottom:1.75rem}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:var(--ga);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:.78rem;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.logo-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent)}
+.logo-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:.95rem}
+.logo-acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-title{font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700;text-align:center;margin-bottom:.35rem}
+.auth-sub{text-align:center;color:var(--txt2);font-size:.83rem;margin-bottom:1.6rem;line-height:1.6}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;background:rgba(0,0,0,.25);border-radius:var(--r2);padding:.25rem;margin-bottom:1.4rem}
+.tab-btn{padding:.58rem;background:transparent;border:none;border-radius:var(--r);color:var(--txt2);font-size:.83rem;font-weight:500;cursor:pointer;transition:all .22s;font-family:'Poppins',sans-serif}
+.tab-btn.on{background:var(--a);color:#fff}
+.fg{margin-bottom:.82rem}
+label{display:block;font-size:.75rem;font-weight:600;color:var(--txt2);margin-bottom:.36rem;font-family:'Poppins',sans-serif;letter-spacing:.03em}
+.inp{width:100%;padding:.75rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.875rem;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.inp:focus{outline:none;border-color:rgba(124,109,250,.5)}
+.inp::placeholder{color:var(--txt3)}
+.inp:disabled{opacity:.5;cursor:not-allowed}
+select.inp option{background:#0e0e28;color:var(--txt)}
+.btn-sub{width:100%;padding:.8rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;margin-top:.25rem}
+.btn-sub::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-sub:hover{transform:translateY(-1px);box-shadow:0 10px 30px var(--glow-a)}
+.btn-sub:disabled{opacity:.6;transform:none;cursor:not-allowed}
+.btn-sub.green-grad{background:linear-gradient(135deg,#00d4ff,#00ffa3)}
+.btn-sub.red-grad{background:linear-gradient(135deg,#ff6b6b,#e85a4f)}
+.forgot-lnk{text-align:right;font-size:.73rem;margin-top:.28rem}
+.forgot-lnk a{color:var(--a);text-decoration:none}
+.msg{padding:.58rem .95rem;border-radius:var(--r);font-size:.78rem;margin-top:.7rem;text-align:center;display:none}
+.msg.ok{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.18);color:var(--d)}
+.msg.err{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.18);color:#ff7070}
+.dash{display:flex;min-height:100vh}
+.sidebar{width:248px;background:rgba(0,0,0,.38);border-right:1px solid var(--bdr);position:fixed;top:0;bottom:0;left:0;overflow-y:auto;overflow-x:hidden;z-index:200;display:flex;flex-direction:column;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-head{padding:1.05rem;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:.52rem;text-decoration:none;color:var(--txt)}
+.sb-logo .logo-text{font-size:.86rem}
+.sb-meta{margin-top:.7rem;padding:.55rem .7rem;background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.15);border-radius:var(--r)}
+.sb-meta-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:.8rem;color:var(--txt);margin-bottom:.12rem}
+.sb-meta-sub{color:var(--txt3);font-size:.65rem;font-family:'JetBrains Mono',monospace}
+.sb-badge{display:inline-block;padding:.2rem .6rem;border-radius:.3rem;font-size:.65rem;font-weight:700;font-family:'Poppins',sans-serif;margin-top:.5rem;letter-spacing:.05em}
+.sb-nav{padding:.5rem 0;flex:1}
+.sb-section{margin-bottom:.8rem}
+.sb-sec-title{padding:.3rem 1rem;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-family:'Poppins',sans-serif}
+.sb-link{display:flex;align-items:center;gap:.55rem;padding:.55rem 1rem;color:var(--txt2);font-size:.8rem;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all .18s;user-select:none;-webkit-user-select:none}
+.sb-link:hover{background:rgba(124,109,250,.07);color:var(--txt)}
+.sb-link.on{background:rgba(124,109,250,.1);color:var(--a);border-left-color:var(--a)}
+.sb-ico{font-family:'Poppins',sans-serif;font-weight:700;font-size:.68rem;width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-.02em}
+.sb-foot{padding:.9rem;border-top:1px solid var(--bdr);flex-shrink:0}
+.btn-logout{width:100%;padding:.62rem;background:rgba(255,100,100,.07);border:1px solid rgba(255,100,100,.18);border-radius:var(--r);color:#ff7070;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif}
+.btn-logout:hover{background:rgba(255,100,100,.14)}
+.main{flex:1;margin-left:248px;padding:1.85rem;min-height:100vh;overflow-x:hidden;max-width:100%}
+.mob-bar{display:none;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:rgba(0,0,0,.88);border-bottom:1px solid var(--bdr);margin:-1.85rem -1.85rem 1.5rem -1.85rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);height:52px}
+.mob-bar-logo{font-family:'Poppins',sans-serif;font-weight:700;font-size:.88rem}
+.btn-ham{background:transparent;border:1px solid var(--bdr2);color:var(--txt);padding:.4rem .62rem;border-radius:var(--r);font-size:1rem;line-height:1}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:199;-webkit-tap-highlight-color:transparent}
+.sb-overlay.show{display:block}
+.page{display:none}.page.on{display:block}
+.page-head{margin-bottom:1.65rem}
+.page-title{font-family:'Poppins',sans-serif;font-size:1.45rem;font-weight:700}
+.page-title .acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-sub{color:var(--txt2);font-size:.82rem;margin-top:.28rem}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.85rem;margin-bottom:1.5rem}
+.stat{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.05rem;transition:border-color .25s,transform .25s}
+.stat:hover{border-color:rgba(124,109,250,.28);transform:translateY(-2px)}
+.stat-lbl{font-size:.67rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.32rem;font-family:'Poppins',sans-serif}
+.stat-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.7rem;line-height:1}
+.ca{color:var(--a)}.cb{color:var(--b)}.cc{color:var(--c)}.cd{color:var(--d)}.ce{color:var(--e)}.cr{color:#ff7070}
+.stat-chg{font-size:.65rem;color:var(--d);margin-top:.18rem}
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:1.35rem;overflow:hidden;transition:border-color .25s}
+.card:hover{border-color:rgba(124,109,250,.18)}
+.card-head{padding:.9rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.card-head h3{font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600}
+.card-body{padding:1.25rem}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:460px}
+th{text-align:left;padding:.7rem .95rem;background:rgba(0,0,0,.22);color:var(--txt3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;font-family:'Poppins',sans-serif}
+td{padding:.7rem .95rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--txt2);font-size:.8rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,109,250,.03)}
+.empty{text-align:center;padding:1.75rem;color:var(--txt3);font-size:.82rem}
+.badge{display:inline-block;padding:.16rem .55rem;border-radius:.3rem;font-size:.65rem;font-weight:600;font-family:'Poppins',sans-serif}
+.badge-g{background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d)}
+.badge-b{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--b)}
+.badge-r{background:rgba(255,100,100,.1);border:1px solid rgba(255,100,100,.2);color:#ff7070}
+.badge-o{background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.2);color:var(--e)}
+.badge-a{background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.2);color:var(--a)}
+.code-tag{font-family:'JetBrains Mono',monospace;background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.18);padding:.14rem .38rem;border-radius:.28rem;font-size:.72rem;color:var(--a)}
+.btn-row{display:flex;gap:.6rem;margin-bottom:1.35rem;flex-wrap:wrap}
+.btn-act{padding:.58rem 1.15rem;border-radius:var(--r);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .22s;font-family:'Poppins',sans-serif;display:flex;align-items:center;gap:.38rem;border:none;white-space:nowrap}
+.btn-a{background:rgba(124,109,250,.14);color:var(--a);border:1px solid rgba(124,109,250,.24)}.btn-a:hover{background:rgba(124,109,250,.24)}
+.btn-g{background:rgba(0,255,163,.1);color:var(--d);border:1px solid rgba(0,255,163,.2)}.btn-g:hover{background:rgba(0,255,163,.2)}
+.btn-b{background:rgba(0,212,255,.1);color:var(--b);border:1px solid rgba(0,212,255,.2)}.btn-b:hover{background:rgba(0,212,255,.2)}
+.btn-r{background:rgba(255,100,100,.08);color:#ff7070;border:1px solid rgba(255,100,100,.16)}.btn-r:hover{background:rgba(255,100,100,.16)}
+.btn-grad{background:var(--ga);color:#fff;border:none;position:relative;overflow:hidden}
+.btn-grad::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}
+.btn-grad:hover{box-shadow:0 6px 22px var(--glow-a)}
+.btn-tbl{background:transparent;border:1px solid var(--bdr2);color:var(--txt2);padding:.28rem .58rem;border-radius:.32rem;font-size:.7rem;cursor:pointer;transition:all .18s;font-family:inherit;margin-right:.28rem}
+.btn-tbl:hover{background:var(--s2);color:var(--txt)}
+.btn-tbl.danger{border-color:rgba(255,100,100,.2);color:#ff7070}.btn-tbl.danger:hover{background:rgba(255,100,100,.08)}
+.btn-tbl.success{border-color:rgba(0,255,163,.2);color:var(--d)}.btn-tbl.success:hover{background:rgba(0,255,163,.08)}
+.search{padding:.58rem .95rem;background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.8rem;font-family:inherit;min-width:170px;max-width:100%;transition:border-color .2s}
+.search:focus{outline:none;border-color:rgba(124,109,250,.4)}
+.search::placeholder{color:var(--txt3)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:500;padding:1rem;backdrop-filter:blur(7px);opacity:0;pointer-events:none;transition:opacity .22s}
+.modal.open{opacity:1;pointer-events:all}
+.modal-box{background:linear-gradient(135deg,#0e0e28,#090921);border:1px solid var(--bdr2);border-radius:var(--r3);padding:1.85rem;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;transform:translateY(14px);transition:transform .22s;scrollbar-width:thin;scrollbar-color:var(--a) transparent}
+.modal.open .modal-box{transform:none}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.3rem}
+.modal-head h3{font-family:'Poppins',sans-serif;font-size:1.05rem;font-weight:600}
+.modal-x{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--txt2);cursor:pointer;font-size:1rem;transition:all .18s}
+.modal-x:hover{color:var(--txt)}
+.link-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);padding:.85rem;margin-bottom:.8rem}
+.link-box label{font-size:.7rem;color:var(--txt3);display:block;margin-bottom:.38rem}
+.link-row{display:flex;gap:.38rem}
+.link-inp{flex:1;padding:.62rem .88rem;background:rgba(0,0,0,.28);border:1px solid var(--bdr);border-radius:var(--r);color:var(--a);font-family:'JetBrains Mono',monospace;font-size:.76rem;min-width:0}
+.btn-copy{padding:.62rem .88rem;background:rgba(124,109,250,.14);border:1px solid rgba(124,109,250,.24);border-radius:var(--r);color:var(--a);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Poppins',sans-serif;white-space:nowrap}
+.btn-copy:hover{background:rgba(124,109,250,.24)}
+.prog-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.05rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.85rem;flex-wrap:wrap;transition:border-color .22s}
+.prog-card:hover{border-color:rgba(124,109,250,.28)}
+.prog-info h4{font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.22rem}
+.prog-info p{color:var(--txt2);font-size:.76rem;margin:0}
+.prog-comm{color:var(--d);font-size:.72rem;font-weight:600;margin-top:.28rem;font-family:'Poppins',sans-serif}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:1.05rem}
+.settings-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.25rem}
+.settings-card h4{font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.9rem}
+.btn-save{padding:.6rem 1.25rem;background:var(--a);border:none;border-radius:var(--r);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;margin-top:.7rem}
+.btn-save:hover{background:#6a5ce8;box-shadow:0 6px 20px var(--glow-a)}
+.key-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);padding:1rem;margin-bottom:.85rem}
+.key-box h4{font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem}
+.key-val{font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.28);padding:.55rem .75rem;border-radius:.35rem;font-size:.76rem;color:var(--a);word-break:break-all}
+.warn-box{background:rgba(255,179,71,.07);border:1px solid rgba(255,179,71,.18);border-radius:var(--r);padding:.8rem;font-size:.78rem;color:var(--e);margin:.7rem 0;line-height:1.6}
+.conv-type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.8rem}
+.ct-card{background:rgba(0,0,0,.18);border:1px solid var(--bdr);border-radius:var(--r);padding:.82rem;text-align:center;transition:border-color .22s}
+.ct-card:hover{border-color:rgba(124,109,250,.28)}
+.ct-name{font-size:.65rem;color:var(--txt3);text-transform:capitalize;margin-bottom:.3rem}
+.ct-count{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.2rem;color:var(--a)}
+.ct-value{font-size:.65rem;color:var(--d);margin-top:.15rem}
+
+/* ═══ RESPONSIVE ═══════════════════════════════════════════════════════════ */
+@media(max-width:1023px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mob-bar{display:flex}
+}
+@media(max-width:640px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .btn-row{flex-direction:column}
+  .btn-act{width:100%;justify-content:center}
+  .auth-box{padding:1.5rem 1rem}
+  .main{padding:1rem}
+  .mob-bar{margin:-1rem -1rem 1rem -1rem;padding:.75rem 1rem}
+  .settings-grid{grid-template-columns:1fr}
+  .page-title{font-size:1.2rem}
+  .stat-val{font-size:1.4rem}
+  .tbl-wrap{margin:0 -.25rem}
+  td,th{padding:.6rem .75rem;font-size:.75rem}
+  .card-head{padding:.75rem 1rem}
+  .card-body{padding:1rem}
+  .link-inp{font-size:.7rem}
+  .prog-card{flex-direction:column;gap:.5rem}
+  h2{font-size:1.4rem}
+}
+@media(max-width:390px){
+  .auth-box{padding:1.25rem .85rem}
+  .main{padding:.85rem}
+  .mob-bar{margin:-.85rem -.85rem .85rem -.85rem}
+  .stats-row{grid-template-columns:1fr 1fr;gap:.6rem}
+  .stat{padding:.75rem}
+  .stat-val{font-size:1.2rem}
+}
+
+</style>
+</head>
+<body>
+<div id="auth-section" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo"><div class="logo-mark" style="background:linear-gradient(135deg,#e85a4f,#f97316)">MW</div><div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span></div></div>
+    <h1 class="auth-title">Admin Portal</h1>
+    <p class="auth-sub">Platform administration access</p>
+    <div class="fg"><label>Email</label><input class="inp" type="email" id="a-email" placeholder="admin@magictracker.cc" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fg"><label>Password</label><input class="inp" type="password" id="a-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-sub red-grad" onclick="doLogin()">Login to Dashboard</button>
+    <div id="auth-msg" class="msg" style="display:none"></div>
+    <div style="text-align:center;margin-top:.85rem;font-size:.78rem;color:var(--txt3)">
+      Forgot password? <a href="#" onclick="showForgot()" style="color:#e85a4f">Reset it here</a>
+    </div>
+    <div id="forgot-form" style="display:none;margin-top:1rem;padding:1rem;background:rgba(232,90,79,.05);border:1px solid rgba(232,90,79,.15);border-radius:var(--r)">
+      <div class="fg"><label>Your Email</label><input class="inp" type="email" id="forgot-email" placeholder="go@sannisanni.com" style="border-color:rgba(232,90,79,.3)"></div>
+      <button onclick="sendAdminReset()" style="width:100%;padding:.75rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;background:linear-gradient(135deg,#e85a4f,#f97316);color:#fff;border:none;cursor:pointer;margin-top:.25rem">Send Reset Link</button>
+      <div id="forgot-msg" class="msg" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div id="dash-section" class="dash hidden">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSB()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <a href="/" class="sb-logo"><div class="logo-mark" style="background:linear-gradient(135deg,#e85a4f,#f97316)">MW</div><div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span></div></a>
+      <span class="sb-badge" style="background:rgba(232,90,79,.12);border:1px solid rgba(232,90,79,.25);color:#e85a4f">ADMIN</span>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section"><div class="sb-sec-title">Overview</div>
+        <div class="sb-link on" onclick="showPage('dash',this)"><span class="sb-ico" style="background:rgba(232,90,79,.15);color:#e85a4f">Dsh</span>Dashboard</div>
+      </div>
+      <div class="sb-section"><div class="sb-sec-title">Management</div>
+        <div class="sb-link" onclick="showPage('affiliates',this);loadAffiliates()"><span class="sb-ico" style="background:rgba(0,212,255,.12);color:var(--b)">Aff</span>Affiliates</div>
+        <div class="sb-link" onclick="showPage('programs',this);loadPrograms()"><span class="sb-ico" style="background:rgba(124,109,250,.12);color:var(--a)">Prg</span>Programs</div>
+        <div class="sb-link" onclick="showPage('conversions',this)"><span class="sb-ico" style="background:rgba(0,255,163,.12);color:var(--d)">Cvn</span>Conversions</div>
+      </div>
+      <div class="sb-section"><div class="sb-sec-title">Reports</div>
+        <div class="sb-link" onclick="showPage('payouts',this);loadAffiliates()"><span class="sb-ico" style="background:rgba(255,179,71,.12);color:var(--e)">Pay</span>Payouts</div>
+        <div class="sb-link" onclick="showPage('destinations',this);loadDestinations()"><span class="sb-ico" style="background:rgba(255,110,247,.12);color:var(--c)">Dst</span>Destinations</div>
+      </div>
+    </nav>
+    <div class="sb-foot"><button class="btn-logout" onclick="doLogout()">Logout</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="mob-bar"><button class="btn-ham" onclick="toggleSB()">&#9776;</button><div class="mob-bar-logo">MAGIC<span class="logo-acc">WORLDS</span> <span style="color:#e85a4f;font-size:.7rem">ADMIN</span></div><div style="width:38px"></div></div>
+
+    <div id="page-dash" class="page on">
+      <div class="page-head"><h1 class="page-title">Admin <span class="acc">Dashboard</span></h1><div class="page-sub">Platform-wide performance overview</div></div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Total Affiliates</div><div class="stat-val cb" id="s-aff">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Clicks</div><div class="stat-val ca" id="s-clicks">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Conversions</div><div class="stat-val cd" id="s-conv">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Revenue</div><div class="stat-val ce" id="s-rev">$0</div></div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Conversions by Type</h3></div><div class="card-body"><div class="conv-type-grid" id="conv-types"><div class="empty">Loading...</div></div></div></div>
+      <div class="card"><div class="card-head"><h3>Top Affiliates</h3></div><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Code</th><th>Conversions</th><th>Earnings</th></tr></thead><tbody id="top-aff"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody></table></div></div>
+    </div>
+
+    <div id="page-affiliates" class="page">
+      <div class="page-head"><h1 class="page-title">Manage <span class="acc">Affiliates</span></h1><div class="page-sub">View and manage all affiliates in this merchant account</div></div>
+      <div class="card"><div class="card-head"><h3>All Affiliates</h3><input class="search" id="aff-search" placeholder="Search by name or email..." oninput="loadAffiliates()"></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Code</th><th>Clicks</th><th>Conversions</th><th>Earnings</th><th>Status</th><th>Actions</th></tr></thead><tbody id="aff-table"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="page-programs" class="page">
+      <div class="page-head"><h1 class="page-title">Affiliate <span class="acc">Programs</span></h1><div class="page-sub">Manage your affiliate programs</div></div>
+      <div class="btn-row"><button class="btn-act btn-a" onclick="openModal('prog-modal')">Create Program</button></div>
+      <div id="programs-list"><div class="empty">Loading...</div></div>
+    </div>
+
+    <div id="page-conversions" class="page">
+      <div class="page-head"><h1 class="page-title">All <span class="acc">Conversions</span></h1><div class="page-sub">Every tracked conversion event</div></div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Total Count</div><div class="stat-val ca" id="cv-total">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Value</div><div class="stat-val cd" id="cv-value">$0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Commission</div><div class="stat-val ce" id="cv-comm">$0</div></div>
+      </div>
+      <div class="card"><div class="card-body"><div class="empty" style="padding:.5rem 0">Full conversion data is available in the Payout Reports section. Download CSV for complete records.</div></div></div>
+    </div>
+
+    <div id="page-payouts" class="page">
+      <div class="page-head"><h1 class="page-title">Payout <span class="acc">Reports</span></h1><div class="page-sub">Download affiliate payout reports as CSV</div></div>
+      <div class="btn-row">
+        <button class="btn-act btn-g" onclick="downloadReport('last_week')">Download Last Week</button>
+        <button class="btn-act btn-b" onclick="downloadReport('this_week')">Download This Week</button>
+        <button class="btn-act btn-a" onclick="downloadReport('this_month')">Download This Month</button>
+      </div>
+      <div class="card"><div class="card-head"><h3>Affiliates with Pending Earnings</h3></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Payment Method</th><th>Wallet / Account</th><th>Earnings</th></tr></thead><tbody id="payout-table"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="page-destinations" class="page">
+      <div class="page-head"><h1 class="page-title">Redirect <span class="acc">Destinations</span></h1><div class="page-sub">Where affiliate tracking links redirect to</div></div>
+      <div class="btn-row"><button class="btn-act btn-a" onclick="openModal('dest-modal')">Add Destination</button></div>
+      <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>URL</th><th>Default</th></tr></thead><tbody id="dest-table"><tr><td colspan="3" class="empty">Loading...</td></tr></tbody></table></div></div>
+    </div>
+  </main>
+</div>
+
+<!-- Program Modal -->
+<div class="modal" id="prog-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="prog-modal-title">Create Program</h3><button class="modal-x" onclick="closeModal('prog-modal')">&#215;</button></div>
+    <input type="hidden" id="prog-id">
+    <div class="fg"><label>Program Name</label><input class="inp" id="prog-name" placeholder="e.g. Summer Campaign"></div>
+    <div class="fg"><label>Description</label><input class="inp" id="prog-desc" placeholder="Brief description"></div>
+    <div class="fg"><label>Landing Page URL</label><input class="inp" id="prog-url" placeholder="https://..."></div>
+    <div class="fg"><label>Commission Type</label><select class="inp" id="prog-ctype"><option value="percentage">Percentage</option><option value="fixed">Fixed Amount</option></select></div>
+    <div class="fg"><label>Commission Value</label><input class="inp" type="number" id="prog-cval" value="10"></div>
+    <div class="fg"><label>Cookie Duration (days)</label><input class="inp" type="number" id="prog-cookie" value="30"></div>
+    <div class="fg"><label>Currency</label><select class="inp" id="prog-cur"><option value="USD">USD</option><option value="EUR">EUR</option><option value="ETH">ETH</option><option value="GBP">GBP</option></select></div>
+    <div class="fg"><label>Set as Default</label><select class="inp" id="prog-default"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    <div class="fg"><label>Status</label><select class="inp" id="prog-status"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+    <button class="btn-sub" onclick="saveProgram()">Save Program</button>
+    <div id="prog-msg" class="msg" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Destination Modal -->
+<div class="modal" id="dest-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Add Destination</h3><button class="modal-x" onclick="closeModal('dest-modal')">&#215;</button></div>
+    <div class="fg"><label>Name</label><input class="inp" id="dest-name" placeholder="e.g. Homepage"></div>
+    <div class="fg"><label>URL</label><input class="inp" id="dest-url" placeholder="https://..."></div>
+    <div class="fg"><label>Set as Default</label><select class="inp" id="dest-default"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    <button class="btn-sub" onclick="saveDest()">Add Destination</button>
+    <div id="dest-msg" class="msg" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const API='https://api.magictracker.cc';
+let tok=null;
+
+function showMsg(id,type,text){const e=document.getElementById(id);if(!e)return;e.textContent=text;e.className='msg '+(type==='ok'?'ok':'err');e.style.display='block'}
+function showPage(n,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));const pg=document.getElementById('page-'+n);if(pg)pg.classList.add('on');document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('on'));if(el)el.classList.add('on');closeSB()}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('show')}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-overlay').classList.remove('show')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function copyText(val,btn){navigator.clipboard.writeText(val).then(()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1800)})}
+
+function doLogin(){
+  const email=document.getElementById('a-email').value.trim();
+  const pw=document.getElementById('a-pw').value;
+  if(!email||!pw){showMsg('auth-msg','err','Please fill in all fields');return}
+  const btn=document.querySelector('.btn-sub');btn.disabled=true;btn.textContent='Logging in...';
+  fetch(API+'/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})})
+    .then(r=>r.json()).then(d=>{
+      btn.disabled=false;btn.textContent='Login to Dashboard';
+      if(d.token){tok=d.token;localStorage.setItem('admin_tok',d.token);loadDash()}
+      else showMsg('auth-msg','err',d.error||'Login failed');
+    }).catch(e=>{btn.disabled=false;btn.textContent='Login to Dashboard';showMsg('auth-msg','err',e.message)});
+}
+function showForgot(){document.getElementById('forgot-form').style.display=document.getElementById('forgot-form').style.display==='none'?'block':'none'}
+async function sendAdminReset(){
+  const email=document.getElementById('forgot-email').value.trim();
+  if(!email){showMsg('forgot-msg','err','Enter your email');return}
+  // Try both super admin and admin reset endpoints
+  try{
+    const r=await fetch(API+'/api/superadmin/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    showMsg('forgot-msg',r.ok?'ok':'err',d.message||d.error||'Reset link sent if account exists');
+  }catch(e){showMsg('forgot-msg','err','Error: '+e.message)}
+}
+function init(){tok=localStorage.getItem('admin_tok');if(tok)loadDash()}
+function loadDash(){
+  document.getElementById('auth-section').classList.add('hidden');
+  document.getElementById('dash-section').classList.remove('hidden');
+  loadStats();loadAffiliates();
+}
+async function loadStats(){
+  try{
+    const r=await fetch(API+'/api/admin/stats',{headers:{Authorization:'Bearer '+tok}});
+    if(!r.ok){doLogout();return}
+    const s=await r.json();
+    document.getElementById('s-aff').textContent=s.affiliates.total;
+    document.getElementById('s-clicks').textContent=s.clicks.total_clicks||0;
+    document.getElementById('s-conv').textContent=s.conversions.total||0;
+    document.getElementById('s-rev').textContent='$'+(s.conversions.total_value||0).toFixed(2);
+    document.getElementById('cv-total').textContent=s.conversions.total||0;
+    document.getElementById('cv-value').textContent='$'+(s.conversions.total_value||0).toFixed(2);
+    document.getElementById('cv-comm').textContent='$'+(s.conversions.total_commission||0).toFixed(2);
+    document.getElementById('top-aff').innerHTML=s.top_affiliates.length?s.top_affiliates.map(a=>'<tr><td>'+a.name+'</td><td><span class="code-tag">'+a.affiliate_code+'</span></td><td>'+a.conversions+'</td><td style="color:var(--d);font-weight:600">$'+parseFloat(a.earnings||0).toFixed(2)+'</td></tr>').join(''):'<tr><td colspan="4" class="empty">No affiliates yet</td></tr>';
+    document.getElementById('conv-types').innerHTML=s.conversions.by_type&&s.conversions.by_type.length?s.conversions.by_type.map(t=>'<div class="ct-card"><div class="ct-name">'+t.conversion_type.replace(/_/g,' ')+'</div><div class="ct-count">'+t.count+'</div><div class="ct-value">$'+parseFloat(t.value||0).toFixed(2)+'</div></div>').join(''):'<div class="empty">No conversions yet</div>';
+  }catch{}
+}
+async function loadAffiliates(){
+  const q=(document.getElementById('aff-search')||{}).value||'';
+  try{
+    const r=await fetch(API+'/api/admin/affiliates?search='+encodeURIComponent(q),{headers:{Authorization:'Bearer '+tok}});
+    const d=await r.json();
+    document.getElementById('aff-table').innerHTML=d.affiliates.length?d.affiliates.map(a=>`<tr><td>${a.name}</td><td>${a.email}</td><td><span class="code-tag">${a.affiliate_code}</span></td><td>${a.total_clicks||0}</td><td>${a.total_conversions||0}</td><td style="color:var(--d);font-weight:600">$${parseFloat(a.total_earnings||0).toFixed(2)}</td><td><span class="badge ${a.status==='active'?'badge-g':'badge-r'}">${a.status}</span></td><td><button class="btn-tbl ${a.status==='active'?'danger':'success'}" onclick="toggleAff(${a.id},'${a.status}')">${a.status==='active'?'Disable':'Enable'}</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">No affiliates found</td></tr>';
+    const pending=d.affiliates.filter(a=>parseFloat(a.total_earnings||0)>0);
+    document.getElementById('payout-table').innerHTML=pending.length?pending.map(a=>`<tr><td>${a.name}</td><td>${a.email}</td><td>${a.payment_method||'crypto'}</td><td><span class="code-tag">${a.wallet_address||'Not set'}</span></td><td style="color:var(--d);font-weight:600">$${parseFloat(a.total_earnings||0).toFixed(2)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No pending payouts</td></tr>';
+  }catch{}
+}
+async function toggleAff(id,cur){
+  try{await fetch(API+'/api/admin/affiliates/'+id,{method:'PUT',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({status:cur==='active'?'inactive':'active'})});loadAffiliates();loadStats()}catch{}
+}
+async function loadPrograms(){
+  try{
+    const r=await fetch(API+'/api/programs',{headers:{Authorization:'Bearer '+tok}});
+    const d=await r.json();
+    document.getElementById('programs-list').innerHTML=d.programs&&d.programs.length?d.programs.map(p=>`<div class="prog-card"><div class="prog-info"><h4>${p.name} ${p.is_default?'<span class="badge badge-g">Default</span>':''}</h4><p>${p.description||'No description'}</p><div class="prog-comm">${p.commission_value}${p.commission_type==='percentage'?'%':' '+p.currency} commission &middot; ${p.cookie_duration} day cookie</div></div><div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn-tbl" onclick="editProg(${p.id})">Edit</button>${!p.is_default?'<button class="btn-tbl danger" onclick="delProg('+p.id+')">Delete</button>':''}</div></div>`).join(''):'<div class="empty">No programs yet. Create one above.</div>';
+  }catch{}
+}
+async function editProg(id){
+  try{
+    const r=await fetch(API+'/api/programs',{headers:{Authorization:'Bearer '+tok}});
+    const d=await r.json();const p=d.programs.find(x=>x.id===id);if(!p)return;
+    document.getElementById('prog-id').value=p.id;document.getElementById('prog-name').value=p.name;document.getElementById('prog-desc').value=p.description||'';document.getElementById('prog-url').value=p.landing_page_url;document.getElementById('prog-ctype').value=p.commission_type;document.getElementById('prog-cval').value=p.commission_value;document.getElementById('prog-cookie').value=p.cookie_duration;document.getElementById('prog-cur').value=p.currency;document.getElementById('prog-status').value=p.is_active?'1':'0';document.getElementById('prog-modal-title').textContent='Edit Program';openModal('prog-modal');
+  }catch{}
+}
+async function saveProgram(){
+  const id=document.getElementById('prog-id').value;
+  const body={name:document.getElementById('prog-name').value,description:document.getElementById('prog-desc').value,landing_page_url:document.getElementById('prog-url').value,commission_type:document.getElementById('prog-ctype').value,commission_value:parseFloat(document.getElementById('prog-cval').value),cookie_duration:parseInt(document.getElementById('prog-cookie').value),currency:document.getElementById('prog-cur').value,is_default:document.getElementById('prog-default').value==='yes',is_active:document.getElementById('prog-status').value==='1'};
+  if(!body.name||!body.landing_page_url){showMsg('prog-msg','err','Name and URL are required');return}
+  try{
+    const method=id?'PUT':'POST';const url=id?API+'/api/programs/'+id:API+'/api/programs';
+    const r=await fetch(url,{method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(d.program){closeModal('prog-modal');document.getElementById('prog-id').value='';document.getElementById('prog-modal-title').textContent='Create Program';loadPrograms()}
+    else showMsg('prog-msg','err',d.error||'Failed');
+  }catch(e){showMsg('prog-msg','err',e.message)}
+}
+async function delProg(id){if(!confirm('Delete this program?'))return;try{await fetch(API+'/api/programs/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+tok}});loadPrograms()}catch{}}
+async function loadDestinations(){
+  try{
+    const r=await fetch(API+'/api/admin/destinations',{headers:{Authorization:'Bearer '+tok}});
+    const d=await r.json();
+    document.getElementById('dest-table').innerHTML=d.destinations.length?d.destinations.map(x=>`<tr><td>${x.name}</td><td style="word-break:break-all;font-size:.75rem">${x.url}</td><td>${x.is_default?'<span class="badge badge-g">Default</span>':'-'}</td></tr>`).join(''):'<tr><td colspan="3" class="empty">No destinations yet</td></tr>';
+  }catch{}
+}
+async function saveDest(){
+  const name=document.getElementById('dest-name').value.trim();const url=document.getElementById('dest-url').value.trim();
+  if(!name||!url){showMsg('dest-msg','err','Name and URL required');return}
+  try{
+    const r=await fetch(API+'/api/admin/destinations',{method:'POST',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({name,url,is_default:document.getElementById('dest-default').value==='yes'})});
+    const d=await r.json();if(d.destination){closeModal('dest-modal');loadDestinations()}else showMsg('dest-msg','err',d.error||'Failed');
+  }catch(e){showMsg('dest-msg','err',e.message)}
+}
+async function downloadReport(period){
+  try{const r=await fetch(API+'/api/admin/reports/payout?period='+period,{headers:{Authorization:'Bearer '+tok}});const b=await r.blob();const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='payout-'+period+'.csv';a.click();URL.revokeObjectURL(u)}catch{alert('Failed to download report')}
+}
+function doLogout(){tok=null;localStorage.removeItem('admin_tok');document.getElementById('auth-section').classList.remove('hidden');document.getElementById('dash-section').classList.add('hidden')}
+init();
+</script>
+</body>
+</html>

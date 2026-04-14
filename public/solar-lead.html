@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ingenstat Solar — Site Feasibility Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--s1:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);--txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;--a:#7c6dfa;--b:#00d4ff;--d:#00ffa3;--e:#ffb347;--r:#ff5a5a;--ga:linear-gradient(135deg,#7c6dfa,#00d4ff);--r2:.75rem;--r3:1.1rem}
+html{overflow-x:hidden;scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100svh;-webkit-font-smoothing:antialiased;padding-bottom:3rem}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:260px;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,212,255,.09),transparent 70%);pointer-events:none;z-index:0}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;line-height:1.2}
+
+/* Header */
+.hdr{padding:1.25rem 1rem .85rem;text-align:center;position:relative;z-index:1}
+.hdr-logo{display:flex;align-items:center;justify-content:center;gap:.6rem;margin-bottom:1rem}
+.hdr-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#f97316,#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;flex-shrink:0;box-shadow:0 6px 20px rgba(249,115,22,.3)}
+.hdr-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--txt)}
+.hdr h1{font-size:1.35rem;font-weight:800;margin-bottom:.3rem;letter-spacing:-.02em}
+.hdr h1 span{background:linear-gradient(135deg,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr p{font-size:.82rem;color:var(--txt2);line-height:1.55}
+.agent-badge{display:inline-flex;align-items:center;gap:.45rem;padding:.3rem .85rem;border-radius:2rem;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);font-size:.72rem;font-weight:600;color:var(--b);margin-top:.65rem;font-family:'Poppins',sans-serif;letter-spacing:.04em}
+
+/* Progress */
+.progress-wrap{padding:.75rem 1rem;position:sticky;top:0;z-index:100;background:rgba(5,5,16,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr)}
+.progress-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#f97316,#fbbf24);border-radius:2px;transition:width .4s ease}
+.step-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem}
+.step-label{font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:600;color:var(--txt2)}
+.step-count{font-family:'Poppins',sans-serif;font-size:.7rem;color:var(--txt3)}
+
+/* Form container */
+.form-wrap{max-width:520px;margin:0 auto;padding:1.25rem 1rem}
+
+/* Step cards */
+.step-card{display:none;animation:stepIn .3s ease both}
+.step-card.active{display:block}
+@keyframes stepIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.step-title{font-family:'Poppins',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem}
+.step-title .step-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.step-sub{font-size:.8rem;color:var(--txt2);margin-bottom:1.2rem;line-height:1.55}
+
+/* Fields */
+.fg{margin-bottom:.95rem}
+label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:.32rem;font-family:'Poppins',sans-serif;letter-spacing:.03em;text-transform:uppercase}
+label .req{color:#f97316;margin-left:.18rem}
+.inp,.sel,.ta{width:100%;padding:.78rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--txt);font-size:.9rem;font-family:'DM Sans',sans-serif;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+.inp:focus,.sel:focus,.ta:focus{outline:none;border-color:rgba(249,115,22,.5);box-shadow:0 0 0 3px rgba(249,115,22,.08)}
+.inp::placeholder,.ta::placeholder{color:var(--txt3)}
+.inp.err,.sel.err{border-color:rgba(255,90,90,.5)}
+.sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888aa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.2rem}
+.sel option{background:#0e0e28;color:var(--txt)}
+.ta{resize:vertical;line-height:1.6;min-height:80px}
+.field-hint{font-size:.7rem;color:var(--txt3);margin-top:.28rem;line-height:1.5}
+
+/* Radio group */
+.radio-group{display:flex;gap:.55rem;flex-wrap:wrap}
+.radio-opt{flex:1;min-width:120px}
+.radio-opt input{display:none}
+.radio-opt label{display:flex;align-items:center;justify-content:center;padding:.7rem .5rem;border:1px solid var(--bdr2);border-radius:var(--r2);cursor:pointer;font-size:.82rem;font-weight:500;color:var(--txt2);transition:all .2s;text-align:center;text-transform:none;letter-spacing:0}
+.radio-opt input:checked + label{border-color:rgba(249,115,22,.5);background:rgba(249,115,22,.1);color:var(--e)}
+
+/* Photo upload */
+.photo-area{border:2px dashed var(--bdr2);border-radius:var(--r3);padding:1.25rem;text-align:center;cursor:pointer;transition:all .25s;background:rgba(0,0,0,.12)}
+.photo-area:hover,.photo-area.drag{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.05)}
+.photo-area p{font-size:.8rem;color:var(--txt2);margin-top:.35rem}
+.photo-area input{display:none}
+.photo-previews{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.75rem}
+.photo-thumb{aspect-ratio:1;border-radius:.5rem;overflow:hidden;position:relative;background:rgba(0,0,0,.2)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb-del{position:absolute;top:.25rem;right:.25rem;width:20px;height:20px;border-radius:50%;background:rgba(255,90,90,.8);color:#fff;font-size:.75rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;line-height:1}
+
+/* Summary card */
+.summary-card{background:rgba(0,0,0,.22);border:1px solid var(--bdr);border-radius:var(--r3);padding:1rem;margin-bottom:.75rem}
+.summary-card h4{font-family:'Poppins',sans-serif;font-size:.78rem;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.65rem}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);gap:.75rem;font-size:.8rem}
+.summary-row:last-child{border-bottom:none}
+.sum-key{color:var(--txt3);flex-shrink:0;font-size:.75rem}
+.sum-val{color:var(--txt);text-align:right;word-break:break-word}
+
+/* Navigation buttons */
+.nav-btns{display:flex;gap:.65rem;margin-top:1.4rem}
+.btn-back{flex:1;padding:.8rem;border-radius:var(--r2);font-family:'Poppins',sans-serif;font-weight:600;font-size:.88rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);color:var(--txt2);cursor:pointer;transition:all .2s}
+.btn-back:hover{background:rgba(255,255,255,.08);color:var(--txt)}
+.btn-next{flex:2;padding:.8rem;border-radius:var(--r2);font-family:'Poppins',sans-serif;font-weight:700;font-size:.88rem;background:linear-gradient(135deg,#f97316,#fbbf24);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.btn-next::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-next:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(249,115,22,.3)}
+.btn-next:disabled{opacity:.6;transform:none;cursor:not-allowed}
+
+/* Success screen */
+.success-screen{text-align:center;padding:2rem 0}
+.success-icon{width:64px;height:64px;border-radius:50%;background:rgba(0,255,163,.1);border:2px solid rgba(0,255,163,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.75rem}
+.success-screen h2{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:.4rem}
+.success-screen p{color:var(--txt2);font-size:.85rem;line-height:1.65;margin-bottom:1.1rem}
+.ref-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr);border-radius:var(--r2);padding:.85rem;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--d);margin-bottom:.75rem;word-break:break-all}
+.btn-new{width:100%;padding:.82rem;border-radius:var(--r2);font-family:'Poppins',sans-serif;font-weight:700;font-size:.9rem;background:linear-gradient(135deg,#f97316,#fbbf24);color:#fff;border:none;cursor:pointer;margin-top:.5rem}
+
+/* Error msg */
+.form-err{background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.2);border-radius:var(--r2);padding:.65rem .9rem;font-size:.78rem;color:var(--r);margin-bottom:.85rem;display:none;line-height:1.55}
+
+/* Responsive */
+@media(max-width:390px){.form-wrap{padding:1rem .85rem}.radio-group{flex-direction:column}.radio-opt{min-width:unset}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-mark">IS</div>
+    <div class="hdr-name">Ingenstat Renewables</div>
+  </div>
+  <h1>Site Feasibility<br><span>Assessment Form</span></h1>
+  <p>Complete this form for each commercial solar prospect.<br>All data is submitted securely and attributed to your agent ID.</p>
+  <div class="agent-badge" id="agent-badge">&#9679; Loading agent ID...</div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-wrap">
+  <div class="step-info">
+    <span class="step-label" id="step-label">Property Details</span>
+    <span class="step-count" id="step-count">Step 1 of 5</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+</div>
+
+<div class="form-wrap">
+  <div class="form-err" id="form-err"></div>
+
+  <!-- STEP 1: Property -->
+  <div class="step-card active" id="step-1">
+    <div class="step-title"><span class="step-ico" style="background:rgba(249,115,22,.1)">&#127968;</span>Property Details</div>
+    <p class="step-sub">Enter the full site address and ownership information for this prospect.</p>
+
+    <div class="fg">
+      <label>Site / Business Name</label>
+      <input class="inp" type="text" id="company_name" placeholder="e.g. Greenfield Warehouses Ltd">
+    </div>
+    <div class="fg">
+      <label>Full Site Address <span class="req">*</span></label>
+      <textarea class="ta" id="site_address" placeholder="Full address including postcode" rows="3"></textarea>
+    </div>
+    <div class="fg">
+      <label>Site Ownership <span class="req">*</span></label>
+      <div class="radio-group">
+        <div class="radio-opt"><input type="radio" name="ownership" id="own-freehold" value="Freehold"><label for="own-freehold">Freehold</label></div>
+        <div class="radio-opt"><input type="radio" name="ownership" id="own-leasehold" value="Leasehold"><label for="own-leasehold">Leasehold</label></div>
+        <div class="radio-opt"><input type="radio" name="ownership" id="own-unknown" value="Unknown"><label for="own-unknown">Unknown</label></div>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Lease Remaining (if leasehold)</label>
+      <input class="inp" type="text" id="lease_remaining" placeholder="e.g. 15 years">
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-next" onclick="goStep(2)">Next: Roof Details &#8594;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Roof -->
+  <div class="step-card" id="step-2">
+    <div class="step-title"><span class="step-ico" style="background:rgba(124,109,250,.1)">&#127968;</span>Roof Information</div>
+    <p class="step-sub">Roof material and condition significantly impact solar feasibility.</p>
+
+    <div class="fg">
+      <label>Roof Material / Type <span class="req">*</span></label>
+      <select class="sel" id="roof_type">
+        <option value="">Select roof type...</option>
+        <option value="Metal (Corrugated)">Metal — Corrugated</option>
+        <option value="Metal (Standing Seam)">Metal — Standing Seam</option>
+        <option value="Flat (Bitumen)">Flat — Bitumen</option>
+        <option value="Flat (EPDM Rubber)">Flat — EPDM Rubber</option>
+        <option value="Flat (GRP Fibreglass)">Flat — GRP Fibreglass</option>
+        <option value="Concrete Tile">Concrete Tile</option>
+        <option value="Clay Tile">Clay Tile</option>
+        <option value="Slate">Slate</option>
+        <option value="Asphalt Shingle">Asphalt Shingle</option>
+        <option value="Green Roof">Green / Sedum Roof</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label>Asbestos Status <span class="req">*</span></label>
+      <div class="radio-group">
+        <div class="radio-opt"><input type="radio" name="asbestos" id="asb-no" value="No asbestos"><label for="asb-no">No asbestos</label></div>
+        <div class="radio-opt"><input type="radio" name="asbestos" id="asb-yes" value="Asbestos present"><label for="asb-yes">Asbestos present</label></div>
+        <div class="radio-opt"><input type="radio" name="asbestos" id="asb-unknown" value="Unknown"><label for="asb-unknown">Not known</label></div>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Approximate Roof Age</label>
+      <select class="sel" id="roof_age">
+        <option value="">Select...</option>
+        <option value="0-5 years">0–5 years</option>
+        <option value="5-10 years">5–10 years</option>
+        <option value="10-20 years">10–20 years</option>
+        <option value="20+ years">20+ years</option>
+        <option value="Unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label>Approximate Roof Area (m²)</label>
+      <input class="inp" type="number" id="roof_area" placeholder="e.g. 500">
+    </div>
+
+    <div class="fg">
+      <label>Roof Orientation</label>
+      <select class="sel" id="roof_orientation">
+        <option value="">Select...</option>
+        <option value="South">South (ideal)</option>
+        <option value="South-East">South-East</option>
+        <option value="South-West">South-West</option>
+        <option value="East">East</option>
+        <option value="West">West</option>
+        <option value="North">North</option>
+        <option value="Flat">Flat</option>
+        <option value="Unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goStep(1)">&#8592; Back</button>
+      <button class="btn-next" onclick="goStep(3)">Next: Energy Data &#8594;</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Energy -->
+  <div class="step-card" id="step-3">
+    <div class="step-title"><span class="step-ico" style="background:rgba(0,255,163,.08)">&#9889;</span>Energy Information</div>
+    <p class="step-sub">Energy usage data is required to size the solar system and calculate savings.</p>
+
+    <div class="fg">
+      <label>MPAN Number</label>
+      <input class="inp" type="text" id="mpan_number" placeholder="21-digit electricity supply number" maxlength="25">
+      <div class="field-hint">Found on the electricity bill. 21 digits starting with S or a number. Leave blank if unavailable.</div>
+    </div>
+
+    <div class="fg">
+      <label>Annual Electricity Usage (kWh)</label>
+      <input class="inp" type="number" id="annual_kwh" placeholder="e.g. 120000">
+      <div class="field-hint">From the annual electricity statement. Approximate figure is fine.</div>
+    </div>
+
+    <div class="fg">
+      <label>Current Electricity Tariff (p/kWh)</label>
+      <input class="inp" type="number" id="tariff_pkwh" placeholder="e.g. 28.5" step="0.1">
+    </div>
+
+    <div class="fg">
+      <label>Payback Hurdle (years)</label>
+      <input class="inp" type="number" id="payback_hurdle" placeholder="e.g. 7" min="1" max="25">
+      <div class="field-hint">Maximum number of years the client is willing to wait to recoup investment.</div>
+    </div>
+
+    <div class="fg">
+      <label>Grid Connection Type</label>
+      <select class="sel" id="grid_connection">
+        <option value="">Select if known...</option>
+        <option value="Single Phase">Single Phase</option>
+        <option value="Three Phase">Three Phase</option>
+        <option value="Unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goStep(2)">&#8592; Back</button>
+      <button class="btn-next" onclick="goStep(4)">Next: Contact Details &#8594;</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Contact + Photos -->
+  <div class="step-card" id="step-4">
+    <div class="step-title"><span class="step-ico" style="background:rgba(0,212,255,.08)">&#128247;</span>Contact &amp; Evidence</div>
+    <p class="step-sub">Site contact details and photo evidence for the surveyor's review.</p>
+
+    <div class="fg">
+      <label>Decision Maker Name <span class="req">*</span></label>
+      <input class="inp" type="text" id="contact_name" placeholder="Full name of the site owner / manager">
+    </div>
+    <div class="fg">
+      <label>Contact Phone <span class="req">*</span></label>
+      <input class="inp" type="tel" id="contact_phone" placeholder="+44 7700 000000">
+    </div>
+    <div class="fg">
+      <label>Contact Email</label>
+      <input class="inp" type="email" id="contact_email" placeholder="email@company.com">
+    </div>
+    <div class="fg">
+      <label>Best Time to Call</label>
+      <select class="sel" id="best_time">
+        <option value="">Any time</option>
+        <option value="Morning (8-12)">Morning (8am–12pm)</option>
+        <option value="Afternoon (12-5)">Afternoon (12pm–5pm)</option>
+        <option value="Evening (5-7)">Evening (5pm–7pm)</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Site Photos (Roof + Electricity Meter)</label>
+      <div class="photo-area" id="photo-area" onclick="document.getElementById('photo-input').click()"
+           ondragover="event.preventDefault();this.classList.add('drag')"
+           ondragleave="this.classList.remove('drag')"
+           ondrop="handleDrop(event)">
+        <div style="font-size:2rem;opacity:.5">&#128247;</div>
+        <p>Tap to add photos of the roof and electricity meter</p>
+        <p style="font-size:.7rem;margin-top:.2rem;color:var(--txt3)">JPG, PNG up to 5MB each, max 6 photos</p>
+        <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
+      </div>
+      <div class="photo-previews" id="photo-previews"></div>
+    </div>
+    <div class="fg">
+      <label>Additional Notes</label>
+      <textarea class="ta" id="notes" placeholder="Any other relevant information about the site..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goStep(3)">&#8592; Back</button>
+      <button class="btn-next" onclick="goStep(5)">Review &amp; Submit &#8594;</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Review + Submit -->
+  <div class="step-card" id="step-5">
+    <div class="step-title"><span class="step-ico" style="background:rgba(0,255,163,.08)">&#10003;</span>Review &amp; Submit</div>
+    <p class="step-sub">Check all details before submitting. This lead will be attributed to your agent ID.</p>
+
+    <div class="summary-card">
+      <h4>Property</h4>
+      <div class="summary-row"><span class="sum-key">Business</span><span class="sum-val" id="sum-company">—</span></div>
+      <div class="summary-row"><span class="sum-key">Address</span><span class="sum-val" id="sum-address">—</span></div>
+      <div class="summary-row"><span class="sum-key">Ownership</span><span class="sum-val" id="sum-ownership">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Roof</h4>
+      <div class="summary-row"><span class="sum-key">Type</span><span class="sum-val" id="sum-roof">—</span></div>
+      <div class="summary-row"><span class="sum-key">Asbestos</span><span class="sum-val" id="sum-asbestos">—</span></div>
+      <div class="summary-row"><span class="sum-key">Orientation</span><span class="sum-val" id="sum-orientation">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Energy</h4>
+      <div class="summary-row"><span class="sum-key">MPAN</span><span class="sum-val" id="sum-mpan">—</span></div>
+      <div class="summary-row"><span class="sum-key">Annual kWh</span><span class="sum-val" id="sum-kwh">—</span></div>
+      <div class="summary-row"><span class="sum-key">Payback</span><span class="sum-val" id="sum-payback">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Contact</h4>
+      <div class="summary-row"><span class="sum-key">Name</span><span class="sum-val" id="sum-contact">—</span></div>
+      <div class="summary-row"><span class="sum-key">Phone</span><span class="sum-val" id="sum-phone">—</span></div>
+      <div class="summary-row"><span class="sum-key">Photos</span><span class="sum-val" id="sum-photos">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Attribution</h4>
+      <div class="summary-row"><span class="sum-key">Agent Code</span><span class="sum-val" id="sum-agent" style="color:var(--b);font-family:'DM Mono',monospace;font-size:.82rem">—</span></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goStep(4)">&#8592; Back</button>
+      <button class="btn-next" id="submit-btn" onclick="submitLead()">Submit Lead &#10003;</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step-card" id="step-success">
+    <div class="success-screen">
+      <div class="success-icon">&#10003;</div>
+      <h2>Lead Submitted!</h2>
+      <p>This solar prospect has been logged and attributed to your agent ID. Mo's team will review and qualify it within 48 hours.</p>
+      <div class="ref-box" id="success-ref">Reference: —</div>
+      <p style="font-size:.75rem;color:var(--txt3)">You can track this lead's status in your field agent dashboard.</p>
+      <button class="btn-new" onclick="resetForm()">&#43; Submit Another Lead</button>
+      <button style="width:100%;padding:.75rem;border-radius:var(--r2);font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);color:var(--txt2);cursor:pointer;margin-top:.6rem" onclick="window.location='/field-agent'">View My Dashboard</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var API = 'https://api.magictracker.cc';
+var currentStep = 1;
+var totalSteps = 5;
+var photoFiles = [];
+var affCode = '';
+var clickId = '';
+
+var stepLabels = ['Property Details','Roof Information','Energy Data','Contact & Evidence','Review & Submit'];
+var stepPercents = [20, 40, 60, 80, 100];
+
+// Get aff code from URL param or cookie
+function getAffCode() {
+  var p = new URLSearchParams(location.search);
+  affCode = p.get('aff') || p.get('aff_code') || getCookie('aff_code') || '';
+  clickId = p.get('clickid') || p.get('click_id') || getCookie('aff_clickid') || '';
+  var badge = document.getElementById('agent-badge');
+  if (affCode) {
+    badge.innerHTML = '&#9679; Agent: ' + affCode;
+    badge.style.borderColor = 'rgba(0,255,163,.3)';
+    badge.style.color = 'var(--d)';
+  } else {
+    badge.innerHTML = '&#9888; No agent ID found — use your personal link';
+    badge.style.borderColor = 'rgba(255,90,90,.3)';
+    badge.style.color = 'var(--r)';
+  }
+}
+function getCookie(name) {
+  var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
+
+function goStep(n) {
+  // Validate before moving forward
+  if (n > currentStep) {
+    var err = validateStep(currentStep);
+    if (err) { showErr(err); return; }
+  }
+  hideErr();
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  var card = document.getElementById('step-' + n);
+  if (card) card.classList.add('active');
+  document.getElementById('step-label').textContent = stepLabels[n-1];
+  document.getElementById('step-count').textContent = 'Step ' + n + ' of ' + totalSteps;
+  document.getElementById('progress-fill').style.width = stepPercents[n-1] + '%';
+  if (n === 5) buildSummary();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    if (!document.getElementById('site_address').value.trim()) return 'Site address is required';
+    if (!document.querySelector('input[name="ownership"]:checked')) return 'Please select site ownership type';
+  }
+  if (step === 2) {
+    if (!document.getElementById('roof_type').value) return 'Please select the roof type';
+    if (!document.querySelector('input[name="asbestos"]:checked')) return 'Please indicate asbestos status';
+  }
+  if (step === 4) {
+    if (!document.getElementById('contact_name').value.trim()) return 'Contact name is required';
+    if (!document.getElementById('contact_phone').value.trim()) return 'Contact phone number is required';
+  }
+  return null;
+}
+
+function showErr(msg) {
+  var el = document.getElementById('form-err');
+  el.textContent = msg; el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function hideErr() { document.getElementById('form-err').style.display = 'none'; }
+
+function buildSummary() {
+  var get = function(id) { return document.getElementById(id).value.trim() || '—'; };
+  var getRadio = function(name) { var r = document.querySelector('input[name="'+name+'"]:checked'); return r ? r.value : '—'; };
+  document.getElementById('sum-company').textContent = get('company_name');
+  document.getElementById('sum-address').textContent = get('site_address');
+  document.getElementById('sum-ownership').textContent = getRadio('ownership');
+  document.getElementById('sum-roof').textContent = get('roof_type');
+  document.getElementById('sum-asbestos').textContent = getRadio('asbestos');
+  document.getElementById('sum-orientation').textContent = get('roof_orientation') !== '—' ? get('roof_orientation') : 'Not specified';
+  document.getElementById('sum-mpan').textContent = get('mpan_number');
+  document.getElementById('sum-kwh').textContent = get('annual_kwh') !== '—' ? get('annual_kwh') + ' kWh' : '—';
+  document.getElementById('sum-payback').textContent = get('payback_hurdle') !== '—' ? get('payback_hurdle') + ' years' : '—';
+  document.getElementById('sum-contact').textContent = get('contact_name');
+  document.getElementById('sum-phone').textContent = get('contact_phone');
+  document.getElementById('sum-photos').textContent = photoFiles.length > 0 ? photoFiles.length + ' photo(s)' : 'None uploaded';
+  document.getElementById('sum-agent').textContent = affCode || 'NO AGENT ID';
+}
+
+function handlePhotos(e) {
+  addPhotoFiles(Array.from(e.target.files));
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('photo-area').classList.remove('drag');
+  addPhotoFiles(Array.from(e.dataTransfer.files).filter(function(f) { return f.type.startsWith('image/'); }));
+}
+function addPhotoFiles(files) {
+  files.slice(0, 6 - photoFiles.length).forEach(function(file) {
+    if (file.size > 5*1024*1024) { showErr('Photo ' + file.name + ' is too large (max 5MB)'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      photoFiles.push({ name: file.name, data: e.target.result });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPreviews() {
+  var wrap = document.getElementById('photo-previews');
+  wrap.innerHTML = photoFiles.map(function(f, i) {
+    return '<div class="photo-thumb"><img src="'+f.data+'" alt="photo"><button class="photo-thumb-del" onclick="removePhoto('+i+')">&#215;</button></div>';
+  }).join('');
+}
+function removePhoto(i) {
+  photoFiles.splice(i, 1); renderPreviews();
+}
+
+async function submitLead() {
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  var get = function(id) { return document.getElementById(id).value.trim(); };
+  var getRadio = function(name) { var r = document.querySelector('input[name="'+name+'"]:checked'); return r ? r.value : ''; };
+
+  var body = {
+    aff_code: affCode,
+    clickid: clickId,
+    site_address: get('site_address'),
+    site_ownership: getRadio('ownership'),
+    roof_type: get('roof_type'),
+    asbestos_status: getRadio('asbestos'),
+    mpan_number: get('mpan_number'),
+    annual_kwh: parseFloat(get('annual_kwh')) || 0,
+    payback_hurdle: parseFloat(get('payback_hurdle')) || 0,
+    contact_name: get('contact_name'),
+    contact_phone: get('contact_phone'),
+    contact_email: get('contact_email'),
+    company_name: get('company_name'),
+    notes: get('notes'),
+    // Extra fields stored in metadata
+    metadata: {
+      roof_age: get('roof_age'),
+      roof_area: get('roof_area'),
+      roof_orientation: get('roof_orientation'),
+      tariff_pkwh: get('tariff_pkwh'),
+      grid_connection: get('grid_connection'),
+      best_time: get('best_time'),
+      lease_remaining: get('lease_remaining'),
+      photos_count: photoFiles.length,
+      photos: photoFiles.map(function(f) { return f.data; })
+    }
+  };
+
+  try {
+    var r = await fetch(API + '/api/affiliates/solar-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await r.json();
+
+    if (d.success) {
+      // Fire S2S postback pixel
+      var pixelUrl = API + '/api/track/postback?clickid=' + encodeURIComponent(clickId || '') +
+        '&event=solar_lead&status=pending&aff_code=' + encodeURIComponent(affCode);
+      new Image().src = pixelUrl;
+
+      document.getElementById('step-5').classList.remove('active');
+      document.getElementById('step-success').classList.add('active');
+      document.getElementById('success-ref').textContent = 'Reference: MWT-SOLAR-' + d.conversion_id + ' | Agent: ' + affCode;
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('step-label').textContent = 'Submitted';
+      document.getElementById('step-count').textContent = 'Complete';
+      window.scrollTo({top:0, behavior:'smooth'});
+    } else {
+      showErr(d.error || 'Submission failed. Please check your agent code and try again.');
+      btn.disabled = false; btn.textContent = 'Submit Lead ✓';
+    }
+  } catch (e) {
+    showErr('Network error: ' + e.message + '. Please check your connection and try again.');
+    btn.disabled = false; btn.textContent = 'Submit Lead ✓';
+  }
+}
+
+function resetForm() {
+  document.getElementById('step-success').classList.remove('active');
+  document.querySelectorAll('.inp,.ta').forEach(function(el){ el.value=''; });
+  document.querySelectorAll('.sel').forEach(function(el){ el.selectedIndex=0; });
+  document.querySelectorAll('input[type=radio]').forEach(function(el){ el.checked=false; });
+  photoFiles = [];
+  document.getElementById('photo-previews').innerHTML = '';
+  currentStep = 1;
+  goStep(1);
+}
+
+getAffCode();
+</script>
+</body>
+</html>

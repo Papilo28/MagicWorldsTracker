@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Campaign Dashboard - Magic Worlds Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--bg2:#07071a;--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);--txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;--a:#7c6dfa;--b:#00d4ff;--c:#ff6ef7;--d:#00ffa3;--e:#ffb347;--ga:linear-gradient(135deg,#7c6dfa,#00d4ff);--gb:linear-gradient(135deg,#7c6dfa,#ff6ef7);--glow-a:rgba(124,109,250,.2);--r:.75rem;--r2:1.1rem;--r3:1.4rem}
+html{overflow-x:hidden}
+body{font-family:DM Sans,sans-serif;background:var(--bg);color:var(--txt);min-height:100svh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:inherit;border:none;background:none}
+h1,h2,h3,h4{font-family:Poppins,sans-serif;line-height:1.2}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a);border-radius:4px}
+.hidden{display:none!important}
+
+/* ── Auth wrapper ── */
+.auth-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(124,109,250,.1),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 80%,rgba(0,212,255,.07),transparent 60%);overflow-y:auto}
+.auth-box{background:linear-gradient(135deg,rgba(13,13,38,.97),rgba(8,8,25,.97));border:1px solid var(--bdr2);border-radius:var(--r3);padding:2rem 1.75rem;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.auth-logo{display:flex;align-items:center;gap:.6rem;justify-content:center;margin-bottom:1.5rem}
+.logo-mark{width:34px;height:34px;border-radius:8px;background:var(--ga);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.logo-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent)}
+.logo-text{font-family:Poppins,sans-serif;font-weight:700;font-size:.9rem}
+.logo-acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-title{font-family:Poppins,sans-serif;font-size:1.35rem;font-weight:700;text-align:center;margin-bottom:.3rem}
+.auth-sub{text-align:center;color:var(--txt2);font-size:.82rem;margin-bottom:1.4rem;line-height:1.6}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;background:rgba(0,0,0,.25);border-radius:var(--r2);padding:.22rem;margin-bottom:1.25rem}
+.tab-btn{padding:.58rem;background:transparent;border:none;border-radius:var(--r);color:var(--txt2);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .22s;font-family:Poppins,sans-serif}
+.tab-btn.on{background:var(--ga);color:#fff}
+.fg{margin-bottom:.78rem}
+label{display:block;font-size:.75rem;font-weight:600;color:var(--txt2);margin-bottom:.34rem;font-family:Poppins,sans-serif;letter-spacing:.03em}
+.inp{width:100%;padding:.75rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.875rem;font-family:DM Sans,sans-serif;transition:border-color .2s}
+.inp:focus{outline:none;border-color:rgba(124,109,250,.5)}
+.inp::placeholder{color:var(--txt3)}
+select.inp option{background:#0e0e28;color:var(--txt)}
+.btn-sub{width:100%;padding:.8rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:600;font-size:.9rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;margin-top:.2rem}
+.btn-sub::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-sub:hover{transform:translateY(-1px);box-shadow:0 10px 30px var(--glow-a)}
+.btn-sub:disabled{opacity:.6;transform:none;cursor:not-allowed}
+.btn-sub.green-grad{background:linear-gradient(135deg,#00d4ff,#00ffa3)}
+.forgot-lnk{text-align:right;font-size:.73rem;margin-top:.28rem}
+.forgot-lnk a{color:var(--a)}
+.msg{padding:.58rem .95rem;border-radius:var(--r);font-size:.78rem;margin-top:.7rem;text-align:center;display:none}
+.msg.ok{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.18);color:var(--d)}
+.msg.err{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.18);color:#ff7070}
+/* signup steps */
+.step{display:none}.step.on{display:block}
+.step-indicator{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1.25rem}
+.step-dot{width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;font-weight:700;font-size:.72rem;color:var(--txt3);transition:all .3s}
+.step-dot.active{background:var(--ga);color:#fff;border-color:transparent}
+.step-dot.done{background:rgba(0,255,163,.15);border-color:rgba(0,255,163,.3);color:var(--d)}
+.step-line{flex:1;height:1px;background:var(--bdr2);max-width:40px}
+.step-line.done{background:rgba(0,255,163,.3)}
+.trial-note{padding:.75rem;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);border-radius:var(--r);font-size:.78rem;color:var(--b);line-height:1.6;margin-bottom:.85rem;text-align:center}
+.plan-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.85rem}
+.plan-chip{padding:.6rem .4rem;border-radius:var(--r);border:1px solid var(--bdr2);background:var(--s1);text-align:center;cursor:pointer;transition:all .2s}
+.plan-chip .pname{font-family:Poppins,sans-serif;font-size:.72rem;font-weight:600;color:var(--txt2)}
+.plan-chip .pprice{font-family:Poppins,sans-serif;font-size:1rem;font-weight:700;color:var(--txt)}
+.plan-chip .pper{font-size:.62rem;color:var(--txt3)}
+.plan-chip.on{border-color:rgba(124,109,250,.5);background:rgba(124,109,250,.1)}
+.plan-chip.on .pname{color:var(--a)}
+.plan-chip.on .pprice{color:var(--a)}
+.success-icon{width:52px;height:52px;border-radius:50%;background:rgba(0,255,163,.12);border:2px solid rgba(0,255,163,.25);display:flex;align-items:center;justify-content:center;margin:0 auto .9rem;font-family:Poppins,sans-serif;font-weight:800;font-size:1.4rem;color:var(--d)}
+
+/* ── Dashboard Layout ── */
+.dash{display:flex;min-height:100vh}
+.sidebar{width:248px;background:rgba(0,0,0,.38);border-right:1px solid var(--bdr);position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:200;display:flex;flex-direction:column;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-head{padding:1rem;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--txt)}
+.sb-logo .logo-text{font-size:.85rem}
+.sb-meta{margin-top:.65rem;padding:.55rem .7rem;background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.15);border-radius:var(--r)}
+.sb-meta-name{font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;color:var(--txt);margin-bottom:.12rem}
+.sb-meta-sub{color:var(--txt3);font-size:.65rem;font-family:JetBrains Mono,monospace}
+.sb-trial{margin-top:.4rem;font-size:.65rem;display:none}
+.sb-nav{padding:.5rem 0;flex:1}
+.sb-sec{margin-bottom:.8rem}
+.sb-sec-title{padding:.3rem 1rem;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-family:Poppins,sans-serif}
+.sb-link{display:flex;align-items:center;gap:.52rem;padding:.52rem 1rem;color:var(--txt2);font-size:.8rem;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all .18s;user-select:none}
+.sb-link:hover{background:rgba(124,109,250,.07);color:var(--txt)}
+.sb-link.on{background:rgba(124,109,250,.1);color:var(--a);border-left-color:var(--a)}
+.sb-ico{font-family:Poppins,sans-serif;font-weight:700;font-size:.62rem;width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
+.sb-foot{padding:.9rem;border-top:1px solid var(--bdr);flex-shrink:0}
+.btn-logout{width:100%;padding:.6rem;background:rgba(255,100,100,.07);border:1px solid rgba(255,100,100,.18);border-radius:var(--r);color:#ff7070;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:Poppins,sans-serif}
+.btn-logout:hover{background:rgba(255,100,100,.14)}
+.main{flex:1;margin-left:248px;padding:1.85rem;min-height:100vh;overflow-x:hidden;max-width:100%}
+.mob-bar{display:none;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:rgba(0,0,0,.88);border-bottom:1px solid var(--bdr);margin:-1.85rem -1.85rem 1.5rem -1.85rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);height:52px}
+.mob-logo{font-family:Poppins,sans-serif;font-weight:700;font-size:.88rem}
+.btn-ham{background:transparent;border:1px solid var(--bdr2);color:var(--txt);padding:.4rem .62rem;border-radius:var(--r);font-size:1rem;line-height:1}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:199}
+.sb-overlay.show{display:block}
+.page{display:none}.page.on{display:block}
+.page-head{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.page-head-left h1{font-family:Poppins,sans-serif;font-size:1.4rem;font-weight:700}
+.page-head-left h1 .acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-sub{color:var(--txt2);font-size:.8rem;margin-top:.25rem}
+
+/* ── Trial banner ── */
+.trial-banner{padding:.75rem 1.1rem;border-radius:var(--r);margin-bottom:1.35rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
+.trial-banner.active{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.18)}
+.trial-banner.warn{background:rgba(255,179,71,.07);border:1px solid rgba(255,179,71,.22)}
+.trial-banner.expired{background:rgba(255,100,100,.07);border:1px solid rgba(255,100,100,.2)}
+.trial-txt strong{font-family:Poppins,sans-serif;font-size:.85rem;display:block;margin-bottom:.15rem}
+.trial-txt span{font-size:.78rem;color:var(--txt2)}
+.trial-days-num{font-family:Poppins,sans-serif;font-weight:800;font-size:1.75rem;line-height:1;color:var(--b)}
+.trial-days-num.warn{color:var(--e)}.trial-days-num.expired{color:#ff7070}
+.trial-right{display:flex;align-items:center;gap:.85rem;flex-shrink:0}
+.btn-upgrade{padding:.48rem 1rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:600;font-size:.78rem;background:var(--ga);color:#fff;border:none;cursor:pointer;white-space:nowrap;position:relative;overflow:hidden}
+.btn-upgrade::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}
+
+/* ── Stats ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.85rem;margin-bottom:1.35rem}
+.stat{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1rem;transition:all .22s}
+.stat:hover{border-color:rgba(124,109,250,.28);transform:translateY(-2px)}
+.stat-lbl{font-size:.65rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;font-family:Poppins,sans-serif}
+.stat-val{font-family:Poppins,sans-serif;font-weight:700;font-size:1.65rem;line-height:1}
+.ca{color:var(--a)}.cb{color:var(--b)}.cd{color:var(--d)}.ce{color:var(--e)}.cr{color:#ff7070}
+.stat-chg{font-size:.65rem;color:var(--d);margin-top:.15rem}
+
+/* ── Cards ── */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:1.25rem;overflow:hidden}
+.card-head{padding:.88rem 1.2rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.card-head h3{font-family:Poppins,sans-serif;font-size:.88rem;font-weight:600}
+.card-body{padding:1.2rem}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:440px}
+th{text-align:left;padding:.65rem .9rem;background:rgba(0,0,0,.22);color:var(--txt3);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:Poppins,sans-serif;white-space:nowrap}
+td{padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--txt2);font-size:.8rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,109,250,.03)}
+.empty{text-align:center;padding:1.75rem;color:var(--txt3);font-size:.82rem}
+.badge{display:inline-block;padding:.16rem .55rem;border-radius:.3rem;font-size:.65rem;font-weight:600;font-family:Poppins,sans-serif}
+.badge-g{background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d)}
+.badge-b{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--b)}
+.badge-r{background:rgba(255,100,100,.1);border:1px solid rgba(255,100,100,.2);color:#ff7070}
+.badge-o{background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.2);color:var(--e)}
+.badge-a{background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.2);color:var(--a)}
+.code-tag{font-family:JetBrains Mono,monospace;background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.18);padding:.14rem .38rem;border-radius:.28rem;font-size:.72rem;color:var(--a)}
+
+/* ── Buttons ── */
+.btn-row{display:flex;gap:.6rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-act{padding:.55rem 1.1rem;border-radius:var(--r);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .22s;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:.38rem;border:none;white-space:nowrap}
+.btn-a{background:rgba(124,109,250,.14);color:var(--a);border:1px solid rgba(124,109,250,.24)}.btn-a:hover{background:rgba(124,109,250,.24)}
+.btn-g{background:rgba(0,255,163,.1);color:var(--d);border:1px solid rgba(0,255,163,.2)}.btn-g:hover{background:rgba(0,255,163,.2)}
+.btn-b{background:rgba(0,212,255,.1);color:var(--b);border:1px solid rgba(0,212,255,.2)}.btn-b:hover{background:rgba(0,212,255,.2)}
+.btn-r{background:rgba(255,100,100,.08);color:#ff7070;border:1px solid rgba(255,100,100,.16)}.btn-r:hover{background:rgba(255,100,100,.16)}
+.btn-grad{background:var(--ga);color:#fff;border:none;position:relative;overflow:hidden}.btn-grad::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}.btn-grad:hover{box-shadow:0 6px 22px var(--glow-a)}
+.btn-tbl{background:transparent;border:1px solid var(--bdr2);color:var(--txt2);padding:.28rem .55rem;border-radius:.32rem;font-size:.7rem;cursor:pointer;transition:all .18s;font-family:inherit;margin-right:.25rem}
+.btn-tbl:hover{background:var(--s2);color:var(--txt)}
+.btn-tbl.danger{border-color:rgba(255,100,100,.2);color:#ff7070}.btn-tbl.danger:hover{background:rgba(255,100,100,.08)}
+.btn-tbl.success{border-color:rgba(0,255,163,.2);color:var(--d)}.btn-tbl.success:hover{background:rgba(0,255,163,.08)}
+.btn-save{padding:.6rem 1.25rem;background:var(--a);border:none;border-radius:var(--r);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:Poppins,sans-serif;margin-top:.7rem}
+.btn-save:hover{background:#6a5ce8;box-shadow:0 6px 20px var(--glow-a)}
+.search{padding:.55rem .9rem;background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.8rem;font-family:inherit;min-width:160px;max-width:100%;transition:border-color .2s}
+.search:focus{outline:none;border-color:rgba(124,109,250,.4)}
+.search::placeholder{color:var(--txt3)}
+
+/* ── Modal ── */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:500;padding:1rem;backdrop-filter:blur(7px);opacity:0;pointer-events:none;transition:opacity .22s}
+.modal.open{opacity:1;pointer-events:all}
+.modal-box{background:linear-gradient(135deg,#0e0e28,#090921);border:1px solid var(--bdr2);border-radius:var(--r3);padding:1.75rem;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;transform:translateY(14px);transition:transform .22s;scrollbar-width:thin;scrollbar-color:var(--a) transparent}
+.modal.open .modal-box{transform:none}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.modal-head h3{font-family:Poppins,sans-serif;font-size:1.05rem;font-weight:600}
+.modal-x{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--txt2);cursor:pointer;font-size:1rem;transition:all .18s}
+.modal-x:hover{color:var(--txt)}
+
+/* ── Link box ── */
+.link-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);padding:.88rem;margin-bottom:.8rem}
+.link-box label{font-size:.7rem;color:var(--txt3);display:block;margin-bottom:.38rem}
+.link-row{display:flex;gap:.38rem}
+.link-inp{flex:1;padding:.62rem .85rem;background:rgba(0,0,0,.28);border:1px solid var(--bdr);border-radius:var(--r);color:var(--a);font-family:JetBrains Mono,monospace;font-size:.74rem;min-width:0}
+.btn-copy{padding:.62rem .85rem;background:rgba(124,109,250,.14);border:1px solid rgba(124,109,250,.24);border-radius:var(--r);color:var(--a);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:Poppins,sans-serif;white-space:nowrap}
+.btn-copy:hover{background:rgba(124,109,250,.24)}
+
+/* ── Program card ── */
+.prog-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.85rem;flex-wrap:wrap;transition:border-color .22s}
+.prog-card:hover{border-color:rgba(124,109,250,.28)}
+.prog-info h4{font-family:Poppins,sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.22rem}
+.prog-info p{color:var(--txt2);font-size:.76rem;margin:0}
+.prog-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
+.prog-comm{color:var(--d);font-size:.72rem;font-weight:600;font-family:Poppins,sans-serif}
+
+/* ── Settings ── */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1rem}
+.settings-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.2rem}
+.settings-card h4{font-family:Poppins,sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.9rem}
+.key-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);padding:.9rem;margin-bottom:.8rem}
+.key-box h4{font-size:.82rem;font-weight:600;margin-bottom:.55rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem;font-family:Poppins,sans-serif}
+.key-val{font-family:JetBrains Mono,monospace;background:rgba(0,0,0,.28);padding:.5rem .72rem;border-radius:.35rem;font-size:.72rem;color:var(--a);word-break:break-all}
+.cred-box{background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);padding:.95rem;margin-bottom:.8rem}
+.cred-row{display:flex;gap:.38rem;margin-top:.38rem}
+.cred-inp{flex:1;padding:.6rem .85rem;background:rgba(0,0,0,.28);border:1px solid var(--bdr);border-radius:var(--r);color:var(--a);font-family:JetBrains Mono,monospace;font-size:.72rem;min-width:0}
+.warn-box{background:rgba(255,179,71,.07);border:1px solid rgba(255,179,71,.18);border-radius:var(--r);padding:.78rem;font-size:.78rem;color:var(--e);margin:.7rem 0;line-height:1.6}
+
+/* ── Affiliate signup link ── */
+.signup-url-box{background:rgba(0,255,163,.05);border:1px solid rgba(0,255,163,.18);border-radius:var(--r2);padding:1.1rem;margin-bottom:1.25rem}
+.signup-url-box label{font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--d);display:block;margin-bottom:.5rem}
+.signup-url-box p{font-size:.78rem;color:var(--txt2);margin-bottom:.65rem;line-height:1.6}
+
+/* ── Conversion chart mini ── */
+.conv-type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.75rem}
+.ct-card{background:rgba(0,0,0,.18);border:1px solid var(--bdr);border-radius:var(--r);padding:.78rem;text-align:center;transition:border-color .22s}
+.ct-card:hover{border-color:rgba(124,109,250,.28)}
+.ct-name{font-size:.63rem;color:var(--txt3);text-transform:capitalize;margin-bottom:.28rem;letter-spacing:.02em}
+.ct-count{font-family:Poppins,sans-serif;font-weight:700;font-size:1.2rem;color:var(--a)}
+.ct-val{font-size:.63rem;color:var(--d);margin-top:.15rem}
+
+/* ── Code snippet ── */
+.code-snippet{background:rgba(0,0,0,.28);border:1px solid var(--bdr);border-radius:var(--r);padding:.9rem 1rem;font-family:JetBrains Mono,monospace;font-size:.74rem;color:var(--txt2);line-height:1.7;overflow-x:auto;white-space:pre;margin:.5rem 0}
+
+
+
+
+/* ── Branded toast ── */
+.toast-bar{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(6px);z-index:1000;display:none;align-items:center;gap:.65rem;padding:.75rem 1.2rem;border-radius:.75rem;font-size:.82rem;font-family:Poppins,sans-serif;font-weight:500;max-width:min(420px,90vw);box-shadow:0 16px 48px rgba(0,0,0,.5);backdrop-filter:blur(16px);opacity:0;transition:opacity .28s,transform .28s}
+.toast-bar.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-bar.ok{background:rgba(0,255,163,.12);border:1px solid rgba(0,255,163,.28);color:var(--d)}
+.toast-bar.err{background:rgba(255,90,90,.12);border:1px solid rgba(255,90,90,.28);color:#ff7070}
+.toast-bar.warn{background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.28);color:var(--e)}
+.toast-bar.info{background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.28);color:var(--a)}
+.toast-icon{font-size:1rem;flex-shrink:0}
+.toast-msg{flex:1}
+.toast-close{background:none;border:none;cursor:pointer;color:inherit;opacity:.6;font-size:1rem;padding:.1rem .2rem;line-height:1;transition:opacity .18s}
+.toast-close:hover{opacity:1}
+/* ── Branded confirm modal ── */
+.confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:700;padding:1rem;backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s}
+.confirm-modal.open{opacity:1;pointer-events:all}
+.confirm-box{background:linear-gradient(160deg,#0d0d28,#080820);border:1px solid rgba(124,109,250,.25);border-radius:1.2rem;padding:1.75rem;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.confirm-box h4{font-family:Poppins,sans-serif;font-weight:600;font-size:.95rem;margin-bottom:.65rem}
+.confirm-box p{font-size:.82rem;color:var(--txt2);line-height:1.65;margin-bottom:1.25rem}
+.confirm-btns{display:flex;gap:.65rem}
+.confirm-btn-yes{flex:1;padding:.65rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .2s}
+.confirm-btn-yes::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}
+.confirm-btn-yes:hover{box-shadow:0 6px 20px var(--glow-a)}
+.confirm-btn-no{flex:1;padding:.65rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:500;font-size:.82rem;background:rgba(255,255,255,.04);color:var(--txt2);border:1px solid var(--bdr2);cursor:pointer;transition:all .18s}
+.confirm-btn-no:hover{background:rgba(255,255,255,.08);color:var(--txt)}
+
+/* ── Payment modal ── */
+.pay-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:600;padding:1rem;backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s}
+.pay-modal.open{opacity:1;pointer-events:all}
+.pay-box{background:linear-gradient(160deg,#0d0d28 0%,#080820 100%);border:1px solid rgba(124,109,250,.3);border-radius:var(--r3);padding:2rem;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 1px rgba(124,109,250,.08);position:relative;overflow:hidden}
+.pay-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ga)}
+.pay-box-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.pay-box-head h3{font-family:Poppins,sans-serif;font-weight:700;font-size:1.1rem}
+.pay-box-head p{font-size:.78rem;color:var(--txt2);margin-top:.2rem}
+.pay-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:var(--txt2);cursor:pointer;font-size:1rem;transition:all .18s;flex-shrink:0}
+.pay-close:hover{background:rgba(255,255,255,.12);color:var(--txt)}
+.pay-plan-summary{background:rgba(124,109,250,.08);border:1px solid rgba(124,109,250,.18);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
+.pay-plan-name{font-family:Poppins,sans-serif;font-weight:600;font-size:.88rem}
+.pay-plan-name small{display:block;font-size:.7rem;color:var(--txt2);font-weight:400;margin-top:.12rem}
+.pay-amount{font-family:Poppins,sans-serif;font-weight:800;font-size:1.65rem;color:var(--a)}
+.pay-amount span{font-size:.8rem;font-weight:500;color:var(--txt3)}
+.pay-field-group{margin-bottom:.85rem}
+.pay-field-group label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:.32rem;font-family:Poppins,sans-serif;letter-spacing:.03em}
+.pay-inp{width:100%;padding:.72rem .95rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);color:var(--txt);font-size:.875rem;font-family:DM Sans,sans-serif;transition:border-color .2s}
+.pay-inp:focus{outline:none;border-color:rgba(124,109,250,.5);background:rgba(124,109,250,.04)}
+.pay-inp::placeholder{color:var(--txt3)}
+.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.85rem}
+.pay-security{display:flex;align-items:center;gap:.5rem;padding:.65rem .85rem;background:rgba(0,255,163,.05);border:1px solid rgba(0,255,163,.12);border-radius:var(--r);font-size:.72rem;color:var(--txt3);margin-bottom:1rem}
+.pay-security-dot{width:6px;height:6px;border-radius:50%;background:var(--d);flex-shrink:0}
+.pay-btn{width:100%;padding:.88rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:700;font-size:.95rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.pay-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16),transparent)}
+.pay-btn:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(124,109,250,.3)}
+.pay-btn:disabled{opacity:.6;transform:none;cursor:not-allowed}
+.pay-msg{padding:.6rem .9rem;border-radius:var(--r);font-size:.78rem;margin-top:.75rem;text-align:center;display:none}
+.pay-msg.ok{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.18);color:var(--d)}
+.pay-msg.err{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.18);color:#ff7070}
+.pay-success-screen{text-align:center;padding:.5rem 0;display:none}
+.pay-success-icon{width:56px;height:56px;border-radius:50%;background:rgba(0,255,163,.12);border:2px solid rgba(0,255,163,.25);display:flex;align-items:center;justify-content:center;margin:0 auto .85rem;font-size:1.6rem;color:var(--d)}
+@media(max-width:480px){.pay-box{padding:1.5rem 1rem}.pay-row{grid-template-columns:1fr}}
+
+/* ── Upgrade nudge banner ── */
+.upgrade-nudge{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.85rem 1.1rem;border-radius:var(--r);margin-bottom:1.1rem;flex-wrap:wrap}
+.upgrade-nudge.purple{background:rgba(124,109,250,.07);border:1px solid rgba(124,109,250,.2)}
+.upgrade-nudge.gold{background:rgba(255,179,71,.07);border:1px solid rgba(255,179,71,.2)}
+.upgrade-nudge.teal{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15)}
+.upgrade-nudge p{font-size:.8rem;color:var(--txt2);line-height:1.5;flex:1}
+.upgrade-nudge strong{font-family:Poppins,sans-serif;color:var(--txt);display:block;margin-bottom:.18rem;font-size:.85rem}
+.btn-nudge{padding:.42rem .9rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:600;font-size:.75rem;white-space:nowrap;cursor:pointer;border:none;transition:all .2s}
+.btn-nudge.purple{background:rgba(124,109,250,.18);color:var(--a);border:1px solid rgba(124,109,250,.3)}.btn-nudge.purple:hover{background:rgba(124,109,250,.28)}
+.btn-nudge.gold{background:rgba(255,179,71,.15);color:var(--e);border:1px solid rgba(255,179,71,.25)}.btn-nudge.gold:hover{background:rgba(255,179,71,.25)}
+.btn-nudge.grad{background:var(--ga);color:#fff;position:relative;overflow:hidden}.btn-nudge.grad::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}.btn-nudge.grad:hover{box-shadow:0 4px 16px var(--glow-a)}
+/* ── Plan cards ── */
+.plan-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.35rem}
+.plan-card{padding:1.4rem 1.1rem;border-radius:var(--r2);border:1px solid var(--bdr);background:var(--s1);position:relative;transition:all .25s;cursor:pointer}
+.plan-card:hover{border-color:rgba(124,109,250,.35);transform:translateY(-2px)}
+.plan-card.current{border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.05)}
+.plan-card.featured{border-color:rgba(124,109,250,.45);background:rgba(124,109,250,.07)}
+.plan-card-badge{position:absolute;top:.75rem;right:.75rem;padding:.15rem .55rem;border-radius:.3rem;font-size:.62rem;font-weight:700;font-family:Poppins,sans-serif}
+.plan-name{font-family:Poppins,sans-serif;font-weight:700;font-size:.8rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.plan-price{font-family:Poppins,sans-serif;font-weight:800;font-size:2.25rem;line-height:1;margin-bottom:.2rem}
+.plan-price sup{font-size:1rem;vertical-align:top;margin-top:.3rem;display:inline-block}
+.plan-period{font-size:.72rem;color:var(--txt3);margin-bottom:.85rem}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.plan-features li{font-size:.78rem;color:var(--txt2);display:flex;align-items:flex-start;gap:.4rem}
+.plan-features li::before{content:"";width:12px;height:12px;border-radius:50%;background:rgba(0,255,163,.12);border:1px solid rgba(0,255,163,.25);flex-shrink:0;margin-top:.12rem}
+.btn-plan{width:100%;padding:.65rem;border-radius:var(--r);font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;border:none;cursor:pointer;transition:all .22s}
+.btn-plan.outline{background:transparent;border:1px solid var(--bdr2);color:var(--txt)}.btn-plan.outline:hover{background:var(--s2);border-color:rgba(124,109,250,.35)}
+.btn-plan.solid{background:var(--ga);color:#fff;position:relative;overflow:hidden}.btn-plan.solid::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}.btn-plan.solid:hover{box-shadow:0 6px 22px var(--glow-a)}
+.btn-plan.current-plan{background:rgba(0,212,255,.1);color:var(--b);border:1px solid rgba(0,212,255,.25)}
+/* ── Asset upload ── */
+.asset-upload-area{border:2px dashed var(--bdr2);border-radius:var(--r2);padding:2rem;text-align:center;cursor:pointer;transition:all .25s;background:rgba(0,0,0,.12)}
+.asset-upload-area:hover,.asset-upload-area.drag{border-color:rgba(124,109,250,.4);background:rgba(124,109,250,.05)}
+.asset-upload-area h4{font-family:Poppins,sans-serif;font-size:.9rem;font-weight:600;margin-bottom:.4rem}
+.asset-upload-area p{font-size:.78rem;color:var(--txt2);line-height:1.6}
+.asset-upload-icon{font-size:2.25rem;margin-bottom:.65rem;opacity:.6}
+.upload-types{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem}
+.upload-type-tag{padding:.22rem .65rem;border-radius:.3rem;font-size:.68rem;font-weight:600;font-family:Poppins,sans-serif;background:var(--s2);border:1px solid var(--bdr2);color:var(--txt2)}
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.9rem;margin-top:1.25rem}
+.asset-item{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);overflow:hidden;transition:all .22s;position:relative}
+.asset-item:hover{border-color:rgba(124,109,250,.28);transform:translateY(-2px)}
+.asset-preview{height:110px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);font-size:2.5rem;position:relative;overflow:hidden}
+.asset-preview img{width:100%;height:100%;object-fit:cover}
+.asset-preview-pdf{display:flex;flex-direction:column;align-items:center;gap:.35rem}
+.asset-preview-pdf span{font-size:2rem}
+.asset-preview-pdf small{font-size:.62rem;color:var(--txt3);font-family:JetBrains Mono,monospace}
+.asset-info{padding:.75rem}
+.asset-name{font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset-type-badge{display:inline-block;padding:.12rem .45rem;border-radius:.25rem;font-size:.6rem;font-weight:600;font-family:Poppins,sans-serif;text-transform:uppercase}
+.asset-actions{display:flex;gap:.35rem;margin-top:.55rem}
+.btn-asset{flex:1;padding:.38rem .5rem;border-radius:.35rem;font-size:.68rem;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;transition:all .18s;text-align:center}
+.btn-asset.copy{background:rgba(124,109,250,.12);border:1px solid rgba(124,109,250,.22);color:var(--a)}.btn-asset.copy:hover{background:rgba(124,109,250,.22)}
+.btn-asset.del{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.18);color:#ff7070}.btn-asset.del:hover{background:rgba(255,100,100,.16)}
+@media(max-width:640px){.plan-cards{grid-template-columns:1fr}.asset-grid{grid-template-columns:1fr 1fr}}
+
+/* ── Responsive ── */
+@media(max-width:1023px){.sidebar{transform:translateX(-100%);transition:transform .3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.mob-bar{display:flex}}
+@media(max-width:640px){
+  .auth-box{padding:1.5rem 1rem}.main{padding:1rem}
+  .mob-bar{margin:-1rem -1rem 1rem -1rem;padding:.75rem 1rem}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .btn-row{flex-direction:column}.btn-act{width:100%;justify-content:center}
+  .settings-grid{grid-template-columns:1fr}
+  .page-head{flex-direction:column}
+  .trial-banner{flex-direction:column;gap:.75rem}
+  .plan-chips{grid-template-columns:1fr}
+}
+@media(max-width:390px){.auth-box{padding:1.25rem .85rem}.main{padding:.85rem}.mob-bar{margin:-.85rem -.85rem .85rem -.85rem}.stats-row{grid-template-columns:1fr 1fr;gap:.6rem}.stat{padding:.75rem}.stat-val{font-size:1.3rem}}
+</style>
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+</head>
+<body>
+
+<!-- ── AUTH SECTION ──────────────────────────────────────────────────────── -->
+<div id="auth-section" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="white" opacity=".95"/><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity=".7"/><circle cx="10" cy="3" r="1.8" fill="white" opacity=".9"/><circle cx="17" cy="10" r="1.8" fill="white" opacity=".9"/><circle cx="3" cy="10" r="1.8" fill="white" opacity=".9"/></svg></div>
+      <div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span> TRACKER</div>
+    </div>
+    <h1 class="auth-title" id="auth-title">Campaign Dashboard</h1>
+    <p class="auth-sub" id="auth-sub">Login to manage your affiliate campaigns</p>
+    <div class="auth-tabs">
+      <button class="tab-btn on" id="tab-li" onclick="swTab('login')">Login</button>
+      <button class="tab-btn" id="tab-su" onclick="swTab('signup')">Create Campaign</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login" style="display:block">
+      <div class="fg"><label>Email</label><input class="inp" type="email" id="li-email" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label>Password</label><input class="inp" type="password" id="li-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="forgot-lnk"><a href="/reset-password">Forgot password?</a></div>
+      <button class="btn-sub" onclick="doLogin()">Login to Dashboard</button>
+      <div id="li-msg" class="msg" style="display:none"></div>
+    </div>
+
+    <!-- SIGNUP — 2 steps, no payment -->
+    <div id="form-signup" style="display:none">
+      <div id="su-plan-info" class="hidden" style="padding:.65rem;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15);border-radius:var(--r);margin-bottom:.85rem;font-size:.78rem;color:var(--b);text-align:center"></div>
+
+      <!-- Step indicators -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-line" id="line2"></div>
+        <div class="step-dot" id="dot3">&#10003;</div>
+      </div>
+
+      <!-- Step 1: Account Details -->
+      <div class="step on" id="su-s1">
+        <div class="fg"><label>Brand / Company Name</label><input class="inp" id="su-company" placeholder="Magic Worlds Gaming" oninput="updateSlugPreview()"></div>
+        <div class="fg"><label>Email Address</label><input class="inp" type="email" id="su-email" placeholder="you@company.com"></div>
+        <div class="fg"><label>Password <span style="color:var(--txt3);font-weight:400">(min 8 characters)</span></label><input class="inp" type="password" id="su-pw" placeholder="Create a secure password"></div>
+        <button class="btn-sub green-grad" onclick="goStep2()">Next: Campaign Setup</button>
+        <div id="su-msg1" class="msg" style="display:none"></div>
+        <div style="text-align:center;margin-top:.85rem;font-size:.75rem;color:var(--txt3)">Already have an account? <a href="#" onclick="swTab('login')" style="color:var(--a)">Login here</a></div>
+      </div>
+
+      <!-- Step 2: Campaign Setup -->
+      <div class="step" id="su-s2">
+        <div class="trial-note">14-day free trial. No credit card needed. Your campaign goes live immediately.</div>
+
+        <!-- Plan selection -->
+        <label style="margin-bottom:.5rem;display:block">Select a plan</label>
+        <div class="plan-chips">
+          <div class="plan-chip on" id="chip-starter" onclick="selectPlan('starter')"><div class="pname">Starter</div><div class="pprice">$1</div><div class="pper">/month after trial</div></div>
+          <div class="plan-chip" id="chip-pro" onclick="selectPlan('pro')"><div class="pname">Pro</div><div class="pprice">$2</div><div class="pper">/month after trial</div></div>
+          <div class="plan-chip" id="chip-scale" onclick="selectPlan('scale')"><div class="pname">Scale</div><div class="pprice">$3</div><div class="pper">/month after trial</div></div>
+        </div>
+
+        <div class="fg"><label>Website / Product URL</label><input class="inp" id="su-site" placeholder="https://yourproduct.com"></div>
+        <div class="fg"><label>Campaign Landing Page <span style="color:var(--txt3);font-weight:400">(where affiliates send traffic)</span></label><input class="inp" id="su-landing" placeholder="https://yourproduct.com/signup"></div>
+        <div class="fg"><label>Default Commission</label>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:.5rem">
+            <input class="inp" type="number" id="su-commission" placeholder="10" value="10" min="1">
+            <select class="inp" id="su-ctype" style="max-width:110px"><option value="percentage">%</option><option value="fixed">Fixed $</option></select>
+          </div>
+        </div>
+        <div class="fg"><label>Cookie Duration <span style="color:var(--txt3);font-weight:400">(days)</span></label><input class="inp" type="number" id="su-cookie" value="30" min="1" max="365"></div>
+        <div style="display:flex;gap:.6rem;margin-top:.2rem">
+          <button class="btn-tbl" style="flex:1;padding:.68rem;font-size:.82rem" onclick="goBackStep1()">Back</button>
+          <button class="btn-sub green-grad" id="su-submit" onclick="createAccount()" style="flex:2;margin-top:0">Launch My Campaign</button>
+        </div>
+        <div id="su-msg2" class="msg" style="display:none"></div>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div class="step" id="su-s3">
+        <div style="text-align:center;padding:1.25rem 0">
+          <div class="success-icon">&#10003;</div>
+          <div style="font-family:Poppins,sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.4rem">Campaign Live!</div>
+          <div style="color:var(--txt2);font-size:.82rem;line-height:1.6">Your 14-day free trial has started. Check your email for your API credentials. Redirecting to your dashboard...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CREDENTIALS SHOWN AFTER SIGNUP ──────────────────────────────────── -->
+<div id="cred-section" class="auth-wrap hidden">
+  <div class="auth-box" style="max-width:500px">
+    <div class="auth-logo">
+      <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="white" opacity=".95"/><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity=".7"/><circle cx="10" cy="3" r="1.8" fill="white" opacity=".9"/><circle cx="17" cy="10" r="1.8" fill="white" opacity=".9"/><circle cx="3" cy="10" r="1.8" fill="white" opacity=".9"/></svg></div>
+      <div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span> TRACKER</div>
+    </div>
+    <h2 style="font-family:Poppins,sans-serif;text-align:center;font-size:1.2rem;margin-bottom:.35rem">Save Your API Credentials</h2>
+    <p style="text-align:center;color:var(--txt2);font-size:.8rem;margin-bottom:1.25rem">The API Secret will not be shown again after you leave this page.</p>
+    <div class="cred-box"><label>API Key</label><div class="cred-row"><input class="cred-inp" id="cred-key" readonly><button class="btn-copy" onclick="copyText(document.getElementById('cred-key').value,this)">Copy</button></div></div>
+    <div class="cred-box"><label>API Secret <span style="color:#ff7070;font-size:.7rem">(save this now)</span></label><div class="cred-row"><input class="cred-inp" id="cred-secret" readonly><button class="btn-copy" onclick="copyText(document.getElementById('cred-secret').value,this)">Copy</button></div></div>
+    <div class="warn-box">Store your API Secret in a safe place. It cannot be retrieved after you close this page.</div>
+    <button class="btn-sub" onclick="enterDash()">I Have Saved My Credentials</button>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ──────────────────────────────────────────────────────────── -->
+<div id="dash-section" class="dash hidden">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSB()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <a href="/" class="sb-logo">
+        <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="white" opacity=".95"/><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity=".7"/><circle cx="10" cy="3" r="1.8" fill="white" opacity=".9"/><circle cx="17" cy="10" r="1.8" fill="white" opacity=".9"/><circle cx="3" cy="10" r="1.8" fill="white" opacity=".9"/></svg></div>
+        <div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span></div>
+      </a>
+      <div class="sb-meta">
+        <div class="sb-meta-name" id="sb-company">Company</div>
+        <div class="sb-meta-sub" id="sb-slug">...</div>
+        <div class="sb-trial" id="sb-trial"><span id="sb-trial-txt" style="color:var(--b)">Trial active</span></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec"><div class="sb-sec-title">Overview</div>
+        <div class="sb-link on" onclick="showPage('dash',this)"><span class="sb-ico" style="background:rgba(0,212,255,.12);color:var(--b)">Dsh</span>Dashboard</div>
+      </div>
+      <div class="sb-sec"><div class="sb-sec-title">Campaign</div>
+        <div class="sb-link" onclick="showPage('affiliates',this);loadAffiliates()"><span class="sb-ico" style="background:rgba(124,109,250,.12);color:var(--a)">Aff</span>Affiliates</div>
+        <div class="sb-link" onclick="showPage('programs',this);loadPrograms()"><span class="sb-ico" style="background:rgba(0,255,163,.12);color:var(--d)">Prg</span>Programs</div>
+        <div class="sb-link" onclick="showPage('conversions',this);loadConversions()"><span class="sb-ico" style="background:rgba(255,179,71,.12);color:var(--e)">Cvn</span>Conversions</div>
+        <div class="sb-link" onclick="showPage('links',this)"><span class="sb-ico" style="background:rgba(0,212,255,.12);color:var(--b)">Lnk</span>Affiliate Links</div>
+      </div>
+      <div class="sb-sec"><div class="sb-sec-title">Integration</div>
+        <div class="sb-link" onclick="showPage('api-keys',this);loadApiKeys()"><span class="sb-ico" style="background:rgba(255,110,247,.12);color:var(--c)">Key</span>API Keys</div>
+        <div class="sb-link" onclick="showPage('tracking',this)"><span class="sb-ico" style="background:rgba(0,212,255,.12);color:var(--b)">Trk</span>Tracking Setup</div>
+      </div>
+      <div class="sb-sec"><div class="sb-sec-title">Account</div>
+        <div class="sb-link" onclick="showPage('assets',this);loadAssets()"><span class="sb-ico" style="background:rgba(255,110,247,.12);color:var(--c)">Med</span>Media Assets</div>
+        <div class="sb-link" onclick="showPage('settings',this);fillSettings()"><span class="sb-ico" style="background:rgba(255,255,255,.07);color:var(--txt2)">Set</span>Settings</div>
+        <div class="sb-link" onclick="showPage('billing',this);loadTrialStatus()"><span class="sb-ico" style="background:rgba(255,179,71,.12);color:var(--e)">Bil</span>Billing & Plan</div>
+      </div>
+    </nav>
+    <div class="sb-foot"><button class="btn-logout" onclick="doLogout()">Logout</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="mob-bar">
+      <button class="btn-ham" onclick="toggleSB()">&#9776;</button>
+      <div class="mob-logo">MAGIC<span class="logo-acc">WORLDS</span></div>
+      <div style="width:38px"></div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="page-dash" class="page on">
+      <div id="upgrade-nudge-dash" class="upgrade-nudge purple" style="display:none">
+        <div><strong>Unlock more affiliates</strong><p>You are on the Starter plan (100 affiliates). Upgrade to Pro for up to 1,000 affiliates and recurring commissions.</p></div>
+        <button class="btn-nudge grad" onclick="showPage('billing',null);loadTrialStatus()">Upgrade Now</button>
+      </div>
+      <div class="page-head">
+        <div class="page-head-left">
+          <h1 class="page-title">Campaign <span class="acc">Overview</span></h1>
+          <div class="page-sub">Your affiliate program performance at a glance</div>
+        </div>
+        <button class="btn-act btn-a" onclick="showPage('affiliates',null);loadAffiliates()">View Affiliates</button>
+      </div>
+      <div id="trial-banner" class="trial-banner active" style="display:none">
+        <div class="trial-txt"><strong id="trial-title">14-day Free Trial Active</strong><span id="trial-sub">Upgrade anytime to keep your campaign running after the trial.</span></div>
+        <div class="trial-right">
+          <div style="text-align:center"><div class="trial-days-num" id="trial-days">14</div><div style="font-size:.6rem;color:var(--txt3);margin-top:.1rem">days left</div></div>
+          <button class="btn-upgrade" onclick="showPage('billing',null);loadTrialStatus()">Upgrade Plan</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Affiliates</div><div class="stat-val cb" id="s-aff">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Clicks</div><div class="stat-val ca" id="s-clicks">0</div></div>
+        <div class="stat"><div class="stat-lbl">Conversions</div><div class="stat-val cd" id="s-conv">0</div></div>
+        <div class="stat"><div class="stat-lbl">Revenue</div><div class="stat-val ce" id="s-rev">$0.00</div></div>
+      </div>
+
+      <!-- Affiliate Signup Link -->
+      <div class="signup-url-box">
+        <label>Your Affiliate Signup Link</label>
+        <p>Share this link with anyone you want to recruit as an affiliate for your campaign. They sign up here and get their unique referral link instantly.</p>
+        <div class="link-row"><input class="link-inp" id="aff-signup-url" readonly><button class="btn-copy" onclick="copyText(document.getElementById('aff-signup-url').value,this)">Copy Link</button></div>
+      </div>
+
+      <div class="card"><div class="card-head"><h3>Top Affiliates</h3><button class="btn-act btn-b" style="padding:.38rem .8rem;font-size:.75rem" onclick="showPage('affiliates',null);loadAffiliates()">View All</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Affiliate</th><th>Code</th><th>Clicks</th><th>Conversions</th><th>Revenue</th></tr></thead><tbody id="top-affs"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Conversions by Type</h3></div><div class="card-body"><div class="conv-type-grid" id="conv-types"><div class="empty">No conversions yet</div></div></div></div>
+    </div>
+
+    <!-- ── AFFILIATES ── -->
+    <div id="page-affiliates" class="page">
+      <div class="upgrade-nudge teal" id="aff-nudge" style="display:none">
+        <div><strong>Recruit more partners</strong><p>You have reached your plan limit. Upgrade to add unlimited affiliates and unlock custom commission overrides per partner.</p></div>
+        <button class="btn-nudge grad" onclick="showPage('billing',null);loadTrialStatus()">Upgrade Plan</button>
+      </div>
+      <div class="page-head">
+        <div class="page-head-left"><h1 class="page-title">Your <span class="acc">Affiliates</span></h1><div class="page-sub">Everyone promoting your campaign</div></div>
+        <input class="search" id="aff-search" placeholder="Search..." oninput="loadAffiliates()">
+      </div>
+
+      <!-- Invite box -->
+      <div class="signup-url-box">
+        <label>Affiliate Signup Link</label>
+        <p>Share this link to invite new affiliates. They fill in their name and email, and get a unique referral link instantly.</p>
+        <div class="link-row"><input class="link-inp" id="aff-signup-url2" readonly><button class="btn-copy" onclick="copyText(document.getElementById('aff-signup-url2').value,this)">Copy</button></div>
+      </div>
+
+      <div class="card"><div class="tbl-wrap"><table>
+        <thead><tr><th>Name</th><th>Email</th><th>Referral Code</th><th>Clicks</th><th>Conversions</th><th>Earnings</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="aff-table"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ── PROGRAMS ── -->
+    <div id="page-programs" class="page">
+      <div class="upgrade-nudge gold">
+        <div><strong>Multiple commission structures</strong><p>Pro and Scale plans let you create unlimited programs — one for influencers, one for resellers, one for creators, each with different rates.</p></div>
+        <button class="btn-nudge gold" onclick="showPage('billing',null);loadTrialStatus()">See Plans</button>
+      </div>
+      <div class="page-head">
+        <div class="page-head-left"><h1 class="page-title">Affiliate <span class="acc">Programs</span></h1><div class="page-sub">Create programs with different commission structures for different partner types</div></div>
+        <button class="btn-act btn-grad" onclick="openModal('prog-modal')">+ New Program</button>
+      </div>
+      <div id="prog-list"><div class="empty">Loading...</div></div>
+    </div>
+
+    <!-- ── CONVERSIONS ── -->
+    <div id="page-conversions" class="page">
+      <div class="page-head">
+        <div class="page-head-left"><h1 class="page-title">All <span class="acc">Conversions</span></h1><div class="page-sub">Every tracked conversion event from your affiliates</div></div>
+        <button class="btn-act btn-g" onclick="downloadReport()">Download CSV</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Total Count</div><div class="stat-val ca" id="cv-total">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Value</div><div class="stat-val cd" id="cv-value">$0</div></div>
+        <div class="stat"><div class="stat-lbl">Commission Due</div><div class="stat-val ce" id="cv-comm">$0</div></div>
+        <div class="stat"><div class="stat-lbl">Unique Affiliates</div><div class="stat-val cb" id="cv-affs">0</div></div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Recent Conversions</h3></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Affiliate</th><th>Type</th><th>Value</th><th>Commission</th><th>Status</th></tr></thead>
+        <tbody id="conv-table"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── LINKS ── -->
+    <div id="page-links" class="page">
+      <div class="page-head"><div class="page-head-left"><h1 class="page-title">Affiliate <span class="acc">Links</span></h1><div class="page-sub">Tracking link formats and how affiliates use them</div></div></div>
+      <div class="card"><div class="card-head"><h3>How Affiliate Links Work</h3></div><div class="card-body">
+        <p style="color:var(--txt2);font-size:.85rem;line-height:1.7;margin-bottom:1rem">Each affiliate gets a unique referral link. When someone clicks it, a 30-day cookie is set. Any conversion within that window is attributed to that affiliate.</p>
+        <div class="link-box"><label>Standard Referral Link Format</label><div class="link-row"><input class="link-inp" id="link-format" readonly><button class="btn-copy" onclick="copyText(document.getElementById('link-format').value,this)">Copy</button></div></div>
+        <div class="link-box"><label>With Campaign Sub-ID (for tracking which campaign sent traffic)</label><div class="link-row"><input class="link-inp" id="link-subid" readonly><button class="btn-copy" onclick="copyText(document.getElementById('link-subid').value,this)">Copy</button></div></div>
+        <div class="link-box"><label>Affiliate Signup Page (share to recruit affiliates)</label><div class="link-row"><input class="link-inp" id="link-signup" readonly><button class="btn-copy" onclick="copyText(document.getElementById('link-signup').value,this)">Copy</button></div></div>
+      </div></div>
+    </div>
+
+    <!-- ── API KEYS ── -->
+    <div id="page-api-keys" class="page">
+      <div class="page-head">
+        <div class="page-head-left"><h1 class="page-title">API <span class="acc">Keys</span></h1><div class="page-sub">Use these to post conversions from your backend</div></div>
+        <button class="btn-act btn-b" onclick="openModal('key-modal')">+ New Key</button>
+      </div>
+      <div id="keys-list"><div class="empty">Loading...</div></div>
+    </div>
+
+    <!-- ── TRACKING SETUP ── -->
+    <div id="page-tracking" class="page">
+      <div class="page-head"><div class="page-head-left"><h1 class="page-title">Tracking <span class="acc">Setup</span></h1><div class="page-sub">Add tracking to your product in minutes</div></div></div>
+      <div class="card"><div class="card-head"><h3>Option 1: JavaScript Snippet (easiest)</h3></div><div class="card-body">
+        <p style="color:var(--txt2);font-size:.82rem;margin-bottom:.75rem;line-height:1.6">Add this to your website. It automatically detects affiliate codes from URLs and tracks clicks. Call the tracking functions when conversions happen.</p>
+        <div class="code-snippet" id="js-snippet">Loading...</div>
+      </div></div>
+      <div class="card"><div class="card-head"><h3>Option 2: Server-to-Server (most reliable)</h3></div><div class="card-body">
+        <p style="color:var(--txt2);font-size:.82rem;margin-bottom:.75rem;line-height:1.6">Post conversion events directly from your backend. Works without cookies. Best for checkout flows, on-chain events, and subscription billing.</p>
+        <div class="code-snippet" id="s2s-snippet">Loading...</div>
+      </div></div>
+      <div class="card"><div class="card-head"><h3>Web3 Conversion Types</h3></div><div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin-top:.25rem">
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--a)">wallet_connect</div><div style="color:var(--txt3)">User connects their wallet</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--b)">nft_mint</div><div style="color:var(--txt3)">NFT minted by referred user</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--c)">token_swap</div><div style="color:var(--txt3)">Token swap executed</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--d)">purchase</div><div style="color:var(--txt3)">Product or subscription purchased</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--e)">signup</div><div style="color:var(--txt3)">New user registered</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--a)">in_game_action</div><div style="color:var(--txt3)">In-game milestone reached</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--b)">referral</div><div style="color:var(--txt3)">Referred user refers another</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--d)">subscription</div><div style="color:var(--txt3)">Subscription started or renewed</div></div>
+          <div style="padding:.75rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);font-size:.78rem"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.8rem;margin-bottom:.25rem;color:var(--e)">level_up</div><div style="color:var(--txt3)">User levels up in game</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div id="page-settings" class="page">
+      <div class="page-head"><div class="page-head-left"><h1 class="page-title">Account <span class="acc">Settings</span></h1><div class="page-sub">Manage your campaign and account details</div></div></div>
+      <div class="settings-grid">
+        <div class="settings-card"><h4>Campaign Info</h4>
+          <div class="fg"><label>Company Name</label><input class="inp" id="set-company"></div>
+          <div class="fg"><label>Website URL</label><input class="inp" id="set-site"></div>
+          <div class="fg"><label>Default Landing Page</label><input class="inp" id="set-landing"></div>
+          <button class="btn-save" onclick="saveCompany()">Save Changes</button>
+        </div>
+        <div class="settings-card"><h4>Default Commission</h4>
+          <div class="fg"><label>Commission Type</label><select class="inp" id="set-ctype"><option value="percentage">Percentage (%)</option><option value="fixed">Fixed Amount ($)</option></select></div>
+          <div class="fg"><label>Commission Value</label><input class="inp" type="number" id="set-cval"></div>
+          <div class="fg"><label>Cookie Duration (days)</label><input class="inp" type="number" id="set-cookie"></div>
+          <button class="btn-save" onclick="saveCommission()">Save Changes</button>
+        </div>
+        <div class="settings-card"><h4>Change Password</h4>
+          <div class="fg"><label>Current Password</label><input class="inp" type="password" id="set-curpw" placeholder="Current password"></div>
+          <div class="fg"><label>New Password</label><input class="inp" type="password" id="set-newpw" placeholder="Min 8 characters"></div>
+          <button class="btn-save" onclick="changePassword()">Update Password</button>
+          <div id="pw-msg" class="msg" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BILLING ── -->
+    <div id="page-billing" class="page">
+      <div class="page-head"><div class="page-head-left"><h1 class="page-title">Billing <span class="acc">and Plan</span></h1><div class="page-sub">Manage your subscription and upgrade your campaign</div></div></div>
+      <div class="card" style="margin-bottom:1.25rem"><div class="card-body" id="billing-body"><div class="empty">Loading...</div></div></div>
+      <div class="card"><div class="card-head"><h3>Choose Your Plan</h3><span style="font-size:.75rem;color:var(--txt3)">All plans include all 9 Web3 conversion event types</span></div><div class="card-body">
+        <div class="plan-cards">
+          <div class="plan-card" id="plan-card-starter">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price"><sup>$</sup>1</div>
+            <div class="plan-period">per month</div>
+            <ul class="plan-features"><li>Up to 100 affiliates</li><li>Up to 3 programs</li><li>All 9 conversion types</li><li>Analytics dashboard</li><li>CSV payout reports</li></ul>
+            <button class="btn-plan outline" id="btn-plan-starter" onclick="openPayModal('starter',1)">Upgrade to Starter — $1/mo</button>
+          </div>
+          <div class="plan-card featured" id="plan-card-pro">
+            <div class="plan-card-badge" style="background:var(--ga);color:#fff">Popular</div>
+            <div class="plan-name">Pro</div>
+            <div class="plan-price"><sup>$</sup>2</div>
+            <div class="plan-period">per month</div>
+            <ul class="plan-features"><li>Up to 1,000 affiliates</li><li>Unlimited programs</li><li>Recurring commissions</li><li>Custom per-affiliate rates</li><li>Webhook integrations</li></ul>
+            <button class="btn-plan solid" id="btn-plan-pro" onclick="openPayModal('pro',2)">Upgrade to Pro — $2/mo</button>
+          </div>
+          <div class="plan-card" id="plan-card-scale">
+            <div class="plan-name">Scale</div>
+            <div class="plan-price"><sup>$</sup>3</div>
+            <div class="plan-period">per month</div>
+            <ul class="plan-features"><li>Unlimited affiliates</li><li>Unlimited programs</li><li>Full white-label portal</li><li>Custom domain</li><li>Dedicated account manager</li></ul>
+            <button class="btn-plan outline" id="btn-plan-scale" onclick="openPayModal('scale',3)">Upgrade to Scale — $3/mo</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding:.85rem 1rem;background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.15);border-radius:var(--r2);margin-top:.5rem">
+          <div>
+            <div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--e);margin-bottom:.15rem">Still in your free trial?</div>
+            <div style="font-size:.77rem;color:var(--txt2)">Pick a plan above to pay now and unlock your features before the trial expires.</div>
+          </div>
+          <button class="btn-act" id="btn-skip-trial" onclick="doSkipTrial()" style="background:rgba(255,179,71,.08);border:1px solid rgba(255,179,71,.2);color:var(--e);font-size:.78rem;white-space:nowrap">Remind me before expiry</button>
+        </div>
+        <div id="billing-action-msg" class="msg" style="display:none;margin-top:.75rem"></div>
+      </div></div>
+      <div class="card" style="margin-top:1.25rem"><div class="card-head"><h3>What You Unlock with Pro and Scale</h3></div><div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.85rem">
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--a);margin-bottom:.3rem">Recurring Commissions</div><div style="font-size:.76rem;color:var(--txt2)">Reward affiliates every month a subscriber they referred keeps paying.</div></div>
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--b);margin-bottom:.3rem">Custom Commission Rates</div><div style="font-size:.76rem;color:var(--txt2)">Override commission per affiliate. Pay your best partners more.</div></div>
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--d);margin-bottom:.3rem">Unlimited Programs</div><div style="font-size:.76rem;color:var(--txt2)">Separate programs for influencers, resellers, and creators each with different rates.</div></div>
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--c);margin-bottom:.3rem">White-Label Portal</div><div style="font-size:.76rem;color:var(--txt2)">Replace Magic Worlds Tracker branding with your own logo and domain (Scale).</div></div>
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--e);margin-bottom:.3rem">Webhook Integrations</div><div style="font-size:.76rem;color:var(--txt2)">Fire webhooks to your CRM or Slack when affiliates join or convert.</div></div>
+          <div style="padding:.9rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)"><div style="font-family:Poppins,sans-serif;font-weight:600;font-size:.82rem;color:var(--a);margin-bottom:.3rem">Priority Support</div><div style="font-size:.76rem;color:var(--txt2)">Direct support. Scale includes a dedicated account manager.</div></div>
+        </div>
+      </div></div>
+    </div>
+    <!-- MEDIA ASSETS PAGE -->
+    <div id="page-assets" class="page">
+      <div class="page-head">
+        <div class="page-head-left"><h1 class="page-title">Media <span class="acc">Assets</span></h1><div class="page-sub">Upload images, banners, and PDFs for your affiliates to use when promoting your campaign</div></div>
+      </div>
+
+      <div class="upgrade-nudge gold">
+        <div><strong>Give your affiliates the best materials</strong><p>Upload brand assets here. Your affiliates can access and download them directly from their dashboard so they always have the right images and copy.</p></div>
+      </div>
+
+      <!-- Upload area -->
+      <div class="card"><div class="card-head"><h3>Upload New Asset</h3></div><div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="fg"><label>Asset Name</label><input class="inp" id="asset-name" placeholder="e.g. Logo PNG, Product Banner, Brand Guide"></div>
+          <div class="fg"><label>Asset Type</label>
+            <select class="inp" id="asset-type">
+              <option value="image">Image (PNG, JPG, SVG)</option>
+              <option value="banner">Banner / Ad Creative</option>
+              <option value="pdf">PDF (Guide, One-Pager)</option>
+              <option value="copy">Text / Copy Snippets</option>
+              <option value="link">External Link / URL</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- File upload (base64) -->
+        <div id="asset-file-wrap">
+          <div class="asset-upload-area" id="upload-area" onclick="document.getElementById('asset-file-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+            <div class="asset-upload-icon">&#8613;</div>
+            <h4>Click to upload or drag and drop</h4>
+            <p>Images: PNG, JPG, SVG, WebP up to 2MB<br>Documents: PDF up to 3MB</p>
+            <div class="upload-types">
+              <span class="upload-type-tag">PNG</span><span class="upload-type-tag">JPG</span><span class="upload-type-tag">SVG</span><span class="upload-type-tag">PDF</span><span class="upload-type-tag">WebP</span>
+            </div>
+            <input type="file" id="asset-file-input" style="display:none" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+          </div>
+          <div id="file-preview" style="display:none;margin-top:.75rem;padding:.75rem;background:rgba(0,255,163,.05);border:1px solid rgba(0,255,163,.15);border-radius:var(--r);font-size:.8rem;color:var(--d)"></div>
+        </div>
+
+        <!-- Text/link input -->
+        <div id="asset-text-wrap" style="display:none" class="fg">
+          <label id="asset-text-label">Content</label>
+          <textarea class="inp" id="asset-content" rows="4" placeholder="Paste your copy, text, or URL here..." style="resize:vertical;line-height:1.6"></textarea>
+        </div>
+
+        <div id="asset-msg" class="msg" style="display:none;margin-top:.75rem"></div>
+        <button class="btn-save" onclick="uploadAsset()" style="margin-top:.85rem">Save Asset</button>
+      </div></div>
+
+      <!-- Asset type switch -->
+      <script>
+      document.getElementById('asset-type').addEventListener('change',function(){
+        var t=this.value;
+        var textTypes=['copy','link'];
+        document.getElementById('asset-file-wrap').style.display=textTypes.includes(t)?'none':'block';
+        document.getElementById('asset-text-wrap').style.display=textTypes.includes(t)?'block':'none';
+        document.getElementById('asset-text-label').textContent=t==='link'?'URL / Link':'Copy / Text Content';
+        document.getElementById('asset-content').placeholder=t==='link'?'https://...':'Paste your promotional copy, hashtags, or text here...';
+      });
+      </script>
+
+      <!-- Existing assets grid -->
+      <div class="card"><div class="card-head"><h3>Your Assets</h3><span style="font-size:.75rem;color:var(--txt3)">Affiliates can see and download these from their dashboard</span></div>
+        <div id="asset-grid-wrap" class="card-body">
+          <div class="empty">Loading assets...</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Program Modal -->
+<div class="modal" id="prog-modal">
+  <div class="modal-box"><div class="modal-head"><h3 id="prog-modal-title">Create Program</h3><button class="modal-x" onclick="closeModal('prog-modal')">&#215;</button></div>
+    <input type="hidden" id="prog-id">
+    <div class="fg"><label>Program Name</label><input class="inp" id="prog-name" placeholder="e.g. Creator Program"></div>
+    <div class="fg"><label>Description</label><input class="inp" id="prog-desc" placeholder="Who is this for?"></div>
+    <div class="fg"><label>Landing Page URL</label><input class="inp" id="prog-url" placeholder="https://..."></div>
+    <div class="fg"><label>Commission Type</label><select class="inp" id="prog-ctype"><option value="percentage">Percentage (%)</option><option value="fixed">Fixed Amount ($)</option></select></div>
+    <div class="fg"><label>Commission Value</label><input class="inp" type="number" id="prog-cval" value="10"></div>
+    <div class="fg"><label>Cookie Duration (days)</label><input class="inp" type="number" id="prog-cookie" value="30"></div>
+    <div class="fg"><label>Currency</label><select class="inp" id="prog-cur"><option value="USD">USD</option><option value="EUR">EUR</option><option value="ETH">ETH</option><option value="GBP">GBP</option></select></div>
+    <div class="fg"><label>Set as Default</label><select class="inp" id="prog-default"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    <button class="btn-sub" onclick="saveProgram()">Save Program</button>
+    <div id="prog-msg" class="msg" style="display:none"></div>
+  </div>
+</div>
+
+<!-- API Key Modal -->
+<div class="modal" id="key-modal">
+  <div class="modal-box"><div class="modal-head"><h3>Create API Key</h3><button class="modal-x" onclick="closeModal('key-modal')">&#215;</button></div>
+    <div class="fg"><label>Key Name</label><input class="inp" id="key-name" placeholder="e.g. Production Server"></div>
+    <div class="fg"><label>Permissions</label><select class="inp" id="key-perms"><option value="full">Full Access</option><option value="tracking">Tracking Only</option><option value="readonly">Read Only</option></select></div>
+    <button class="btn-sub" onclick="createKey()">Create Key</button>
+    <div id="new-key-reveal" style="display:none;margin-top:1rem">
+      <div class="warn-box">Save these now. The secret cannot be retrieved again.</div>
+      <div class="cred-box"><label>API Key</label><div class="cred-row"><input class="cred-inp" id="new-key-val" readonly><button class="btn-copy" onclick="copyText(document.getElementById('new-key-val').value,this)">Copy</button></div></div>
+      <div class="cred-box"><label>API Secret</label><div class="cred-row"><input class="cred-inp" id="new-secret-val" readonly><button class="btn-copy" onclick="copyText(document.getElementById('new-secret-val').value,this)">Copy</button></div></div>
+    </div>
+    <div id="key-msg" class="msg" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const API='https://api.magictracker.cc';
+const FRONTEND='https://magictracker.cc';
+let tok=null,merchant=null,selPlan='starter',pendingPlan=null;
+
+function showMsg(id,type,text){var e=document.getElementById(id);if(!e)return;e.textContent=text;e.className='msg '+(type==='ok'?'ok':'err');e.style.display='block'}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function copyText(v,b){navigator.clipboard.writeText(v).then(function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o},1800)})}
+function showPage(n,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+  var pg=document.getElementById('page-'+n);if(pg)pg.classList.add('on');
+  document.querySelectorAll('.sb-link').forEach(function(l){l.classList.remove('on')});
+  if(el)el.classList.add('on');
+  closeSB();
+}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('show')}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-overlay').classList.remove('show')}
+
+function selectPlan(p){
+  selPlan=p;
+  ['starter','pro','scale'].forEach(function(n){document.getElementById('chip-'+n).classList.toggle('on',n===p)});
+}
+
+function swTab(t){
+  var fl=document.getElementById('form-login');
+  var fs=document.getElementById('form-signup');
+  var tli=document.getElementById('tab-li');
+  var tsu=document.getElementById('tab-su');
+  if(t==='signup'){
+    if(fl)fl.style.display='none';
+    if(fs){fs.style.display='block';fs.classList.remove('hidden')}
+    if(tli)tli.classList.remove('on');
+    if(tsu)tsu.classList.add('on');
+    var titleEl=document.getElementById('auth-title');
+    var subEl=document.getElementById('auth-sub');
+    if(titleEl)titleEl.textContent='Create Your Campaign';
+    if(subEl)subEl.textContent='Launch your affiliate program in 2 minutes. Free for 14 days.';
+  } else {
+    if(fl)fl.style.display='block';
+    if(fs){fs.style.display='none';fs.classList.add('hidden')}
+    if(tli)tli.classList.add('on');
+    if(tsu)tsu.classList.remove('on');
+    var titleEl=document.getElementById('auth-title');
+    var subEl=document.getElementById('auth-sub');
+    if(titleEl)titleEl.textContent='Campaign Dashboard';
+    if(subEl)subEl.textContent='Login to manage your affiliate campaigns';
+  }
+}
+
+function setStep(n){
+  for(var i=1;i<=3;i++){
+    var s=document.getElementById('su-s'+i);
+    if(s)s.classList.toggle('on',i===n);
+    var dot=document.getElementById('dot'+i);
+    if(dot){dot.classList.toggle('active',i===n);dot.classList.toggle('done',i<n)}
+    if(i<3){var line=document.getElementById('line'+i);if(line)line.classList.toggle('done',i<n)}
+  }
+}
+
+function goStep2(){
+  var c=document.getElementById('su-company').value.trim();
+  var e=document.getElementById('su-email').value.trim();
+  var pw=document.getElementById('su-pw').value;
+  if(!c){showMsg('su-msg1','err','Please enter your brand name');return}
+  if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){showMsg('su-msg1','err','Please enter a valid email');return}
+  if(pw.length<8){showMsg('su-msg1','err','Password must be at least 8 characters');return}
+  setStep(2);
+}
+function goBackStep1(){setStep(1)}
+
+async function createAccount(){
+  var site=document.getElementById('su-site').value.trim();
+  if(!site){showMsg('su-msg2','err','Please enter your website URL');return}
+  var btn=document.getElementById('su-submit');
+  btn.disabled=true;btn.textContent='Creating campaign...';
+  setStep(3);
+  var body={
+    company_name:document.getElementById('su-company').value.trim(),
+    email:document.getElementById('su-email').value.trim(),
+    password:document.getElementById('su-pw').value,
+    website_url:site,
+    default_redirect_url:document.getElementById('su-landing').value.trim()||site,
+    plan:pendingPlan||selPlan,
+    commission_value:parseFloat(document.getElementById('su-commission').value)||10,
+    commission_type:document.getElementById('su-ctype').value,
+    cookie_duration:parseInt(document.getElementById('su-cookie').value)||30
+  };
+  try{
+    var r=await fetch(API+'/api/merchants/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    var d=await r.json();
+    if(d.token){
+      tok=d.token;localStorage.setItem('merch_tok',d.token);
+      if(d.api_credentials){
+        document.getElementById('auth-section').classList.add('hidden');
+        document.getElementById('cred-section').classList.remove('hidden');
+        document.getElementById('cred-key').value=d.api_credentials.api_key;
+        document.getElementById('cred-secret').value=d.api_credentials.api_secret;
+      } else {loadDash()}
+    } else {
+      setStep(2);btn.disabled=false;btn.textContent='Launch My Campaign';
+      showMsg('su-msg2','err',d.error||'Account creation failed');
+    }
+  } catch(e){
+    setStep(2);btn.disabled=false;btn.textContent='Launch My Campaign';
+    showMsg('su-msg2','err','Error: '+e.message);
+  }
+}
+
+function enterDash(){
+  document.getElementById('cred-section').classList.add('hidden');
+  loadDash();
+}
+
+async function doLogin(){
+  var email=document.getElementById('li-email').value.trim();
+  var pw=document.getElementById('li-pw').value;
+  if(!email||!pw){showMsg('li-msg','err','Please fill in all fields');return}
+  try{
+    var r=await fetch(API+'/api/merchants/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:pw})});
+    var d=await r.json();
+    if(d.token){tok=d.token;localStorage.setItem('merch_tok',d.token);loadDash()}
+    else showMsg('li-msg','err',d.error||'Login failed');
+  } catch(e){showMsg('li-msg','err','Error: '+e.message)}
+}
+
+async function loadDash(){
+  try{
+    var r=await fetch(API+'/api/merchants/me',{headers:{Authorization:'Bearer '+tok}});
+    if(!r.ok){doLogout();return}
+    var d=await r.json();merchant=d.merchant;
+    document.getElementById('auth-section').classList.add('hidden');
+    document.getElementById('cred-section').classList.add('hidden');
+    document.getElementById('dash-section').classList.remove('hidden');
+    document.getElementById('sb-company').textContent=merchant.company_name;
+    document.getElementById('sb-slug').textContent=merchant.slug;
+    var signupUrl=FRONTEND+'/dashboard?join='+merchant.slug;
+    ['aff-signup-url','aff-signup-url2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=signupUrl});
+    var lf=document.getElementById('link-format');if(lf)lf.value=API+'/r/AFFILIATE_CODE';
+    var ls=document.getElementById('link-subid');if(ls)ls.value=API+'/r/AFFILIATE_CODE?subid=campaign1';
+    var lsig=document.getElementById('link-signup');if(lsig)lsig.value=signupUrl;
+    var jsEl=document.getElementById('js-snippet');
+    if(jsEl)jsEl.textContent='<script src="'+API+'/api/track/script.js"><'+'/script>\n\nAffiliateTracker.trackWalletConnect("0x...", "ethereum");\nAffiliateTracker.trackPurchase(99.99, "USD", "order-123");\nAffiliateTracker.trackNFTMint("token-id", "CollectionName");';
+    var s2sEl=document.getElementById('s2s-snippet');
+    if(s2sEl)s2sEl.textContent='POST '+API+'/api/track/conversion\nX-API-Secret: YOUR_API_SECRET\nContent-Type: application/json\n\n{\n  "affiliate_code": "ABC123",\n  "conversion_type": "purchase",\n  "conversion_value": 99.99\n}';
+    loadStats();loadTrialStatus();
+  } catch(e){doLogout()}
+}
+
+async function loadStats(){
+  try{
+    var r=await fetch(API+'/api/merchants/stats',{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    document.getElementById('s-aff').textContent=d.affiliates.total;
+    document.getElementById('s-clicks').textContent=d.clicks.total_clicks||0;
+    document.getElementById('s-conv').textContent=d.conversions.total||0;
+    document.getElementById('s-rev').textContent='$'+parseFloat(d.conversions.total_value||0).toFixed(2);
+    var topEl=document.getElementById('top-affs');
+    if(topEl){
+      if(d.top_affiliates&&d.top_affiliates.length){
+        topEl.innerHTML=d.top_affiliates.map(function(a){
+          return '<tr><td>'+a.name+'</td><td><span class="code-tag">'+a.affiliate_code+'</span></td><td>'+a.conversions+'</td><td>'+a.conversions+'</td><td style="color:var(--d);font-weight:600">$'+parseFloat(a.revenue||0).toFixed(2)+'</td></tr>';
+        }).join('');
+      } else {
+        topEl.innerHTML='<tr><td colspan="5" class="empty">No affiliates yet. Share your signup link to get started.</td></tr>';
+      }
+    }
+    var ctEl=document.getElementById('conv-types');
+    if(ctEl){
+      if(d.conversions.by_type&&d.conversions.by_type.length){
+        ctEl.innerHTML=d.conversions.by_type.map(function(t){
+          return '<div class="ct-card"><div class="ct-name">'+t.conversion_type.replace(/_/g,' ')+'</div><div class="ct-count">'+t.count+'</div><div class="ct-val">$'+parseFloat(t.value||0).toFixed(2)+'</div></div>';
+        }).join('');
+      } else {ctEl.innerHTML='<div class="empty">No conversions yet</div>'}
+    }
+    document.getElementById('cv-total').textContent=d.conversions.total||0;
+    document.getElementById('cv-value').textContent='$'+parseFloat(d.conversions.total_value||0).toFixed(2);
+    document.getElementById('cv-comm').textContent='$'+parseFloat(d.conversions.total_commission||0).toFixed(2);
+    document.getElementById('cv-affs').textContent=d.affiliates.active||0;
+  } catch(e){}
+}
+
+async function loadTrialStatus(){
+  try{
+    var r=await fetch(API+'/api/merchants/trial-status',{headers:{Authorization:'Bearer '+tok}});
+    if(!r.ok)return;
+    var d=await r.json();
+    var banner=document.getElementById('trial-banner');
+    var daysEl=document.getElementById('trial-days');
+    var titleEl=document.getElementById('trial-title');
+    var subEl=document.getElementById('trial-sub');
+    var sbTrial=document.getElementById('sb-trial');
+    var sbTxt=document.getElementById('sb-trial-txt');
+    if(d.is_subscribed){
+      if(sbTrial){sbTrial.style.display='block';if(sbTxt){sbTxt.style.color='var(--d)';sbTxt.textContent='Subscribed - '+d.plan}}
+      if(banner)banner.style.display='none';
+      var bb=document.getElementById('billing-body');
+      if(bb)bb.innerHTML='<p style="text-align:center;padding:1.25rem;color:var(--d);font-family:Poppins,sans-serif;font-weight:600">Subscribed on the '+d.plan+' plan.</p>';
+      return;
+    }
+    if(banner){
+      banner.style.display='flex';
+      if(daysEl)daysEl.textContent=d.days_left;
+      if(d.trial_status==='expired'){
+        banner.className='trial-banner expired';if(daysEl)daysEl.className='trial-days-num expired';
+        if(titleEl)titleEl.textContent='Your free trial has expired';
+        if(subEl)subEl.textContent='Upgrade to restore access.';
+        if(sbTrial){sbTrial.style.display='block';if(sbTxt){sbTxt.style.color='#ff7070';sbTxt.textContent='Trial expired'}}
+      } else if(d.days_left<=3){
+        banner.className='trial-banner warn';if(daysEl)daysEl.className='trial-days-num warn';
+        if(titleEl)titleEl.textContent='Trial ending in '+d.days_left+' day'+(d.days_left===1?'':'s');
+        if(subEl)subEl.textContent='Upgrade now to keep your campaign running.';
+        if(sbTrial){sbTrial.style.display='block';if(sbTxt){sbTxt.style.color='var(--e)';sbTxt.textContent=d.days_left+'d left'}}
+      } else {
+        if(titleEl)titleEl.textContent='Free trial active - '+d.plan+' plan';
+        if(subEl)subEl.textContent=d.days_left+' days remaining. No payment needed yet.';
+        if(sbTrial){sbTrial.style.display='block';if(sbTxt)sbTxt.textContent=d.days_left+' days left'}
+      }
+    }
+    var trialEnd=d.trial_ends_at?new Date(d.trial_ends_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'N/A';
+    var bb=document.getElementById('billing-body');
+    if(bb){
+      bb.innerHTML=
+        '<div style="padding:.5rem 0">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid var(--bdr)"><span style="font-size:.85rem;color:var(--txt2)">Current Plan</span><span class="badge badge-a">'+d.plan+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid var(--bdr)"><span style="font-size:.85rem;color:var(--txt2)">Trial Status</span><span class="badge '+(d.trial_status==='expired'?'badge-r':d.days_left<=3?'badge-o':'badge-g')+'">'+d.trial_status+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid var(--bdr)"><span style="font-size:.85rem;color:var(--txt2)">Trial Ends</span><span style="font-size:.85rem">'+trialEnd+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0"><span style="font-size:.85rem;color:var(--txt2)">Days Remaining</span><span style="font-family:Poppins,sans-serif;font-weight:700;color:'+(d.days_left<=3?'var(--e)':'var(--b)')+'">'+d.days_left+' days</span></div>'+
+        '<p style="font-size:.78rem;color:var(--txt3);margin-top:.85rem;text-align:center">To upgrade contact <a href="mailto:go@sannisanni.com" style="color:var(--a)">go@sannisanni.com</a></p>'+
+        '</div>';
+    }
+  } catch(e){console.log('Trial error:',e.message)}
+}
+
+async function loadAffiliates(){
+  var q=(document.getElementById('aff-search')||{}).value||'';
+  try{
+    var r=await fetch(API+'/api/admin/affiliates?search='+encodeURIComponent(q),{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    var el=document.getElementById('aff-table');
+    if(!el)return;
+    if(d.affiliates&&d.affiliates.length){
+      el.innerHTML=d.affiliates.map(function(a){
+        var badge=a.status==='active'?'badge-g':'badge-r';
+        var btnClass=a.status==='active'?'danger':'success';
+        var btnTxt=a.status==='active'?'Disable':'Enable';
+        return '<tr><td>'+a.name+'</td><td>'+a.email+'</td><td><span class="code-tag">'+a.affiliate_code+'</span></td><td>'+(a.total_clicks||0)+'</td><td>'+(a.total_conversions||0)+'</td><td style="color:var(--d);font-weight:600">$'+parseFloat(a.total_earnings||0).toFixed(2)+'</td><td><span class="badge '+badge+'">'+a.status+'</span></td><td><button class="btn-tbl '+btnClass+'" onclick="toggleAff('+a.id+')">'+btnTxt+'</button></td></tr>';
+      }).join('');
+    } else {
+      el.innerHTML='<tr><td colspan="8" class="empty">No affiliates yet. Share your signup link.</td></tr>';
+    }
+  } catch(e){}
+}
+
+async function toggleAff(id){
+  try{
+    var r=await fetch(API+'/api/admin/affiliates/'+id,{headers:{Authorization:'Bearer '+tok}});
+    var aff=await r.json();
+    var newStatus=aff.status==='active'?'inactive':'active';
+    await fetch(API+'/api/admin/affiliates/'+id,{method:'PUT',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({status:newStatus})});
+    loadAffiliates();
+  } catch(e){}
+}
+
+async function loadPrograms(){
+  try{
+    var r=await fetch(API+'/api/programs',{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    var el=document.getElementById('prog-list');
+    if(!el)return;
+    if(d.programs&&d.programs.length){
+      el.innerHTML=d.programs.map(function(p){
+        var defBadge=p.is_default?'<span class="badge badge-g">Default</span>':'';
+        var comm=p.commission_value+(p.commission_type==='percentage'?'%':' '+p.currency)+' commission';
+        var delBtn=p.is_default?'':'<button class="btn-tbl danger" onclick="delProg('+p.id+')">Delete</button>';
+        return '<div class="prog-card"><div class="prog-info"><h4>'+p.name+' '+defBadge+'</h4><p>'+(p.description||'')+'</p><div class="prog-meta"><span class="prog-comm">'+comm+'</span><span style="color:var(--txt3);font-size:.72rem">'+p.cookie_duration+' day cookie</span></div></div><div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn-tbl" onclick="editProg('+p.id+')">Edit</button>'+delBtn+'</div></div>';
+      }).join('');
+    } else {el.innerHTML='<div class="empty">No programs yet. Create one above.</div>'}
+  } catch(e){}
+}
+
+async function editProg(id){
+  try{
+    var r=await fetch(API+'/api/programs',{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    var p=d.programs.find(function(x){return x.id===id});
+    if(!p)return;
+    document.getElementById('prog-id').value=p.id;
+    document.getElementById('prog-name').value=p.name;
+    document.getElementById('prog-desc').value=p.description||'';
+    document.getElementById('prog-url').value=p.landing_page_url;
+    document.getElementById('prog-ctype').value=p.commission_type;
+    document.getElementById('prog-cval').value=p.commission_value;
+    document.getElementById('prog-cookie').value=p.cookie_duration;
+    document.getElementById('prog-cur').value=p.currency;
+    document.getElementById('prog-modal-title').textContent='Edit Program';
+    openModal('prog-modal');
+  } catch(e){}
+}
+
+async function saveProgram(){
+  var id=document.getElementById('prog-id').value;
+  var body={
+    name:document.getElementById('prog-name').value,
+    description:document.getElementById('prog-desc').value,
+    landing_page_url:document.getElementById('prog-url').value,
+    commission_type:document.getElementById('prog-ctype').value,
+    commission_value:parseFloat(document.getElementById('prog-cval').value),
+    cookie_duration:parseInt(document.getElementById('prog-cookie').value),
+    currency:document.getElementById('prog-cur').value,
+    is_default:document.getElementById('prog-default').value==='yes'
+  };
+  if(!body.name||!body.landing_page_url){showMsg('prog-msg','err','Name and URL required');return}
+  try{
+    var method=id?'PUT':'POST';
+    var url=id?API+'/api/programs/'+id:API+'/api/programs';
+    var r=await fetch(url,{method:method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    var d=await r.json();
+    if(d.program){closeModal('prog-modal');document.getElementById('prog-id').value='';document.getElementById('prog-modal-title').textContent='Create Program';loadPrograms()}
+    else showMsg('prog-msg','err',d.error||'Failed');
+  } catch(e){showMsg('prog-msg','err',e.message)}
+}
+
+async function delProg(id){
+  brandedConfirm('Delete this program? This cannot be undone.', async function(){
+    try{
+      await fetch(API+'/api/programs/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+tok}});
+      loadPrograms();
+      toast('ok','Program deleted');
+    }catch(e){toast('err',e.message)}
+  },'Delete','Cancel');
+}
+
+async function loadConversions(){
+  document.getElementById('conv-table').innerHTML='<tr><td colspan="6" class="empty">Loading...</td></tr>';
+  try{
+    var r=await fetch(API+'/api/merchants/stats',{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    document.getElementById('cv-total').textContent=d.conversions.total||0;
+    document.getElementById('cv-value').textContent='$'+parseFloat(d.conversions.total_value||0).toFixed(2);
+    document.getElementById('cv-comm').textContent='$'+parseFloat(d.conversions.total_commission||0).toFixed(2);
+    document.getElementById('cv-affs').textContent=d.affiliates.active||0;
+    document.getElementById('conv-table').innerHTML='<tr><td colspan="6" class="empty">Download CSV for full breakdown.</td></tr>';
+  } catch(e){}
+}
+
+async function downloadReport(){
+  try{
+    var r=await fetch(API+'/api/admin/reports/payout?period=this_month',{headers:{Authorization:'Bearer '+tok}});
+    var b=await r.blob();var u=URL.createObjectURL(b);
+    var a=document.createElement('a');a.href=u;a.download='conversions.csv';a.click();URL.revokeObjectURL(u);
+  } catch(e){toast('err','Report download failed')}
+}
+
+async function loadApiKeys(){
+  try{
+    var r=await fetch(API+'/api/merchants/api-keys',{headers:{Authorization:'Bearer '+tok}});
+    var d=await r.json();
+    var el=document.getElementById('keys-list');
+    if(!el)return;
+    if(d.api_keys&&d.api_keys.length){
+      el.innerHTML=d.api_keys.map(function(k){
+        var badge=k.is_active?'badge-g':'badge-r';
+        var status=k.is_active?'Active':'Inactive';
+        return '<div class="key-box"><h4>'+k.key_name+' <span class="badge '+badge+'">'+status+'</span></h4><div class="key-val">'+k.api_key+'</div><div style="font-size:.7rem;color:var(--txt3);margin-top:.4rem">Created '+new Date(k.created_at).toLocaleDateString()+'</div></div>';
+      }).join('');
+    } else {el.innerHTML='<div class="empty">No API keys. Create one above.</div>'}
+  } catch(e){}
+}
+
+async function createKey(){
+  try{
+    var r=await fetch(API+'/api/merchants/api-keys',{method:'POST',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({key_name:document.getElementById('key-name').value||'New Key',permissions:document.getElementById('key-perms').value})});
+    var d=await r.json();
+    if(d.api_key){
+      document.getElementById('new-key-val').value=d.api_key.api_key;
+      document.getElementById('new-secret-val').value=d.api_key.api_secret;
+      document.getElementById('new-key-reveal').style.display='block';
+      loadApiKeys();
+    } else showMsg('key-msg','err',d.error||'Failed');
+  } catch(e){showMsg('key-msg','err',e.message)}
+}
+
+function fillSettings(){
+  if(!merchant)return;
+  document.getElementById('set-company').value=merchant.company_name||'';
+  document.getElementById('set-site').value=merchant.website_url||'';
+  document.getElementById('set-landing').value=merchant.default_redirect_url||'';
+  document.getElementById('set-ctype').value=merchant.commission_type||'percentage';
+  document.getElementById('set-cval').value=merchant.commission_value||10;
+  document.getElementById('set-cookie').value=merchant.cookie_duration||30;
+}
+
+async function saveCompany(){
+  try{
+    var r=await fetch(API+'/api/merchants/me',{method:'PUT',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({company_name:document.getElementById('set-company').value,website_url:document.getElementById('set-site').value,default_redirect_url:document.getElementById('set-landing').value})});
+    var d=await r.json();
+    if(d.merchant){merchant=d.merchant;document.getElementById('sb-company').textContent=merchant.company_name;toast('ok','Settings saved successfully')}
+    else toast('err',d.error||'Save failed');
+  } catch(e){toast('err','Error: '+e.message)}
+}
+
+async function saveCommission(){
+  try{
+    var r=await fetch(API+'/api/merchants/me',{method:'PUT',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({commission_type:document.getElementById('set-ctype').value,commission_value:parseFloat(document.getElementById('set-cval').value),cookie_duration:parseInt(document.getElementById('set-cookie').value)})});
+    var d=await r.json();
+    if(d.merchant){merchant=d.merchant;toast('ok','Commission settings saved')}else toast('err',d.error||'Save failed');
+  } catch(e){toast('err','Error: '+e.message)}
+}
+
+async function changePassword(){
+  var curpw=document.getElementById('set-curpw').value;
+  var newpw=document.getElementById('set-newpw').value;
+  if(!curpw||!newpw){showMsg('pw-msg','err','Fill in both fields');return}
+  if(newpw.length<8){showMsg('pw-msg','err','Min 8 characters');return}
+  try{
+    var r=await fetch(API+'/api/merchants/me',{method:'PUT',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({current_password:curpw,password:newpw})});
+    var d=await r.json();
+    showMsg('pw-msg',d.merchant?'ok':'err',d.merchant?'Password updated':d.error||'Failed');
+  } catch(e){showMsg('pw-msg','err',e.message)}
+}
+
+
+// ── Billing / upgrade ─────────────────────────────────────────────────────
+var selectedUpgradePlan = null;
+var selectedUpgradePrice = null;
+var FLW_PUBLIC = 'FLWPUBK-4bc28fb9e509b351f586617ddb186621-X';
+
+function selectUpgradePlan(plan, price) {
+  // This is now only called internally — plan buttons go direct to openPayModal
+  selectedUpgradePlan = plan;
+  selectedUpgradePrice = price;
+}
+
+function doUpgrade() {
+  if (!selectedUpgradePlan) { toast('warn', 'Please select a plan first'); return; }
+  openPayModal(selectedUpgradePlan, selectedUpgradePrice);
+}
+
+// ── Payment modal ──────────────────────────────────────────────────────────
+function openPayModal(plan, price) {
+  selectedUpgradePlan = plan;
+  selectedUpgradePrice = price;
+  var planLabel = plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+  var el = document.getElementById('pay-plan-label');
+  if (el) el.innerHTML = planLabel + '<small>Billed monthly, cancel anytime</small>';
+  var amEl = document.getElementById('pay-amount-display');
+  if (amEl) amEl.innerHTML = '$' + price + '<span>/mo</span>';
+  var btnAm = document.getElementById('pay-btn-amount');
+  if (btnAm) btnAm.textContent = '$' + price;
+  // Pre-fill email from merchant data
+  if (merchant && merchant.email) {
+    var payEmail = document.getElementById('pay-email');
+    if (payEmail) payEmail.value = merchant.email;
+  }
+  if (merchant && merchant.company_name) {
+    var payName = document.getElementById('pay-name');
+    if (payName && !payName.value) payName.value = merchant.company_name;
+  }
+  // Reset form
+  document.getElementById('pay-form-view').style.display = 'block';
+  document.getElementById('pay-success-view').style.display = 'none';
+  var msgEl = document.getElementById('pay-msg');
+  if (msgEl) msgEl.style.display = 'none';
+  document.getElementById('pay-modal').classList.add('open');
+}
+
+function closePayModal() {
+  document.getElementById('pay-modal').classList.remove('open');
+}
+
+function formatCard(inp) {
+  var v = inp.value.replace(/\D/g,'').substring(0,16);
+  inp.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(inp) {
+  var v = inp.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.substring(0,2) + ' / ' + v.substring(2,4);
+  inp.value = v;
+}
+
+function processPayment(paymentOption) {
+  paymentOption = paymentOption || 'card';
+  var nameEl = document.getElementById('pay-name');
+  var emailEl = document.getElementById('pay-email');
+  var name = (nameEl && nameEl.value.trim()) || (merchant && merchant.company_name) || '';
+  var email = (emailEl && emailEl.value.trim()) || (merchant && merchant.email) || '';
+  if (!name) { showPayMsg('err', 'Please enter your name'); return; }
+  if (!email || email.indexOf('@') < 0) { showPayMsg('err', 'Please enter a valid email address'); return; }
+  var btn = document.getElementById('pay-submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Opening secure checkout...'; }
+  var txRef = 'MWT-' + Date.now() + '-' + Math.random().toString(36).substr(2,6).toUpperCase();
+  FlutterwaveCheckout({
+    public_key: FLW_PUBLIC,
+    tx_ref: txRef,
+    amount: selectedUpgradePrice,
+    currency: 'USD',
+    payment_options: paymentOption,
+    customer: { email: email, name: name },
+    customizations: {
+      title: 'Magic Worlds Tracker',
+      description: 'Upgrade to ' + selectedUpgradePlan.charAt(0).toUpperCase() + selectedUpgradePlan.slice(1) + ' plan — $' + selectedUpgradePrice + '/month',
+      logo: 'https://magictracker.cc/favicon.ico'
+    },
+    callback: function(response) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Pay $' + selectedUpgradePrice + ' and Upgrade Instantly'; }
+      if (response.status === 'successful' || response.status === 'completed') {
+        verifyAndActivate(response.transaction_id, txRef);
+      } else {
+        showPayMsg('err', 'Payment was not completed. Please try again.');
+      }
+    },
+    onclose: function() {
+      if (btn) { btn.disabled = false; btn.textContent = 'Pay $' + selectedUpgradePrice + ' and Upgrade Instantly'; }
+    }
+  });
+}
+
+async function verifyAndActivate(transactionId, txRef) {
+  var btn = document.getElementById('pay-submit-btn');
+  btn.disabled = true; btn.textContent = 'Verifying payment...';
+  try {
+    var r = await fetch(API + '/api/merchants/subscribe', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: selectedUpgradePlan, transaction_id: transactionId, tx_ref: txRef })
+    });
+    var d = await r.json();
+    if (r.ok) {
+      document.getElementById('pay-form-view').style.display = 'none';
+      document.getElementById('pay-success-view').style.display = 'block';
+      var banner = document.getElementById('trial-banner');
+      if (banner) banner.style.display = 'none';
+      if (merchant) merchant.plan = selectedUpgradePlan;
+    } else {
+      showPayMsg('err', d.error || 'Payment verified but activation failed. Contact support.');
+      btn.disabled = false; btn.textContent = 'Pay $' + selectedUpgradePrice + ' and Upgrade';
+    }
+  } catch (e) {
+    showPayMsg('err', 'Network error: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Pay $' + selectedUpgradePrice + ' and Upgrade';
+  }
+}
+
+function showPayMsg(type, text) {
+  var el = document.getElementById('pay-msg');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'pay-msg ' + type;
+  el.style.display = 'block';
+}
+
+function doSkipTrial() {
+  brandedConfirm(
+    'You will receive an email reminder 3 days before your trial expires. You must upgrade to a paid plan before the trial ends to keep your campaign active. Choose a plan above to upgrade now.',
+    function() {
+      toast('ok', 'Got it! We will remind you before your trial expires.');
+    },
+    'I understand',
+    'Cancel'
+  );
+}
+
+// ── Assets / Media ─────────────────────────────────────────────────────────
+var pendingFileBase64 = null;
+var pendingFileName = null;
+
+function handleFileSelect(event) {
+  var file = event.target.files[0];
+  if (file) processFile(file);
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('upload-area').classList.remove('drag');
+  var file = event.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  var maxSize = 3 * 1024 * 1024; // 3MB
+  if (file.size > maxSize) {
+    showMsg('asset-msg', 'err', 'File too large. Maximum size is 3MB.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    pendingFileBase64 = e.target.result; // data:mime;base64,...
+    pendingFileName = file.name;
+    var preview = document.getElementById('file-preview');
+    if (preview) {
+      preview.style.display = 'block';
+      if (file.type.startsWith('image/')) {
+        preview.innerHTML = '<img src="' + pendingFileBase64 + '" style="max-height:80px;border-radius:var(--r);margin-bottom:.4rem;display:block"><span>' + file.name + ' (' + (file.size/1024).toFixed(0) + 'KB)</span>';
+      } else {
+        preview.innerHTML = '<span style="font-size:1.5rem">&#128196;</span> ' + file.name + ' (' + (file.size/1024).toFixed(0) + 'KB) — ready to upload';
+      }
+    }
+    if (!document.getElementById('asset-name').value) {
+      document.getElementById('asset-name').value = file.name.replace(/\.[^/.]+$/, '');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadAsset() {
+  var name = document.getElementById('asset-name').value.trim();
+  var type = document.getElementById('asset-type').value;
+  if (!name) { showMsg('asset-msg', 'err', 'Please enter an asset name'); return; }
+
+  var textTypes = ['copy', 'link'];
+  var body = { name: name, type: type };
+
+  if (textTypes.includes(type)) {
+    var content = document.getElementById('asset-content').value.trim();
+    if (!content) { showMsg('asset-msg', 'err', 'Please enter content'); return; }
+    body.content = content;
+  } else {
+    if (!pendingFileBase64) { showMsg('asset-msg', 'err', 'Please select a file to upload'); return; }
+    body.file_url = pendingFileBase64;
+    body.content = pendingFileName;
+  }
+
+  try {
+    var r = await fetch(API + '/api/merchants/assets', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await r.json();
+    if (d.asset) {
+      showMsg('asset-msg', 'ok', 'Asset saved successfully');
+      document.getElementById('asset-name').value = '';
+      document.getElementById('asset-content').value = '';
+      document.getElementById('file-preview').style.display = 'none';
+      pendingFileBase64 = null; pendingFileName = null;
+      document.getElementById('asset-file-input').value = '';
+      loadAssets();
+    } else {
+      showMsg('asset-msg', 'err', d.error || 'Upload failed');
+    }
+  } catch (e) {
+    showMsg('asset-msg', 'err', 'Error: ' + e.message);
+  }
+}
+
+async function loadAssets() {
+  var wrap = document.getElementById('asset-grid-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="empty">Loading...</div>';
+  try {
+    var r = await fetch(API + '/api/merchants/assets', { headers: { Authorization: 'Bearer ' + tok } });
+    var d = await r.json();
+    if (!d.assets || !d.assets.length) {
+      wrap.innerHTML = '<div class="empty">No assets yet. Upload your first image or PDF above.</div>';
+      return;
+    }
+    var typeColors = { image:'badge-b', banner:'badge-a', pdf:'badge-r', copy:'badge-g', link:'badge-o', video:'badge-c' };
+    wrap.innerHTML = '<div class="asset-grid">' + d.assets.map(function(a) {
+      var preview = '';
+      if ((a.type === 'image' || a.type === 'banner') && a.file_url && a.file_url.startsWith('data:image')) {
+        preview = '<div class="asset-preview"><img src="' + a.file_url + '" alt="' + a.name + '"></div>';
+      } else if (a.type === 'pdf') {
+        preview = '<div class="asset-preview"><div class="asset-preview-pdf"><span>&#128196;</span><small>' + (a.content || 'PDF') + '</small></div></div>';
+      } else if (a.type === 'link') {
+        preview = '<div class="asset-preview" style="font-size:1.5rem;color:var(--b)">&#128279;</div>';
+      } else if (a.type === 'copy') {
+        preview = '<div class="asset-preview" style="font-size:1.25rem;color:var(--d);padding:.5rem;word-break:break-word;text-align:left;align-items:flex-start;font-size:.72rem;color:var(--txt2)">' + (a.content || '').substring(0, 80) + (a.content && a.content.length > 80 ? '...' : '') + '</div>';
+      } else {
+        preview = '<div class="asset-preview" style="font-size:2rem;color:var(--txt3)">&#128230;</div>';
+      }
+      var badge = typeColors[a.type] || 'badge-b';
+      var copyVal = a.type === 'link' ? a.content : (a.type === 'copy' ? a.content : a.file_url) || '';
+      return '<div class="asset-item">' +
+        preview +
+        '<div class="asset-info">' +
+          '<div class="asset-name">' + a.name + '</div>' +
+          '<span class="badge ' + badge + ' asset-type-badge">' + a.type + '</span>' +
+          '<div class="asset-actions">' +
+            '<button class="btn-asset copy" data-id="' + a.id + '" onclick="copyAsset(this.dataset.id)">Copy</button>' +
+            '<button class="btn-asset del" data-id="' + a.id + '" onclick="deleteAsset(this.dataset.id)">Delete</button>' +
+          '</div>' +
+        '</div>' +
+        '</div>';
+    }).join('') + '</div>';
+  } catch (e) {
+    wrap.innerHTML = '<div class="empty">Failed to load assets</div>';
+  }
+}
+
+function copyAsset(id) {
+  var btn = event.target;
+  fetch(API + '/api/merchants/assets', { headers: { Authorization: 'Bearer ' + tok } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var asset = d.assets.find(function(a) { return String(a.id) === String(id); });
+      if (!asset) return;
+      var val = asset.type === 'link' ? asset.content : (asset.type === 'copy' ? asset.content : asset.file_url) || '';
+      navigator.clipboard.writeText(val).then(function() {
+        var orig = btn.textContent; btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1800);
+      });
+    });
+}
+
+async function deleteAsset(id) {
+  brandedConfirm('Delete this asset?', async function() {
+    try {
+      var r = await fetch(API + '/api/merchants/assets/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + tok } });
+      var d = await r.json();
+      if (d.message) { loadAssets(); toast('ok','Asset deleted'); }
+      else toast('err', d.error || 'Failed to delete');
+    } catch (e) { toast('err', e.message); }
+  }, 'Delete', 'Cancel');
+}
+
+
+// ── Branded toast notification (replaces alert) ──────────────────────────
+var toastTimer = null;
+function toast(type, msg, duration) {
+  duration = duration || 3500;
+  var el = document.getElementById('toast-bar');
+  if (!el) return;
+  el.className = 'toast-bar ' + type;
+  el.querySelector('.toast-msg').textContent = msg;
+  var icons = {ok:'&#10003;',err:'&#9888;',warn:'&#9888;',info:'&#9432;'};
+  var icon = el.querySelector('.toast-icon'); if(icon) icon.innerHTML = icons[type]||'&#9432;';
+  el.style.display = 'flex';
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() {
+    el.classList.remove('show');
+    setTimeout(function() { el.style.display = 'none'; }, 320);
+  }, duration);
+}
+
+// ── Branded confirm modal (replaces confirm()) ────────────────────────────
+var confirmCallback = null;
+function brandedConfirm(message, onYes, yesLabel, noLabel) {
+  yesLabel = yesLabel || 'Confirm';
+  noLabel = noLabel || 'Cancel';
+  confirmCallback = onYes;
+  document.getElementById('confirm-msg').textContent = message;
+  document.getElementById('confirm-yes').textContent = yesLabel;
+  document.getElementById('confirm-no').textContent = noLabel;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function confirmYes() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+}
+function confirmNo() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  confirmCallback = null;
+}
+
+// ── Payment tab switcher ──────────────────────────────────────────────────
+var currentPayTab = 'card';
+function setPayTab(tab) {
+  currentPayTab = tab;
+  var tabs = ['card', 'bank', 'mobile'];
+  var opts = ['credit card', 'ussd_bank_transfer', 'mobilemoney'];
+  tabs.forEach(function(t) {
+    var btn = document.getElementById('tab-' + t);
+    var pane = document.getElementById('pay-tab-' + t);
+    var active = t === tab;
+    if (btn) { btn.style.background = active ? 'var(--ga)' : 'transparent'; btn.style.color = active ? '#fff' : 'var(--txt2)'; }
+    if (pane) pane.style.display = active ? 'block' : 'none';
+  });
+}
+
+
+function doLogout(){
+  tok=null;merchant=null;localStorage.removeItem('merch_tok');
+  document.getElementById('auth-section').classList.remove('hidden');
+  document.getElementById('dash-section').classList.add('hidden');
+  document.getElementById('cred-section').classList.add('hidden');
+}
+
+function init(){
+  var p=new URLSearchParams(location.search);
+  var plan=p.get('plan');
+  if(plan){
+    pendingPlan=plan;selPlan=plan;
+    swTab('signup');
+    selectPlan(plan);
+    var info=document.getElementById('su-plan-info');
+    if(info){info.classList.remove('hidden');info.textContent=plan.charAt(0).toUpperCase()+plan.slice(1)+' plan selected - 14-day free trial, no card needed'}
+    history.replaceState({},'','/merchant');
+    return;
+  }
+  tok=localStorage.getItem('merch_tok');
+  if(tok)loadDash();
+}
+init();
+</script>
+
+
+<!-- Branded Toast -->
+<div class="toast-bar ok" id="toast-bar" style="display:none">
+  <span class="toast-icon" id="toast-icon">&#10003;</span>
+  <span class="toast-msg" id="toast-msg"></span>
+  <button class="toast-close" onclick="document.getElementById('toast-bar').classList.remove('show')">&#215;</button>
+</div>
+
+<!-- Branded Confirm Modal -->
+<div class="confirm-modal" id="confirm-modal">
+  <div class="confirm-box">
+    <h4>Are you sure?</h4>
+    <p id="confirm-msg">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn-no" id="confirm-no" onclick="confirmNo()">Cancel</button>
+      <button class="confirm-btn-yes" id="confirm-yes" onclick="confirmYes()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="pay-modal" id="pay-modal">
+  <div class="pay-box">
+    <div id="pay-form-view">
+      <div class="pay-box-head">
+        <div>
+          <h3 id="pay-modal-title">Upgrade Your Plan</h3>
+          <p id="pay-subtitle">Secure payment via Flutterwave</p>
+        </div>
+        <button class="pay-close" onclick="closePayModal()">&#215;</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.35rem;background:rgba(0,0,0,.3);border-radius:.6rem;padding:.22rem;margin-bottom:1.1rem">
+        <button id="tab-card" onclick="setPayTab('card')" style="padding:.52rem;border:none;border-radius:.42rem;font-family:Poppins,sans-serif;font-weight:600;font-size:.73rem;cursor:pointer;transition:all .2s;background:var(--ga);color:#fff">Credit Card</button>
+        <button id="tab-bank" onclick="setPayTab('bank')" style="padding:.52rem;border:none;border-radius:.42rem;font-family:Poppins,sans-serif;font-weight:600;font-size:.73rem;cursor:pointer;transition:all .2s;background:transparent;color:var(--txt2)">Bank Transfer</button>
+        <button id="tab-mobile" onclick="setPayTab('mobile')" style="padding:.52rem;border:none;border-radius:.42rem;font-family:Poppins,sans-serif;font-weight:600;font-size:.73rem;cursor:pointer;transition:all .2s;background:transparent;color:var(--txt2)">Mobile Money</button>
+      </div>
+      <div class="pay-plan-summary">
+        <div class="pay-plan-name" id="pay-plan-label">Pro Plan<small>Billed monthly, cancel anytime</small></div>
+        <div class="pay-amount" id="pay-amount-display">$2<span>/mo</span></div>
+      </div>
+      <div class="pay-field-group">
+        <label>Full Name</label>
+        <input class="pay-inp" type="text" id="pay-name" placeholder="Your name" autocomplete="name">
+      </div>
+      <div class="pay-field-group">
+        <label>Email Address</label>
+        <input class="pay-inp" type="email" id="pay-email" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="pay-security">
+        <div class="pay-security-dot"></div>
+        Card details entered securely in Flutterwave's PCI-compliant checkout. We never store your card number.
+      </div>
+      <button class="pay-btn" id="pay-submit-btn" onclick="processPayment()">Pay <span id="pay-btn-amount">$2</span> and Upgrade Instantly</button>
+      <div class="pay-msg" id="pay-msg"></div>
+    </div>
+    <div class="pay-success-screen" id="pay-success-view">
+      <div class="pay-success-icon">&#10003;</div>
+      <h3 style="font-family:Poppins,sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.4rem">Payment Successful!</h3>
+      <p style="color:var(--txt2);font-size:.82rem;line-height:1.6;margin-bottom:1rem">Your plan has been upgraded. Your new features are now active.</p>
+      <button class="pay-btn" onclick="closePayModal();loadTrialStatus()">Continue to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

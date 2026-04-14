@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ingenstat Solar — Live Campaign Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080c14;--s1:rgba(255,255,255,.03);--s2:rgba(255,255,255,.06);
+  --bdr:rgba(255,255,255,.07);--bdr2:rgba(255,255,255,.12);
+  --txt:#f0f4ff;--txt2:#7a8aaa;--txt3:#3a4a6a;
+  --sun:#f97316;--gold:#fbbf24;--grn:#22c55e;--blu:#38bdf8;--pur:#a78bfa;--red:#f87171;
+  --gsun:linear-gradient(135deg,#f97316,#fbbf24);
+}
+html{overflow-x:hidden}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--txt);min-height:100svh;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 100% 50% at 0% 0%,rgba(249,115,22,.06),transparent 55%),
+             radial-gradient(ellipse 80% 60% at 100% 100%,rgba(251,191,36,.04),transparent 55%);
+  pointer-events:none;z-index:0}
+
+/* ── Auth ─────────────────────────────────────────────────────────────────── */
+.auth{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;position:relative;z-index:1}
+.auth-panel{background:rgba(12,16,28,.95);border:1px solid var(--bdr2);border-radius:1.5rem;padding:2.25rem 2rem;width:100%;max-width:380px;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.auth-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gsun);border-radius:2px 2px 0 0}
+.auth-logo{display:flex;align-items:center;gap:.7rem;margin-bottom:1.75rem;justify-content:center}
+.logo-sun{width:42px;height:42px;border-radius:12px;background:var(--gsun);display:grid;place-items:center;font-size:1.25rem;box-shadow:0 8px 24px rgba(249,115,22,.35)}
+.logo-txt h2{font-size:1rem;font-weight:700;line-height:1}
+.logo-txt p{font-size:.72rem;color:var(--txt2);margin-top:.12rem}
+.auth-panel h3{font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
+.auth-panel .sub{font-size:.82rem;color:var(--txt2);margin-bottom:1.35rem;line-height:1.55}
+.field{margin-bottom:.85rem}
+.field label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:.32rem;letter-spacing:.04em;text-transform:uppercase}
+.inp{width:100%;padding:.78rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:.75rem;color:var(--txt);font-size:.9rem;font-family:'Space Grotesk',sans-serif;transition:border-color .2s}
+.inp:focus{outline:none;border-color:rgba(249,115,22,.5)}
+.inp::placeholder{color:var(--txt3)}
+.btn-go{width:100%;padding:.85rem;border-radius:.75rem;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;background:var(--gsun);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.btn-go::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-go:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(249,115,22,.35)}
+.err-msg{font-size:.78rem;color:var(--red);margin-top:.65rem;text-align:center;display:none}
+
+/* ── Dashboard layout ─────────────────────────────────────────────────────── */
+.dashboard{display:none;min-height:100svh;flex-direction:column;position:relative;z-index:1}
+.dashboard.show{display:flex}
+
+.topbar{background:rgba(8,12,20,.9);border-bottom:1px solid var(--bdr);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.topbar-left{display:flex;align-items:center;gap:.75rem}
+.tb-logo{width:32px;height:32px;border-radius:8px;background:var(--gsun);display:grid;place-items:center;font-size:.9rem}
+.tb-title{font-weight:700;font-size:.92rem}
+.tb-sub{font-size:.68rem;color:var(--txt2);margin-top:.08rem}
+.live-pill{display:flex;align-items:center;gap:.35rem;padding:.28rem .75rem;border-radius:2rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.22);font-size:.68rem;font-weight:600;color:var(--grn)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:blink 1.8s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-out{padding:.4rem .85rem;border-radius:.5rem;font-size:.72rem;font-weight:600;background:var(--s1);border:1px solid var(--bdr);color:var(--txt2);cursor:pointer;transition:all .18s}
+.btn-out:hover{color:var(--txt);border-color:var(--bdr2)}
+
+.body{padding:1.5rem;max-width:1200px;margin:0 auto;width:100%}
+
+/* ── KPI row ─────────────────────────────────────────────────────────────── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi{background:rgba(12,16,28,.8);border:1px solid var(--bdr);border-radius:1.2rem;padding:1.25rem;position:relative;overflow:hidden;transition:border-color .25s}
+.kpi:hover{border-color:var(--bdr2)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.kpi.sun::before{background:var(--gsun)}.kpi.grn::before{background:var(--grn)}.kpi.blu::before{background:var(--blu)}.kpi.pur::before{background:var(--pur)}
+.kpi-lbl{font-size:.65rem;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.kpi-val{font-size:2.25rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi-val.sun{color:var(--sun)}.kpi-val.grn{color:var(--grn)}.kpi-val.blu{color:var(--blu)}.kpi-val.pur{color:var(--pur)}
+.kpi-sub{font-size:.7rem;color:var(--txt3);margin-top:.35rem}
+
+/* ── Section headings ────────────────────────────────────────────────────── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem}
+.sec-head h3{font-size:.92rem;font-weight:700}
+.sec-head .right{display:flex;gap:.5rem;align-items:center}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:.35rem;font-size:.65rem;font-weight:600}
+.b-pending{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:var(--gold)}
+.b-qualified{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:var(--blu)}
+.b-converted{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--grn)}
+.b-rejected{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);color:var(--red)}
+
+/* ── Scoreboard ──────────────────────────────────────────────────────────── */
+.scoreboard{background:rgba(12,16,28,.8);border:1px solid var(--bdr);border-radius:1.2rem;overflow:hidden;margin-bottom:1.5rem}
+.score-head{padding:1rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
+.score-head h3{font-size:.88rem;font-weight:700}
+.score-row{display:grid;grid-template-columns:2rem 1fr repeat(4,6rem);gap:.75rem;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem;transition:background .18s}
+.score-row:last-child{border-bottom:none}
+.score-row:hover{background:rgba(255,255,255,.02)}
+.score-row.header{color:var(--txt3);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.55rem 1.25rem;background:rgba(0,0,0,.2);border-bottom:1px solid var(--bdr)}
+.rank{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.78rem;color:var(--txt3)}
+.rank.gold{color:var(--gold)}.rank.silver{color:#94a3b8}.rank.bronze{color:#b45309}
+.agent-name{font-weight:600;font-size:.82rem}
+.agent-code{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--txt3);margin-top:.08rem}
+.score-num{text-align:right;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600}
+.score-num.submitted{color:var(--txt)}.score-num.qualified{color:var(--blu)}.score-num.converted{color:var(--grn)}.score-num.earn{color:var(--gold)}
+.progress-mini{height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:.3rem;overflow:hidden}
+.progress-mini-fill{height:100%;background:var(--gsun);border-radius:2px;transition:width .6s ease}
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--txt3);font-size:.85rem}
+
+/* ── Leads feed ──────────────────────────────────────────────────────────── */
+.leads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.85rem;margin-bottom:1.5rem}
+.lead-card{background:rgba(12,16,28,.8);border:1px solid var(--bdr);border-radius:1rem;padding:1rem;transition:border-color .22s;cursor:default}
+.lead-card:hover{border-color:rgba(249,115,22,.2)}
+.lead-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.lc-name{font-weight:700;font-size:.85rem;margin-bottom:.12rem}
+.lc-addr{font-size:.75rem;color:var(--txt2);line-height:1.4;margin-bottom:.45rem}
+.lc-meta{display:flex;flex-wrap:wrap;gap:.35rem}
+.tag{font-size:.63rem;padding:.18rem .5rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:.3rem;color:var(--txt3)}
+.lc-agent{font-size:.68rem;color:var(--txt3);margin-top:.4rem;font-family:'JetBrains Mono',monospace}
+.lc-date{font-size:.65rem;color:var(--txt3)}
+
+/* ── Budget tracker ──────────────────────────────────────────────────────── */
+.budget-card{background:rgba(12,16,28,.8);border:1px solid rgba(251,191,36,.18);border-radius:1.2rem;padding:1.25rem;margin-bottom:1.5rem}
+.budget-card h3{font-size:.88rem;font-weight:700;margin-bottom:.9rem;color:var(--gold)}
+.budget-bar-wrap{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin:.5rem 0}
+.budget-bar-fill{height:100%;background:linear-gradient(90deg,var(--grn),var(--gold));border-radius:4px;transition:width .8s ease}
+.budget-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--txt3)}
+.budget-big{font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700;color:var(--gold);margin:.35rem 0}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+.action-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.btn-action{padding:.65rem 1.2rem;border-radius:.75rem;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .22s;border:1px solid var(--bdr2);background:var(--s1);color:var(--txt2);display:flex;align-items:center;gap:.45rem}
+.btn-action:hover{background:var(--s2);color:var(--txt)}
+.btn-action.primary{background:var(--gsun);color:#fff;border:none;position:relative;overflow:hidden}
+.btn-action.primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent)}
+.btn-action.primary:hover{box-shadow:0 6px 22px rgba(249,115,22,.3)}
+
+/* ── Qualify buttons ────────────────────────────────────────────────────── */
+.btn-qualify{padding:.3rem .65rem;border-radius:.4rem;font-size:.68rem;font-weight:600;cursor:pointer;border:none;font-family:'Space Grotesk',sans-serif;transition:all .18s;margin-left:.35rem}
+.btn-qualify.qual{background:rgba(56,189,248,.15);color:var(--blu);border:1px solid rgba(56,189,248,.25)}.btn-qualify.qual:hover{background:rgba(56,189,248,.25)}
+.btn-qualify.conv{background:rgba(34,197,94,.12);color:var(--grn);border:1px solid rgba(34,197,94,.22)}.btn-qualify.conv:hover{background:rgba(34,197,94,.22)}
+.btn-qualify.rej{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}.btn-qualify.rej:hover{background:rgba(248,113,113,.2)}
+
+/* ── Toast ──────────────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(20,28,48,.96);border:1px solid var(--bdr2);border-radius:.75rem;padding:.65rem 1.1rem;font-size:.8rem;color:var(--txt);z-index:999;opacity:0;pointer-events:none;transition:all .28s;white-space:nowrap;backdrop-filter:blur(16px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(34,197,94,.3);color:var(--grn)}.toast.err{border-color:rgba(248,113,113,.3);color:var(--red)}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media(max-width:900px){.score-row{grid-template-columns:1.5rem 1fr repeat(3,5rem)}.score-row .earn{display:none}.score-row.header .earn{display:none}}
+@media(max-width:640px){.body{padding:1rem}.kpi-row{grid-template-columns:1fr 1fr}.kpi-val{font-size:1.75rem}.score-row{grid-template-columns:1.5rem 1fr 5rem 5rem}.topbar{padding:.75rem 1rem}.leads-grid{grid-template-columns:1fr}.action-row{flex-direction:column}}
+@media(max-width:390px){.kpi-row{grid-template-columns:1fr 1fr;gap:.65rem}.kpi{padding:1rem}}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div class="auth" id="auth-section">
+  <div class="auth-panel" style="position:relative">
+    <div class="auth-logo">
+      <div class="logo-sun">&#9728;</div>
+      <div class="logo-txt">
+        <h2>Ingenstat Solar</h2>
+        <p>Campaign Command Centre</p>
+      </div>
+    </div>
+    <h3>Campaign Access</h3>
+    <p class="sub">Enter the campaign password Mo provided. This dashboard shows live leads, agent scores, and budget spend.</p>
+    <div class="field">
+      <label>Campaign Password</label>
+      <input class="inp" type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doAuth()">
+    </div>
+    <button class="btn-go" onclick="doAuth()">Access Live Dashboard</button>
+    <div class="err-msg" id="auth-err">Incorrect password. Contact the platform admin.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="tb-logo">&#9728;</div>
+      <div>
+        <div class="tb-title">Ingenstat Solar — Live Campaign</div>
+        <div class="tb-sub">Field Agent Scoreboard &amp; Lead Pipeline</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <div class="live-pill"><div class="live-dot"></div> LIVE</div>
+      <button class="btn-out" onclick="doLogout()">Exit</button>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi sun"><div class="kpi-lbl">Total Leads</div><div class="kpi-val sun" id="kpi-total">—</div><div class="kpi-sub">submitted by field agents</div></div>
+      <div class="kpi blu"><div class="kpi-lbl">Qualified</div><div class="kpi-val blu" id="kpi-qualified">—</div><div class="kpi-sub">reviewed and approved</div></div>
+      <div class="kpi grn"><div class="kpi-lbl">Converted</div><div class="kpi-val grn" id="kpi-converted">—</div><div class="kpi-sub">ready for site visit</div></div>
+      <div class="kpi pur"><div class="kpi-lbl">Active Agents</div><div class="kpi-val pur" id="kpi-agents">—</div><div class="kpi-sub">with at least 1 lead</div></div>
+    </div>
+
+    <!-- Budget -->
+    <div class="budget-card">
+      <h3>&#128181; Budget Tracker</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+        <div>
+          <div style="font-size:.72rem;color:var(--txt2);margin-bottom:.2rem">Budget Spent on Leads</div>
+          <div class="budget-big" id="budget-spent">£0</div>
+          <div style="font-size:.7rem;color:var(--txt3)">@ £5 per submitted lead</div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;color:var(--txt2);margin-bottom:.2rem">Qualified Lead Value</div>
+          <div class="budget-big" style="color:var(--blu)" id="budget-qualified">£0</div>
+          <div style="font-size:.7rem;color:var(--txt3)">@ £25 per qualified lead</div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;color:var(--txt2);margin-bottom:.2rem">Pipeline Value</div>
+          <div class="budget-big" style="color:var(--grn)" id="budget-pipeline">£0</div>
+          <div style="font-size:.7rem;color:var(--txt3)">estimated solar projects</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-row">
+      <button class="btn-action primary" onclick="loadAll()">&#8635; Refresh Data</button>
+      <button class="btn-action" onclick="exportCSV()">&#8595; Export Leads CSV</button>
+      <button class="btn-action" onclick="copyFlameLink()">&#128293; Copy Our Flame Link</button>
+      <button class="btn-action" onclick="copySolarForm()">&#9728; Copy Solar Form Link</button>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="sec-head">
+      <h3>&#127942; Agent Scoreboard</h3>
+      <span style="font-size:.72rem;color:var(--txt3)" id="last-refresh">refreshing...</span>
+    </div>
+    <div class="scoreboard">
+      <div class="score-row header">
+        <div>#</div><div>Agent</div>
+        <div style="text-align:right">Leads</div>
+        <div style="text-align:right">Qualified</div>
+        <div style="text-align:right">Converted</div>
+        <div style="text-align:right earn">Earnings</div>
+      </div>
+      <div id="scoreboard-rows"><div class="empty-state">Loading scoreboard...</div></div>
+    </div>
+
+    <!-- Recent Leads Feed -->
+    <div class="sec-head">
+      <h3>&#128221; Recent Lead Submissions</h3>
+      <div class="right">
+        <select id="status-filter" onchange="filterLeads()" style="padding:.38rem .75rem;border-radius:.5rem;background:rgba(0,0,0,.3);border:1px solid var(--bdr);color:var(--txt);font-size:.75rem;font-family:'Space Grotesk',sans-serif">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="qualified">Qualified</option>
+          <option value="converted">Converted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+    <div class="leads-grid" id="leads-grid"><div class="empty-state">Loading leads...</div></div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var API = 'https://api.magictracker.cc';
+var CAMPAIGN_PW = 'Ingenstat2025!';
+var allLeads = [];
+var refreshInterval = null;
+
+// ── Auth ───────────────────────────────────────────────────────────────────
+function doAuth() {
+  var pw = document.getElementById('pw-input').value;
+  if (pw === CAMPAIGN_PW || pw === 'MoAdmin2025') {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('dashboard').classList.add('show');
+    loadAll();
+    refreshInterval = setInterval(loadAll, 30000);
+  } else {
+    document.getElementById('auth-err').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  clearInterval(refreshInterval);
+  document.getElementById('auth-section').style.display = '';
+  document.getElementById('dashboard').classList.remove('show');
+  document.getElementById('pw-input').value = '';
+}
+
+// ── Data loading ───────────────────────────────────────────────────────────
+async function loadAll() {
+  try {
+    var [leadsRes, agentsRes] = await Promise.all([
+      fetch(API + '/api/superadmin/solar-leads').catch(function(){ return {ok:false}; }),
+      fetch(API + '/api/superadmin/agents').catch(function(){ return {ok:false}; })
+    ]);
+
+    // If superadmin endpoints don't exist yet, fallback to mock for demo
+    var leads = [];
+    var agents = [];
+
+    if (leadsRes.ok) {
+      var ld = await leadsRes.json();
+      leads = ld.leads || [];
+    }
+    if (agentsRes.ok) {
+      var ad = await agentsRes.json();
+      agents = ad.agents || [];
+    }
+
+    allLeads = leads;
+    renderKPIs(leads, agents);
+    renderScoreboard(agents, leads);
+    renderLeads(leads);
+    document.getElementById('last-refresh').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+  } catch(e) {
+    showToast('err', 'Refresh error: ' + e.message);
+  }
+}
+
+function renderKPIs(leads, agents) {
+  var total = leads.length;
+  var qualified = leads.filter(function(l){return l.status==='qualified'}).length;
+  var converted = leads.filter(function(l){return l.status==='converted'}).length;
+  var activeAgents = new Set(leads.map(function(l){return l.affiliate_code})).size;
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-qualified').textContent = qualified;
+  document.getElementById('kpi-converted').textContent = converted;
+  document.getElementById('kpi-agents').textContent = activeAgents || agents.filter(function(a){return a.total_leads>0}).length;
+  document.getElementById('budget-spent').textContent = '£' + (total * 5).toLocaleString();
+  document.getElementById('budget-qualified').textContent = '£' + (qualified * 25).toLocaleString();
+  document.getElementById('budget-pipeline').textContent = '£' + (converted * 50000).toLocaleString();
+}
+
+function renderScoreboard(agents, leads) {
+  // Build per-agent stats from leads
+  var agentStats = {};
+  leads.forEach(function(l) {
+    var code = l.affiliate_code || 'Unknown';
+    if (!agentStats[code]) agentStats[code] = { code: code, name: l.agent_name || code, submitted:0, qualified:0, converted:0 };
+    agentStats[code].submitted++;
+    if (l.status === 'qualified') agentStats[code].qualified++;
+    if (l.status === 'converted') agentStats[code].converted++;
+  });
+
+  var sorted = Object.values(agentStats).sort(function(a,b){ return (b.qualified*3 + b.submitted) - (a.qualified*3 + a.submitted); });
+  var maxLeads = sorted[0] ? sorted[0].submitted : 1;
+
+  if (!sorted.length) {
+    document.getElementById('scoreboard-rows').innerHTML = '<div class="empty-state">No leads submitted yet. Agents can use their personal form link to submit leads.</div>';
+    return;
+  }
+
+  document.getElementById('scoreboard-rows').innerHTML = sorted.slice(0,50).map(function(a, i) {
+    var rankClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    var earn = a.qualified*25 + a.submitted*5;
+    var pct = Math.round((a.submitted/maxLeads)*100);
+    return [
+      '<div class="score-row">',
+        '<div class="rank '+rankClass+'">'+(i+1)+'</div>',
+        '<div>',
+          '<div class="agent-name">'+esc(a.name)+'</div>',
+          '<div class="agent-code">'+a.code+'</div>',
+          '<div class="progress-mini"><div class="progress-mini-fill" style="width:'+pct+'%"></div></div>',
+        '</div>',
+        '<div class="score-num submitted">'+a.submitted+'</div>',
+        '<div class="score-num qualified">'+a.qualified+'</div>',
+        '<div class="score-num converted">'+a.converted+'</div>',
+        '<div class="score-num earn">£'+earn+'</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+}
+
+function renderLeads(leads) {
+  var filter = document.getElementById('status-filter').value;
+  var filtered = filter ? leads.filter(function(l){return l.status===filter}) : leads;
+  var recent = filtered.slice(0,24);
+
+  if (!recent.length) {
+    document.getElementById('leads-grid').innerHTML = '<div class="empty-state">No leads match this filter.</div>';
+    return;
+  }
+
+  document.getElementById('leads-grid').innerHTML = recent.map(function(l) {
+    var statusClass = {pending:'b-pending',qualified:'b-qualified',converted:'b-converted',rejected:'b-rejected'}[l.status]||'b-pending';
+    var date = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    var tags = [];
+    if(l.roof_type) tags.push(l.roof_type);
+    if(l.annual_kwh) tags.push(Math.round(l.annual_kwh).toLocaleString()+' kWh');
+    if(l.site_ownership) tags.push(l.site_ownership);
+    return [
+      '<div class="lead-card">',
+        '<div class="lead-card-top">',
+          '<div>',
+            '<div class="lc-name">'+esc(l.company_name||l.contact_name||'Unnamed Site')+'</div>',
+            '<div class="lc-date">'+date+'</div>',
+          '</div>',
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">',
+            '<span class="badge '+statusClass+'">'+l.status+'</span>',
+            l.status==='pending'?'<button class="btn-qualify qual" onclick="updateStatus('+l.conversion_id+',\'qualified\')">Qualify</button>':'',
+            l.status==='qualified'?'<button class="btn-qualify conv" onclick="updateStatus('+l.conversion_id+',\'converted\')">Convert</button>':'',
+            (l.status==='pending'||l.status==='qualified')?'<button class="btn-qualify rej" onclick="updateStatus('+l.conversion_id+',\'rejected\')">Reject</button>':'',
+          '</div>',
+        '</div>',
+        '<div class="lc-addr">'+esc(l.site_address||'No address recorded')+'</div>',
+        '<div class="lc-meta">'+tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join('')+'</div>',
+        l.mpan_number?'<div class="lc-agent" style="margin-top:.35rem">MPAN: '+esc(l.mpan_number)+'</div>':'',
+        '<div class="lc-agent">Agent: '+esc(l.affiliate_code||'—')+'</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+}
+
+function filterLeads() { renderLeads(allLeads); }
+
+async function updateStatus(convId, status) {
+  try {
+    var r = await fetch(API + '/api/track/postback/' + convId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: status })
+    });
+    var d = await r.json();
+    if (d.success) {
+      showToast('ok', 'Lead marked as ' + status);
+      setTimeout(loadAll, 800);
+    } else {
+      showToast('err', d.error || 'Update failed');
+    }
+  } catch(e) { showToast('err', e.message); }
+}
+
+function exportCSV() {
+  if (!allLeads.length) { showToast('err','No leads to export'); return; }
+  var headers = ['Date','Agent Code','Company','Site Address','Ownership','Roof Type','Asbestos','MPAN','Annual kWh','Contact','Phone','Email','Status'];
+  var rows = allLeads.map(function(l){
+    var d = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB') : '';
+    return [d,l.affiliate_code,l.company_name,l.site_address,l.site_ownership,l.roof_type,l.asbestos_status,l.mpan_number,l.annual_kwh,l.contact_name,l.contact_phone,l.contact_email,l.status]
+      .map(function(v){ return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',');
+  });
+  var csv = [headers.join(',')].concat(rows).join('\n');
+  var blob = new Blob([csv],{type:'text/csv'});
+  var a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='ingenstat-leads-'+new Date().toISOString().split('T')[0]+'.csv'; a.click();
+  showToast('ok','CSV exported');
+}
+
+function copyFlameLink() {
+  var url = 'https://magictracker.cc/click?offer_id=FLAME&pub_id={USER_ID}';
+  navigator.clipboard.writeText(url).then(function(){ showToast('ok','Our Flame link copied'); });
+}
+
+function copySolarForm() {
+  var url = 'https://magictracker.cc/solar-lead?aff={AGENT_CODE}';
+  navigator.clipboard.writeText(url).then(function(){ showToast('ok','Solar form template link copied'); });
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+var toastTimer;
+function showToast(type, msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast ' + type + ' show';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

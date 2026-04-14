@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Affiliate Dashboard - Magic Worlds Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--bg2:#07071a;--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.13);--txt:#eeeeff;--txt2:#8888aa;--txt3:#4a4a6a;--a:#7c6dfa;--b:#00d4ff;--c:#ff6ef7;--d:#00ffa3;--e:#ffb347;--ga:linear-gradient(135deg,#7c6dfa,#00d4ff);--r:.75rem;--r2:1.1rem;--r3:1.4rem;--glow-a:rgba(124,109,250,.2)}
+html{overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100svh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:inherit;border:none;background:none}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;line-height:1.2}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a);border-radius:4px}
+.hidden{display:none!important}
+
+/* Auth */
+.auth-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(124,109,250,.1),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 80%,rgba(0,212,255,.07),transparent 60%);overflow-y:auto}
+.auth-box{background:linear-gradient(135deg,rgba(13,13,38,.97),rgba(8,8,25,.97));border:1px solid var(--bdr2);border-radius:var(--r3);padding:2rem 1.75rem;width:100%;max-width:460px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.auth-logo{display:flex;align-items:center;gap:.6rem;justify-content:center;margin-bottom:1.4rem}
+.logo-mark{width:34px;height:34px;border-radius:8px;background:var(--ga);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.logo-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent)}
+.logo-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:.9rem}
+.logo-acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-title{font-family:'Poppins',sans-serif;font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:.3rem}
+.auth-sub{text-align:center;color:var(--txt2);font-size:.82rem;margin-bottom:1.35rem;line-height:1.6}
+.fg{margin-bottom:.78rem}
+label{display:block;font-size:.75rem;font-weight:600;color:var(--txt2);margin-bottom:.34rem;font-family:'Poppins',sans-serif;letter-spacing:.03em}
+.inp{width:100%;padding:.75rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.875rem;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.inp:focus{outline:none;border-color:rgba(124,109,250,.5)}
+.inp::placeholder{color:var(--txt3)}
+.btn-sub{width:100%;padding:.8rem;border-radius:var(--r);font-family:'Poppins',sans-serif;font-weight:600;font-size:.9rem;background:var(--ga);color:#fff;border:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;margin-top:.2rem}
+.btn-sub::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent)}
+.btn-sub:hover{transform:translateY(-1px);box-shadow:0 10px 30px var(--glow-a)}
+.btn-sub:disabled{opacity:.6;transform:none;cursor:not-allowed}
+.msg{padding:.58rem .95rem;border-radius:var(--r);font-size:.78rem;margin-top:.7rem;text-align:center;display:none}
+.msg.ok{background:rgba(0,255,163,.08);border:1px solid rgba(0,255,163,.18);color:var(--d)}
+.msg.err{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.18);color:#ff7070}
+
+/* Join banner shown when coming via invite link */
+.join-banner{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.18);border-radius:var(--r2);padding:1rem;margin-bottom:1.25rem;text-align:center}
+.join-banner-logo{width:40px;height:40px;border-radius:.65rem;background:var(--ga);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:.8rem;color:#fff;margin:0 auto .65rem}
+.join-banner h3{font-family:'Poppins',sans-serif;font-size:.95rem;font-weight:600;margin-bottom:.25rem}
+.join-banner p{font-size:.78rem;color:var(--txt2);line-height:1.5}
+.join-badge{display:inline-block;padding:.2rem .65rem;border-radius:.3rem;font-size:.68rem;font-weight:600;font-family:'Poppins',sans-serif;background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d);margin-top:.4rem}
+
+/* Dashboard */
+.dash{display:flex;min-height:100vh}
+.sidebar{width:248px;background:rgba(0,0,0,.38);border-right:1px solid var(--bdr);position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:200;display:flex;flex-direction:column;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-head{padding:1rem;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--txt);margin-bottom:.65rem}
+.sb-logo .logo-text{font-size:.85rem}
+.sb-user{padding:.6rem .7rem;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r)}
+.sb-user-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:.82rem;margin-bottom:.1rem}
+.sb-user-email{font-size:.68rem;color:var(--txt3)}
+.sb-user-count{font-size:.65rem;color:var(--b);margin-top:.18rem}
+.sb-nav{padding:.5rem 0;flex:1}
+.sb-sec{margin-bottom:.8rem}
+.sb-sec-title{padding:.3rem 1rem;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-family:'Poppins',sans-serif}
+.sb-link{display:flex;align-items:center;gap:.52rem;padding:.52rem 1rem;color:var(--txt2);font-size:.8rem;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all .18s;user-select:none}
+.sb-link:hover{background:rgba(124,109,250,.07);color:var(--txt)}
+.sb-link.on{background:rgba(124,109,250,.1);color:var(--a);border-left-color:var(--a)}
+.sb-ico{font-family:'Poppins',sans-serif;font-weight:700;font-size:.62rem;width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-foot{padding:.9rem;border-top:1px solid var(--bdr);flex-shrink:0}
+.btn-logout{width:100%;padding:.6rem;background:rgba(255,100,100,.07);border:1px solid rgba(255,100,100,.18);border-radius:var(--r);color:#ff7070;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif}
+.btn-logout:hover{background:rgba(255,100,100,.14)}
+.main{flex:1;margin-left:248px;padding:1.85rem;min-height:100vh;overflow-x:hidden}
+.mob-bar{display:none;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:rgba(0,0,0,.88);border-bottom:1px solid var(--bdr);margin:-1.85rem -1.85rem 1.5rem -1.85rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);height:52px}
+.mob-logo{font-family:'Poppins',sans-serif;font-weight:700;font-size:.88rem}
+.btn-ham{background:transparent;border:1px solid var(--bdr2);color:var(--txt);padding:.4rem .62rem;border-radius:var(--r);font-size:1rem;line-height:1}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:199}
+.sb-overlay.show{display:block}
+.page{display:none}.page.on{display:block}
+.page-head{margin-bottom:1.5rem}
+.page-title{font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700}
+.page-title .acc{background:var(--ga);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-sub{color:var(--txt2);font-size:.8rem;margin-top:.25rem}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.85rem;margin-bottom:1.35rem}
+.stat{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1rem;transition:all .22s}
+.stat:hover{border-color:rgba(124,109,250,.28);transform:translateY(-2px)}
+.stat-lbl{font-size:.65rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;font-family:'Poppins',sans-serif}
+.stat-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.65rem;line-height:1}
+.ca{color:var(--a)}.cb{color:var(--b)}.cd{color:var(--d)}.ce{color:var(--e)}
+
+/* Campaign cards */
+.campaign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem;margin-bottom:1.5rem}
+.campaign-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.25rem;transition:all .25s;cursor:pointer;position:relative;overflow:hidden}
+.campaign-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ga);opacity:0;transition:opacity .25s}
+.campaign-card:hover{border-color:rgba(124,109,250,.32);transform:translateY(-3px);box-shadow:0 12px 32px rgba(124,109,250,.1)}
+.campaign-card:hover::before{opacity:1}
+.campaign-card.active-card{border-color:rgba(124,109,250,.4);background:rgba(124,109,250,.07)}
+.campaign-card.active-card::before{opacity:1}
+.cc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.85rem;gap:.5rem}
+.cc-logo{width:38px;height:38px;border-radius:.65rem;background:var(--ga);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:.78rem;color:#fff;flex-shrink:0}
+.cc-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:.92rem;margin-bottom:.18rem}
+.cc-url{font-size:.72rem;color:var(--txt3)}
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.85rem}
+.cc-stat{text-align:center;padding:.55rem .4rem;background:rgba(0,0,0,.18);border-radius:.5rem}
+.cc-stat-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--txt)}
+.cc-stat-lbl{font-size:.6rem;color:var(--txt3);margin-top:.12rem}
+.cc-link-row{display:flex;gap:.4rem}
+.cc-link-inp{flex:1;padding:.55rem .75rem;background:rgba(0,0,0,.25);border:1px solid var(--bdr);border-radius:var(--r);color:var(--a);font-family:'JetBrains Mono',monospace;font-size:.7rem;min-width:0}
+.cc-copy{padding:.55rem .75rem;background:rgba(124,109,250,.14);border:1px solid rgba(124,109,250,.22);border-radius:var(--r);color:var(--a);font-size:.7rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;transition:all .18s}
+.cc-copy:hover{background:rgba(124,109,250,.24)}
+.badge{display:inline-block;padding:.16rem .55rem;border-radius:.3rem;font-size:.65rem;font-weight:600;font-family:'Poppins',sans-serif}
+.badge-g{background:rgba(0,255,163,.1);border:1px solid rgba(0,255,163,.2);color:var(--d)}
+.badge-b{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--b)}
+.badge-a{background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.2);color:var(--a)}
+.code-tag{font-family:'JetBrains Mono',monospace;background:rgba(124,109,250,.1);border:1px solid rgba(124,109,250,.18);padding:.14rem .38rem;border-radius:.28rem;font-size:.72rem;color:var(--a)}
+
+/* Card / table */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:1.25rem;overflow:hidden}
+.card-head{padding:.88rem 1.2rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.card-head h3{font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600}
+.card-body{padding:1.2rem}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th{text-align:left;padding:.65rem .9rem;background:rgba(0,0,0,.22);color:var(--txt3);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Poppins',sans-serif;white-space:nowrap}
+td{padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--txt2);font-size:.8rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,109,250,.03)}
+.empty{text-align:center;padding:1.75rem;color:var(--txt3);font-size:.82rem}
+
+/* Settings */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1rem}
+.settings-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.2rem}
+.settings-card h4{font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.9rem}
+.btn-save{padding:.6rem 1.25rem;background:var(--a);border:none;border-radius:var(--r);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;margin-top:.7rem}
+.btn-save:hover{background:#6a5ce8;box-shadow:0 6px 20px var(--glow-a)}
+
+/* Conversions */
+.conv-filters{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-select{padding:.5rem .85rem;background:rgba(0,0,0,.22);border:1px solid var(--bdr2);border-radius:var(--r);color:var(--txt);font-size:.8rem;font-family:inherit}
+.filter-select:focus{outline:none;border-color:rgba(124,109,250,.4)}
+.filter-select option{background:#0e0e28}
+
+/* Responsive */
+@media(max-width:1023px){.sidebar{transform:translateX(-100%);transition:transform .3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.mob-bar{display:flex}}
+@media(max-width:640px){.main{padding:1rem}.mob-bar{margin:-1rem -1rem 1rem -1rem;padding:.75rem 1rem}.stats-row{grid-template-columns:1fr 1fr}.campaign-grid{grid-template-columns:1fr}.settings-grid{grid-template-columns:1fr}.auth-box{padding:1.5rem 1rem}}
+@media(max-width:390px){.main{padding:.85rem}.mob-bar{margin:-.85rem -.85rem .85rem -.85rem}.stats-row{grid-template-columns:1fr 1fr;gap:.6rem}.stat{padding:.75rem}.stat-val{font-size:1.3rem}.auth-box{padding:1.25rem .85rem}}
+</style>
+</head>
+<body>
+
+<!-- ── AUTH / JOIN SECTION ──────────────────────────────────────────────── -->
+<div id="auth-section" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="white" opacity=".95"/><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity=".7"/><circle cx="10" cy="3" r="1.8" fill="white" opacity=".9"/><circle cx="17" cy="10" r="1.8" fill="white" opacity=".9"/><circle cx="3" cy="10" r="1.8" fill="white" opacity=".9"/></svg></div>
+      <div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span> TRACKER</div>
+    </div>
+
+    <!-- JOIN MODE: shown when coming via ?join=slug -->
+    <div id="join-section" style="display:none">
+      <div class="join-banner" id="join-banner">
+        <div class="join-banner-logo" id="join-logo">MW</div>
+        <h3 id="join-merchant-name">Loading campaign...</h3>
+        <p id="join-merchant-desc">Loading...</p>
+        <span class="join-badge" id="join-commission">...</span>
+      </div>
+      <h1 class="auth-title">Join This Campaign</h1>
+      <p class="auth-sub">Enter your details to get your unique referral link instantly. Free to join.</p>
+      <div class="fg"><label>Your Full Name</label><input class="inp" type="text" id="join-name" placeholder="Alex Kim"></div>
+      <div class="fg"><label>Email Address</label><input class="inp" type="email" id="join-email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doJoin()"></div>
+      <button class="btn-sub" id="join-btn" onclick="doJoin()">Join Campaign and Get My Link</button>
+      <div id="join-msg" class="msg" style="display:none"></div>
+      <div style="text-align:center;margin-top:.85rem;font-size:.75rem;color:var(--txt3)">Already an affiliate? <a href="#" onclick="showLoginMode()" style="color:var(--a)">Login here</a></div>
+    </div>
+
+    <!-- JOIN SUCCESS -->
+    <div id="join-success" style="display:none;text-align:center;padding:.5rem 0">
+      <div style="width:52px;height:52px;border-radius:50%;background:rgba(0,255,163,.12);border:2px solid rgba(0,255,163,.25);display:flex;align-items:center;justify-content:center;margin:0 auto .9rem;font-size:1.5rem;color:var(--d)">&#10003;</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1.1rem;margin-bottom:.4rem">You are in!</h2>
+      <p style="color:var(--txt2);font-size:.82rem;margin-bottom:1rem;line-height:1.6">Your referral link is ready. Check your email for it too. Opening your dashboard...</p>
+      <div style="background:rgba(0,0,0,.2);border:1px solid var(--bdr);border-radius:var(--r);padding:.75rem">
+        <div style="font-size:.68rem;color:var(--txt3);margin-bottom:.35rem;font-family:'Poppins',sans-serif">Your referral link</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--a);word-break:break-all" id="join-link-display"></div>
+      </div>
+    </div>
+
+    <!-- LOGIN MODE: normal login with email magic link -->
+    <div id="login-section" style="display:none">
+      <h1 class="auth-title">Affiliate Login</h1>
+      <p class="auth-sub">Enter your email to receive a magic login link. You must have previously joined a campaign to log in.</p>
+      <div class="fg"><label>Email Address</label><input class="inp" type="email" id="login-email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-sub" onclick="doLogin()">Send Magic Login Link</button>
+      <div id="login-msg" class="msg" style="display:none"></div>
+      <div style="margin-top:1.1rem;padding:.85rem;background:rgba(124,109,250,.05);border:1px solid rgba(124,109,250,.12);border-radius:var(--r);font-size:.78rem;color:var(--txt2);line-height:1.6;text-align:center">
+        Not an affiliate yet? Ask the campaign owner for their signup link, or <a href="/merchant" style="color:var(--a);font-weight:600">launch your own campaign here</a>.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DASHBOARD ───────────────────────────────────────────────────────── -->
+<div id="dash-section" class="dash hidden">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSB()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <a href="/" class="sb-logo">
+        <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="white" opacity=".95"/><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity=".7"/><circle cx="10" cy="3" r="1.8" fill="white" opacity=".9"/><circle cx="17" cy="10" r="1.8" fill="white" opacity=".9"/><circle cx="3" cy="10" r="1.8" fill="white" opacity=".9"/></svg></div>
+        <div class="logo-text">MAGIC<span class="logo-acc">WORLDS</span></div>
+      </a>
+      <div class="sb-user">
+        <div class="sb-user-name" id="sb-name">Affiliate</div>
+        <div class="sb-user-email" id="sb-email"></div>
+        <div class="sb-user-count" id="sb-count"></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec"><div class="sb-sec-title">Overview</div>
+        <div class="sb-link on" onclick="showPage('overview',this)"><span class="sb-ico" style="background:rgba(0,212,255,.12);color:var(--b)">All</span>All Campaigns</div>
+      </div>
+      <div class="sb-sec"><div class="sb-sec-title">Analytics</div>
+        <div class="sb-link" onclick="showPage('conversions',this);loadAllConversions()"><span class="sb-ico" style="background:rgba(0,255,163,.12);color:var(--d)">Cvn</span>Conversions</div>
+        <div class="sb-link" onclick="showPage('earnings',this)"><span class="sb-ico" style="background:rgba(255,179,71,.12);color:var(--e)">Earn</span>Earnings</div>
+      </div>
+      <div class="sb-sec"><div class="sb-sec-title">Account</div>
+        <div class="sb-link" onclick="showPage('settings',this)"><span class="sb-ico" style="background:rgba(255,255,255,.07);color:var(--txt2)">Set</span>Settings</div>
+      </div>
+    </nav>
+    <div class="sb-foot"><button class="btn-logout" onclick="doLogout()">Logout</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="mob-bar">
+      <button class="btn-ham" onclick="toggleSB()">&#9776;</button>
+      <div class="mob-logo">MAGIC<span class="logo-acc">WORLDS</span></div>
+      <div style="width:38px"></div>
+    </div>
+
+    <!-- ALL CAMPAIGNS OVERVIEW -->
+    <div id="page-overview" class="page on">
+      <div class="page-head">
+        <h1 class="page-title">My <span class="acc">Campaigns</span></h1>
+        <div class="page-sub">All affiliate campaigns linked to your email</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Campaigns</div><div class="stat-val ca" id="total-campaigns">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Clicks</div><div class="stat-val cb" id="total-clicks">0</div></div>
+        <div class="stat"><div class="stat-lbl">Conversions</div><div class="stat-val cd" id="total-conversions">0</div></div>
+        <div class="stat"><div class="stat-lbl">Total Earnings</div><div class="stat-val ce" id="total-earnings">$0.00</div></div>
+      </div>
+      <div class="campaign-grid" id="campaigns-grid">
+        <div style="color:var(--txt3);font-size:.85rem;padding:1rem">Loading your campaigns...</div>
+      </div>
+    </div>
+
+    <!-- CONVERSIONS -->
+    <div id="page-conversions" class="page">
+      <div class="page-head">
+        <h1 class="page-title">All <span class="acc">Conversions</span></h1>
+        <div class="page-sub">Every tracked conversion across all your campaigns</div>
+      </div>
+      <div class="conv-filters">
+        <select class="filter-select" id="conv-campaign-filter" onchange="loadAllConversions()">
+          <option value="">All Campaigns</option>
+        </select>
+      </div>
+      <div class="card"><div class="tbl-wrap"><table>
+        <thead><tr><th>Date</th><th>Campaign</th><th>Type</th><th>Value</th><th>Commission</th><th>Status</th></tr></thead>
+        <tbody id="conv-table"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- EARNINGS -->
+    <div id="page-earnings" class="page">
+      <div class="page-head">
+        <h1 class="page-title">My <span class="acc">Earnings</span></h1>
+        <div class="page-sub">Commission summary across all campaigns</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-lbl">Total Earned</div><div class="stat-val ce" id="earn-total">$0.00</div></div>
+        <div class="stat"><div class="stat-lbl">Pending</div><div class="stat-val cb" id="earn-pending">$0.00</div></div>
+        <div class="stat"><div class="stat-lbl">Approved</div><div class="stat-val cd" id="earn-approved">$0.00</div></div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Earnings by Campaign</h3></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Campaign</th><th>Referral Code</th><th>Conversions</th><th>Earnings</th></tr></thead>
+          <tbody id="earn-table"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <div class="page-head">
+        <h1 class="page-title">Account <span class="acc">Settings</span></h1>
+        <div class="page-sub">Your affiliate profile and payment preferences</div>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card"><h4>Profile</h4>
+          <div class="fg"><label>Name</label><input class="inp" type="text" id="set-name"></div>
+          <div class="fg"><label>Email</label><input class="inp" type="email" id="set-email" disabled></div>
+          <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+          <div id="profile-msg" class="msg" style="display:none"></div>
+        </div>
+        <div class="settings-card"><h4>Payment Details</h4>
+          <div class="fg"><label>Wallet Address</label><input class="inp" type="text" id="set-wallet" placeholder="0x..."></div>
+          <div class="fg"><label>Payment Method</label>
+            <select class="inp" id="set-payment">
+              <option value="crypto">Crypto</option>
+              <option value="fiat">Fiat / Bank Transfer</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <button class="btn-save" onclick="savePayment()">Save Changes</button>
+          <div id="payment-msg" class="msg" style="display:none"></div>
+        </div>
+        <div class="settings-card"><h4>Login</h4>
+          <p style="color:var(--txt2);font-size:.8rem;line-height:1.65;margin-bottom:.85rem">Request a new magic login link to be sent to your email.</p>
+          <div class="fg"><input class="inp" type="email" id="reset-email" placeholder="your@email.com"></div>
+          <button class="btn-save" onclick="requestMagicLink()">Send Magic Link</button>
+          <div id="reset-msg" class="msg" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+var API = 'https://api.magictracker.cc';
+var tok = null;
+var affiliateData = null; // full multi-campaign data
+var joinSlug = null;
+var joinMerchant = null;
+
+function showMsg(id, type, text) {
+  var e = document.getElementById(id);
+  if (!e) return;
+  e.textContent = text;
+  e.className = 'msg ' + (type === 'ok' ? 'ok' : 'err');
+  e.style.display = 'block';
+}
+
+function copyText(v, b) {
+  navigator.clipboard.writeText(v).then(function() {
+    var o = b.textContent; b.textContent = 'Copied!';
+    setTimeout(function() { b.textContent = o; }, 1800);
+  });
+}
+
+function showPage(n, el) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('on'); });
+  var pg = document.getElementById('page-' + n);
+  if (pg) pg.classList.add('on');
+  document.querySelectorAll('.sb-link').forEach(function(l) { l.classList.remove('on'); });
+  if (el) el.classList.add('on');
+  closeSB();
+  if (n === 'earnings') loadEarnings();
+}
+
+function toggleSB() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sb-overlay').classList.toggle('show');
+}
+function closeSB() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
+
+function showLoginMode() {
+  document.getElementById('join-section').style.display = 'none';
+  document.getElementById('join-success').style.display = 'none';
+  document.getElementById('login-section').style.display = 'block';
+}
+
+// ── JOIN flow ──────────────────────────────────────────────────────────────
+async function loadJoinPage(slug) {
+  joinSlug = slug;
+  document.getElementById('join-section').style.display = 'block';
+  document.getElementById('login-section').style.display = 'none';
+  try {
+    var r = await fetch(API + '/api/affiliates/join/' + slug);
+    var d = await r.json();
+    if (!d.merchant) {
+      document.getElementById('join-banner').innerHTML = '<p style="color:#ff7070;font-size:.82rem">Campaign not found. Check your link.</p>';
+      return;
+    }
+    joinMerchant = d.merchant;
+    document.getElementById('join-merchant-name').textContent = d.merchant.company_name;
+    document.getElementById('join-merchant-desc').textContent =
+      (d.stats.affiliates || 0) + ' active affiliates' +
+      (d.stats.programs > 1 ? ' · ' + d.stats.programs + ' programs' : '');
+    document.getElementById('join-commission').textContent =
+      d.merchant.commission_value +
+      (d.merchant.commission_type === 'percentage' ? '% commission' : ' ' + d.merchant.currency + ' per conversion');
+    var logoEl = document.getElementById('join-logo');
+    if (logoEl) logoEl.textContent = d.merchant.company_name.charAt(0).toUpperCase();
+  } catch (e) {
+    document.getElementById('join-banner').innerHTML = '<p style="color:#ff7070;font-size:.82rem">Error loading campaign info.</p>';
+  }
+}
+
+async function doJoin() {
+  var name = document.getElementById('join-name').value.trim();
+  var email = document.getElementById('join-email').value.trim();
+  if (!name) { showMsg('join-msg', 'err', 'Please enter your name'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMsg('join-msg', 'err', 'Please enter a valid email address'); return; }
+
+  var btn = document.getElementById('join-btn');
+  btn.disabled = true; btn.textContent = 'Joining...';
+
+  try {
+    var body = { name: name, email: email };
+    if (joinMerchant) body.merchant_id = joinMerchant.id;
+    else body.merchant_slug = joinSlug;
+
+    var r = await fetch(API + '/api/affiliates/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await r.json();
+
+    if (d.token) {
+      tok = d.token; localStorage.setItem('aff_token', d.token);
+      // Show success then redirect to dashboard
+      document.getElementById('join-section').style.display = 'none';
+      document.getElementById('join-success').style.display = 'block';
+      if (d.affiliate && d.affiliate.tracking_link) {
+        document.getElementById('join-link-display').textContent = d.affiliate.tracking_link;
+      }
+      setTimeout(function() { loadDash(); }, 2500);
+    } else {
+      btn.disabled = false; btn.textContent = 'Join Campaign and Get My Link';
+      showMsg('join-msg', 'err', d.error || 'Signup failed');
+    }
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Join Campaign and Get My Link';
+    showMsg('join-msg', 'err', 'Error: ' + e.message);
+  }
+}
+
+// ── LOGIN flow ─────────────────────────────────────────────────────────────
+async function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  if (!email) { showMsg('login-msg', 'err', 'Please enter your email'); return; }
+  try {
+    var r = await fetch(API + '/api/affiliates/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+    var d = await r.json();
+    if (r.ok) {
+      showMsg('login-msg', 'ok', 'Magic link sent! Check your email inbox.');
+    } else {
+      showMsg('login-msg', 'err', d.error || 'Login failed');
+    }
+  } catch (e) {
+    showMsg('login-msg', 'err', 'Error: ' + e.message);
+  }
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+async function loadDash() {
+  try {
+    var r = await fetch(API + '/api/affiliates/me/all', { headers: { Authorization: 'Bearer ' + tok } });
+    if (!r.ok) { doLogout(); return; }
+    affiliateData = await r.json();
+
+    document.getElementById('auth-section').classList.add('hidden');
+    document.getElementById('dash-section').classList.remove('hidden');
+
+    document.getElementById('sb-name').textContent = affiliateData.name || 'Affiliate';
+    document.getElementById('sb-email').textContent = affiliateData.email || '';
+    document.getElementById('sb-count').textContent =
+      affiliateData.total_campaigns + ' campaign' + (affiliateData.total_campaigns === 1 ? '' : 's');
+
+    document.getElementById('total-campaigns').textContent = affiliateData.total_campaigns;
+    document.getElementById('total-clicks').textContent = affiliateData.total_clicks;
+    document.getElementById('total-conversions').textContent = affiliateData.total_conversions;
+    document.getElementById('total-earnings').textContent = '$' + affiliateData.total_earnings.toFixed(2);
+
+    // Settings
+    document.getElementById('set-name').value = affiliateData.name || '';
+    document.getElementById('set-email').value = affiliateData.email || '';
+    document.getElementById('reset-email').value = affiliateData.email || '';
+
+    renderCampaigns();
+    populateCampaignFilter();
+    loadEarnings();
+  } catch (e) {
+    doLogout();
+  }
+}
+
+function renderCampaigns() {
+  var grid = document.getElementById('campaigns-grid');
+  if (!affiliateData || !affiliateData.campaigns || !affiliateData.campaigns.length) {
+    grid.innerHTML = '<div style="color:var(--txt3);font-size:.85rem;padding:1rem">No campaigns yet. Use a campaign invite link to join one.</div>';
+    return;
+  }
+  grid.innerHTML = affiliateData.campaigns.map(function(c) {
+    var initial = (c.company_name || 'M').charAt(0).toUpperCase();
+    var comm = c.commission_value + (c.commission_type === 'percentage' ? '%' : ' ' + c.currency);
+    return [
+      '<div class="campaign-card">',
+        '<div class="cc-head">',
+          '<div>',
+            '<div class="cc-name">' + escHtml(c.company_name) + '</div>',
+            '<div class="cc-url">' + comm + ' commission &middot; Code: <span class="code-tag">' + c.affiliate_code + '</span></div>',
+          '</div>',
+          '<span class="badge badge-g">Active</span>',
+        '</div>',
+        '<div class="cc-stats">',
+          '<div class="cc-stat"><div class="cc-stat-val">' + (c.total_clicks || 0) + '</div><div class="cc-stat-lbl">Clicks</div></div>',
+          '<div class="cc-stat"><div class="cc-stat-val">' + (c.total_conversions || 0) + '</div><div class="cc-stat-lbl">Conversions</div></div>',
+          '<div class="cc-stat"><div class="cc-stat-val" style="color:var(--d)">$' + parseFloat(c.total_earnings || 0).toFixed(2) + '</div><div class="cc-stat-lbl">Earned</div></div>',
+        '</div>',
+        '<div class="cc-link-row">',
+          '<input class="cc-link-inp" type="text" value="' + c.tracking_link + '" readonly id="link-' + c.id + '">',
+          '<button class="cc-copy" onclick="copyText(\'' + c.tracking_link + '\', this)">Copy Link</button>',
+        '</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+}
+
+function populateCampaignFilter() {
+  var sel = document.getElementById('conv-campaign-filter');
+  if (!sel || !affiliateData || !affiliateData.campaigns) return;
+  sel.innerHTML = '<option value="">All Campaigns</option>' +
+    affiliateData.campaigns.map(function(c) {
+      return '<option value="' + c.id + '">' + escHtml(c.company_name) + '</option>';
+    }).join('');
+}
+
+async function loadAllConversions() {
+  var tbody = document.getElementById('conv-table');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" class="empty">Loading...</td></tr>';
+
+  if (!affiliateData || !affiliateData.campaigns || !affiliateData.campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No campaigns yet.</td></tr>';
+    return;
+  }
+
+  var filterCampaignId = (document.getElementById('conv-campaign-filter') || {}).value || '';
+  var campaigns = affiliateData.campaigns;
+  if (filterCampaignId) {
+    campaigns = campaigns.filter(function(c) { return String(c.id) === filterCampaignId; });
+  }
+
+  var allRows = [];
+  for (var i = 0; i < campaigns.length; i++) {
+    var c = campaigns[i];
+    try {
+      var r = await fetch(API + '/api/affiliates/conversions', { headers: { Authorization: 'Bearer ' + tok } });
+      var d = await r.json();
+      if (d.conversions) {
+        d.conversions.forEach(function(cv) {
+          cv._campaign_name = c.company_name;
+        });
+        allRows = allRows.concat(d.conversions);
+      }
+    } catch (e) {}
+  }
+
+  if (!allRows.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No conversions yet across your campaigns.</td></tr>';
+    return;
+  }
+
+  allRows.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+  tbody.innerHTML = allRows.map(function(cv) {
+    var badge = cv.status === 'approved' ? 'badge-g' : 'badge-b';
+    return '<tr>' +
+      '<td>' + new Date(cv.created_at).toLocaleDateString() + '</td>' +
+      '<td>' + escHtml(cv._campaign_name || '') + '</td>' +
+      '<td>' + cv.conversion_type.replace(/_/g, ' ') + '</td>' +
+      '<td>$' + parseFloat(cv.conversion_value || 0).toFixed(2) + '</td>' +
+      '<td style="color:var(--d);font-weight:600">$' + parseFloat(cv.commission_amount || 0).toFixed(2) + '</td>' +
+      '<td><span class="badge ' + badge + '">' + cv.status + '</span></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function loadEarnings() {
+  var tbody = document.getElementById('earn-table');
+  if (!tbody || !affiliateData) return;
+
+  var total = affiliateData.total_earnings || 0;
+  document.getElementById('earn-total').textContent = '$' + total.toFixed(2);
+  document.getElementById('earn-pending').textContent = '$' + (total * 0.7).toFixed(2);
+  document.getElementById('earn-approved').textContent = '$' + (total * 0.3).toFixed(2);
+
+  if (!affiliateData.campaigns || !affiliateData.campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No campaigns yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = affiliateData.campaigns.map(function(c) {
+    return '<tr>' +
+      '<td>' + escHtml(c.company_name) + '</td>' +
+      '<td><span class="code-tag">' + c.affiliate_code + '</span></td>' +
+      '<td>' + (c.total_conversions || 0) + '</td>' +
+      '<td style="color:var(--d);font-weight:600">$' + parseFloat(c.total_earnings || 0).toFixed(2) + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+async function saveProfile() {
+  var name = document.getElementById('set-name').value.trim();
+  if (!name) { showMsg('profile-msg', 'err', 'Name is required'); return; }
+  try {
+    var r = await fetch(API + '/api/affiliates/me', {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name })
+    });
+    var d = await r.json();
+    if (d.affiliate) {
+      affiliateData.name = d.affiliate.name;
+      document.getElementById('sb-name').textContent = d.affiliate.name;
+      showMsg('profile-msg', 'ok', 'Profile saved');
+    } else showMsg('profile-msg', 'err', d.error || 'Failed');
+  } catch (e) { showMsg('profile-msg', 'err', e.message); }
+}
+
+async function savePayment() {
+  try {
+    var r = await fetch(API + '/api/affiliates/me', {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        wallet_address: document.getElementById('set-wallet').value,
+        payment_method: document.getElementById('set-payment').value
+      })
+    });
+    var d = await r.json();
+    if (d.affiliate) showMsg('payment-msg', 'ok', 'Payment details saved');
+    else showMsg('payment-msg', 'err', d.error || 'Failed');
+  } catch (e) { showMsg('payment-msg', 'err', e.message); }
+}
+
+async function requestMagicLink() {
+  var email = document.getElementById('reset-email').value.trim();
+  if (!email) { showMsg('reset-msg', 'err', 'Enter your email'); return; }
+  try {
+    var r = await fetch(API + '/api/affiliates/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+    var d = await r.json();
+    showMsg('reset-msg', r.ok ? 'ok' : 'err', d.message || d.error);
+  } catch (e) { showMsg('reset-msg', 'err', e.message); }
+}
+
+function doLogout() {
+  tok = null; affiliateData = null;
+  localStorage.removeItem('aff_token');
+  document.getElementById('auth-section').classList.remove('hidden');
+  document.getElementById('dash-section').classList.add('hidden');
+  document.getElementById('join-section').style.display = 'none';
+  document.getElementById('join-success').style.display = 'none';
+  document.getElementById('login-section').style.display = 'block';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function init() {
+  var p = new URLSearchParams(location.search);
+
+  // Magic link token from email
+  var token = p.get('token');
+  if (token) {
+    tok = token; localStorage.setItem('aff_token', token);
+    history.replaceState({}, '', '/dashboard');
+    loadDash(); return;
+  }
+
+  // Error from magic link redirect
+  if (p.get('error')) {
+    showMsg('login-msg', 'err', p.get('error').replace(/_/g, ' '));
+    history.replaceState({}, '', '/dashboard');
+  }
+
+  // Join campaign via invite link: /dashboard?join=merchant-slug
+  var join = p.get('join');
+  if (join) {
+    history.replaceState({}, '', '/dashboard');
+    // Check if already logged in - if so just load dashboard
+    tok = localStorage.getItem('aff_token');
+    if (tok) { loadDash(); return; }
+    loadJoinPage(join); return;
+  }
+
+  // Normal load - check stored token
+  tok = localStorage.getItem('aff_token');
+  if (tok) { loadDash(); return; }
+
+  // Default: show login
+  document.getElementById('login-section').style.display = 'block';
+}
+
+init();
+</script>
+</body>
+</html>

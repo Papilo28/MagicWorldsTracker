@@ -1,0 +1,173 @@
+================================================================
+  MAGIC WORLDS TRACKER v2.0 — DEPLOYMENT GUIDE
+  magicworldstracker.eu
+================================================================
+
+ARCHITECTURE (Option A — Split Hosting):
+  Backend API  → Railway.app (free) at api.magicworldstracker.eu
+  Frontend     → Hostinger shared hosting at magicworldstracker.eu
+
+================================================================
+STEP 1: DEPLOY BACKEND TO RAILWAY
+================================================================
+
+1. Go to https://railway.app and sign up (free)
+
+2. Install Railway CLI (optional but easier):
+   npm install -g @railway/cli
+
+3. Push your project to GitHub first:
+   cd magicworlds-tracker
+   git init
+   git add .
+   git commit -m "Initial production deploy"
+   git remote add origin https://github.com/YOUR_USERNAME/magicworlds-tracker.git
+   git push -u origin main
+
+4. In Railway dashboard:
+   → New Project → Deploy from GitHub repo
+   → Select your magicworlds-tracker repo
+   → Railway auto-detects Node.js and installs dependencies
+
+5. Add ALL environment variables in Railway:
+   Go to: Project → Variables → Add each one:
+
+   DATABASE_URL=postgresql://neondb_owner:npg_QhPndSA5u0bF@ep-old-leaf-ancjm9es-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+   JWT_SECRET=af141a0b48f9df9b4f714ea0577354096a3e028a2abaca36843ab706efc60b2bb34ca3b74bb971f3dc04f75ac79ce0f1ede3b121e22b1d8cb9cebed13e9eaaaf
+   SUPER_ADMIN_EMAIL=go@sannisanni.com
+   SUPER_ADMIN_PASSWORD=Abvcha@@72664$$
+   ATTRIBUTION_WINDOW_DAYS=30
+   DEFAULT_REDIRECT_URL=https://magicworldstracker.eu
+   TRACKING_API_SECRET=13f34dccda177bb76246c33814d12fe5a71dc3708eb7522bb2ade9b46c0d6058
+   ENCRYPTION_KEY=Y1M7OF9TNLE0IWB8Z3AHXJQDKRG26P54
+   BASE_URL=https://api.magicworldstracker.eu
+   FRONTEND_URL=https://magicworldstracker.eu
+   NODE_ENV=production
+   BREVO_API_KEY=<your-brevo-key-here>
+   EMAIL_FROM=noreply@magicworldstracker.eu
+   EMAIL_FROM_NAME=Magic Worlds Tracker
+
+6. Railway gives you a URL like: https://magicworlds-tracker-production.up.railway.app
+   → Go to Settings → Domains → Add Custom Domain
+   → Enter: api.magicworldstracker.eu
+   → Railway shows you a CNAME value
+
+7. In Hostinger DNS (hPanel → Domains → DNS Zone):
+   Add CNAME record:
+     Name:   api
+     Value:  <the CNAME Railway gave you>
+     TTL:    3600
+
+================================================================
+STEP 2: DEPLOY FRONTEND TO HOSTINGER
+================================================================
+
+The frontend is the /public folder (static HTML files only).
+
+1. In hPanel → File Manager → navigate to public_html/
+
+2. Upload these files/folders from your /public folder:
+     index.html           → public_html/index.html
+     reset-password.html  → public_html/reset-password.html
+     api.html             → public_html/api.html
+     dashboard/           → public_html/dashboard/
+     admin/               → public_html/admin/
+     merchant/            → public_html/merchant/
+     superadmin/          → public_html/superadmin/
+
+   (Do NOT upload src/, node_modules/, .env, package.json)
+
+3. Or via FTP (FileZilla):
+   Host:     ftp.magicworldstracker.eu (or your Hostinger FTP host)
+   Username: your Hostinger FTP username
+   Password: your Hostinger FTP password
+   Port:     21
+   Upload the above files to /public_html/
+
+================================================================
+STEP 3: SET UP BREVO EMAIL (5 minutes)
+================================================================
+
+1. Go to https://app.brevo.com → Sign up free
+2. Go to: Account → SMTP & API → API Keys → Generate New Key
+3. Copy your API key
+4. Add it to Railway environment variables: BREVO_API_KEY=<key>
+5. In Brevo: Senders & IPs → Add Sender:
+   Email: noreply@magicworldstracker.eu
+   Name:  Magic Worlds Tracker
+6. Verify domain ownership in Brevo (add DNS TXT record in Hostinger)
+
+================================================================
+STEP 4: VERIFY EVERYTHING WORKS
+================================================================
+
+Test these URLs after deployment:
+
+Health check (should return {"status":"ok"}):
+  https://api.magicworldstracker.eu/api/health
+
+Frontend pages:
+  https://magicworldstracker.eu              → Home
+  https://magicworldstracker.eu/dashboard    → Affiliate signup
+  https://magicworldstracker.eu/merchant     → Merchant portal
+  https://magicworldstracker.eu/admin        → Admin panel
+  https://magicworldstracker.eu/superadmin   → Super admin
+
+Super Admin Login:
+  Email:    go@sannisanni.com
+  Password: Abvcha@@72664$$
+
+================================================================
+STEP 5: IF USING RENDER INSTEAD OF RAILWAY
+================================================================
+
+1. Go to https://render.com → New → Web Service
+2. Connect your GitHub repo
+3. Settings:
+   Build Command:  npm install
+   Start Command:  node src/server.js
+4. Add environment variables (same as Railway above)
+5. Free tier spins down after inactivity — Railway is better for production
+
+================================================================
+IMPORTANT SECURITY NOTES
+================================================================
+
+1. Your .env file is already in .gitignore — NEVER commit it to git
+2. All secrets are set as Railway environment variables (safe)
+3. Rotate TRACKING_API_SECRET if you think it's been exposed
+4. The BREVO_API_KEY in Railway env vars is never visible in code
+
+================================================================
+CONVERSION TYPES AVAILABLE
+================================================================
+
+Standard:   wallet_connect, purchase, signup, in_game_action
+New:        referral, subscription, nft_mint, token_swap, level_up
+
+JavaScript tracking:
+  AffiliateTracker.trackWalletConnect('0x...', 'ethereum')
+  AffiliateTracker.trackPurchase(99.99, 'USD', 'order-123')
+  AffiliateTracker.trackSignup('user-id')
+  AffiliateTracker.trackReferral('referred-user-id')
+  AffiliateTracker.trackSubscription('pro-plan', 29.99, 'USD')
+  AffiliateTracker.trackNFTMint('#1234', 'MagicWorlds')
+  AffiliateTracker.trackTokenSwap('ETH', 'USDC', 0.5)
+  AffiliateTracker.trackLevelUp(5, {game: 'magicworld'})
+  AffiliateTracker.trackAction('custom_action', {key: 'val'}, 0)
+
+================================================================
+BUGS FIXED IN THIS VERSION
+================================================================
+
+1. verifyMagicLinkToken — was checking wrong field (purpose vs type)
+2. Magic link now sends real email via Brevo instead of returning URL
+3. Duplicate /join/:merchantSlug route removed from server.js
+4. Google Auth completely removed (no dependency)
+5. SQLite replaced with Postgres (persistent, production-ready)
+6. All SQL queries converted from positional (?) to Postgres ($1, $2...)
+7. admin.js used env ADMIN_EMAIL not bound to DB — now consistent
+8. Missing merchant_id in conversion insert — fixed
+9. Tables now all horizontally scrollable on mobile (overflow-x:auto)
+10. Sidebar slides in on mobile with overlay backdrop
+11. All pages fully responsive down to 320px
